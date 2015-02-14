@@ -15,9 +15,9 @@ class Profile(models.Model):
     GENDER_CHOICES = (('M', 'Male'),
                       ('F', 'Female'))
 
-    author_id = models.ForeignKey(Author)
+    author_id = models.OneToOneField(Author)
     name = models.CharField(max_length=128, default='N/A')
-    body = models.CharField(max_length=2048, blank=True)
+    body = models.Field(max_length=2048, blank=True)
     birthdate = models.DateField('birthdate',null=True, blank=True)
     gender = models.CharField(max_length=1, blank=True, choices=GENDER_CHOICES)
     image = models.ImageField(blank=True)
