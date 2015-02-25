@@ -7,7 +7,7 @@ from django.db import models, migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('authors', '__first__'),
+        ('authors', '0001_initial'),
     ]
 
     operations = [
@@ -28,9 +28,9 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('post_text', models.TextField(max_length=2048)),
-                ('title', models.CharField(max_length=128)),
+                ('title', models.CharField(max_length=128, blank=True)),
                 ('date', models.DateTimeField(verbose_name=b'date posted')),
-                ('privacy', models.CharField(max_length=1)),
+                ('privacy', models.CharField(max_length=1, blank=True)),
                 ('author', models.OneToOneField(to='authors.Profile')),
             ],
             options={
