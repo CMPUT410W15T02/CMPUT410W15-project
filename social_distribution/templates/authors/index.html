@@ -1,0 +1,14 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>Social Distribution</title>
+</head>
+<body>
+    {% if user.is_authenticated %}
+    <p>Hello {{ user.username }}!</p>
+    <a href='/logout/'>Logout</a>
+    {% else %}
+    <p>Hello World!</p>
+    {% endif %}
+</body>
+<html>
