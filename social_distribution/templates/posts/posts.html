@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+{% load static %}
+
+<html>
+    <head>
+        <title>Social Distribution</title>
+	<link rel="stylesheet" href="{% static 'css/post.css' %}" />
+	<script src="{% static 'js/jquery-1.11.0.min.js' %}"></script>
+	<script src="{% static 'js/post.js' %}"></script>
+        
+    </head>
+   
+    <body>
+        <h2>Make a Post</h2>
+
+        <form id="post_form" method="post" action="/posts/"
+                enctype="multipart/form-data">
+
+            {% csrf_token %}
+	    <div>
+		Title:</br>
+		{{post_form.title}}
+		</br>
+	    </div>
+            <div>
+		Post:</br>
+		{{post_form.post_text}}
+		</br>
+	    </div>
+	    <div>
+		Privacy:</br>
+		{{post_form.privacy}}
+		</br>
+	    </div>
+            <div id="allowed">
+		Allowed:</br>
+		{{post_form.allowed}}</br>
+		Use Control or Command to select multiple users
+		</br>
+	    </div>
+            <input type="submit" name="submit" value="Post" />
+        </form>
+    </body>
+</html>
