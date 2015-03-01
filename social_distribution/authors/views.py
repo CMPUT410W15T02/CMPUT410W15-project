@@ -4,7 +4,7 @@ from django.template import RequestContext
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.decorators import login_required
-
+from authors.models import Profile
 
 # Create your views here.
 def index(request):
@@ -24,7 +24,10 @@ def register(request):
         if user_form.is_valid():
             user = user_form.save()
             user.set_password(user.password)
+            user.is_active = False
             user.save()
+
+            profile = Profile.create_profile(user)
 
             registered = True
 
@@ -34,7 +37,11 @@ def register(request):
     else:
         user_form = UserForm()
 
-    return render_to_response('authors/register.html',
+    if registered == True:
+        return HttpResponse("User successfully created! Login "
+        "<a href=/login/>here</a> after the admin has activated your account.")
+    else:
+        return render_to_response('authors/register.html',
             {'user_form': user_form, 'registered': registered}, context)
 
 
@@ -45,9 +52,12 @@ def user_login(request):
 
         user = authenticate(username=username, password=password)
 
-        if user:
-            login(request, user)
-            return HttpResponseRedirect('/')
+        if user is not None:
+            if user.is_active:
+                login(request, user)
+                return HttpResponseRedirect('/')
+            else:
+                return HttpResponse("This user has not been enabled by the admin yet.")
         else:
             print("Invalid login deatils: {0}, {1}".format(username, password))
             return HttpResponse("Invalid login details supplied.")

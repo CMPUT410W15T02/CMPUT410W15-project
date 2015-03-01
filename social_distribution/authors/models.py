@@ -17,6 +17,11 @@ class Profile(models.Model):
     follows = models.ManyToManyField('self', blank=True, symmetrical=False)
     friends = models.ManyToManyField('self', blank=True)
 
+    @classmethod
+    def create_profile(cls, username):
+        profile = cls(user=username)
+        profile.save()
+        return profile
+
     def __unicode__(self):
         return str(self.user)
-
