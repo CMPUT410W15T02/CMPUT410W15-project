@@ -25,13 +25,14 @@ def posts(request):
                 #for user in allowed: 
 		 #   allowedUsers.allowed.add(user.username)                    
             elif privacy=="4":
-		a=0
+		#friends=Profile.objects.get(author=author)
 		#TODO when posting get all friends names and add them to allowed names
             else:
                 a=0
 		#TODO when posting make allowed empty
         else:
-            print post_form.errors     
+            print post_form.errors  
+	    
     else:
         post_form=PostForm()
     return render(request, 'posts/posts.html', {'post_form':post_form})
