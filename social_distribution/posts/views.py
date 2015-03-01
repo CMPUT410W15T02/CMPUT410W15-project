@@ -25,6 +25,7 @@ def posts(request):
                 #for user in allowed: 
 		 #   allowedUsers.allowed.add(user.username)                    
             elif privacy=="4":
+		a=0
 		#friends=Profile.objects.get(author=author)
 		#TODO when posting get all friends names and add them to allowed names
             else:
