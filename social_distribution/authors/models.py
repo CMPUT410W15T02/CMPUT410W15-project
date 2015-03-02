@@ -1,13 +1,17 @@
 from django.db import models
 from django.contrib.auth.models import User
+import uuid
 
 # Create your models here.
 
 class Profile(models.Model):
+    uuid = models.CharField(max_length=32, default = uuid.uuid4)
     GENDER_CHOICES = (('M', 'Male'),
                       ('F', 'Female'))
 
-    user = models.OneToOneField(User)
+    user = models.OneToOneField(User, editable=False)
+    host = models.CharField(max_length=32, blank=True)
+    displayname = models.CharField(max_length=128, blank=True)
     body = models.TextField(max_length=2048, blank=True)
     birthdate = models.DateField('birthdate',null=True, blank=True)
     gender = models.CharField(max_length=1, blank=True, choices=GENDER_CHOICES)
