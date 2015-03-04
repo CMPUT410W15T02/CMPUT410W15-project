@@ -6,6 +6,8 @@ from posts.forms import PostForm
 from django.http import HttpResponseRedirect, HttpResponse
 from posts.models import Post
 from authors.models import Profile
+from datetime import datetime
+from django.contrib.auth.models import User
 
 import time
 # Create your views here.
@@ -18,18 +20,22 @@ def posts(request):
             privacy = post_form.cleaned_data['privacy']
             post_text=post_form.cleaned_data['post_text']
             title=post_form.cleaned_data['title']
+	    date=datetime.now()
+	    current=request.user
+	    author=Profile.objects.get(user=current)
+	    a=Post(post_text=post_text, title=title, date=date,author=author,privacy=privacy)
+	    a.save()	    
             if privacy=="3":
-		a=0
-		#TODO When posting add all the allowed names
-		#allowed=post_form.cleaned_data['allowed']
-                #for user in allowed: 
-		 #   allowedUsers.allowed.add(user.username)                    
+		allowed=post_form.cleaned_data['allowed']
+                for user in allowed: 
+		    a.allowed.add(User.objects.get(username=user))                    
             elif privacy=="4":
-		a=0
-		#friends=Profile.objects.get(author=author)
+		all_friends=Profile.objects.get(user=current)
+		for friend in all_friends.friends.all():
+		    a.allowed.add(User.objects.get(username=friend.user))
 		#TODO when posting get all friends names and add them to allowed names
-            else:
-                a=0
+               
+		
 		#TODO when posting make allowed empty
         else:
             print post_form.errors  

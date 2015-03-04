@@ -11,7 +11,7 @@ class Post(models.Model):
                       ('4','Friends'))
     post_text = models.TextField(max_length=2048)
     title = models.CharField(max_length=128, blank=True)
-    author = models.OneToOneField(Profile) 
+    author = models.ForeignKey(Profile) 
     date = models.DateTimeField('date posted')
     privacy = models.CharField(max_length=1, choices=PRIVACY_CHOICES)
     #This will get all the Users for custom do we want that?

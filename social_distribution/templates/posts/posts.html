@@ -12,6 +12,12 @@
    
     <body>
         <h2>Make a Post</h2>
+	{% if user.is_authenticated %}
+	<p>Authenticated {{ user.username }}</p>
+	
+	{% else %}
+	<p>Not authenticated </p>
+	{% endif %}
 
         <form id="post_form" method="post" action="/posts/"
                 enctype="multipart/form-data">
