@@ -1,0 +1,28 @@
+<html>
+<head>
+    <title>Social Distribution</title>
+</head>
+<body>
+    <p>Friend Request Sent </p>
+
+    {% if friends %}
+    
+		{% for friend in friends%}
+			<div>
+		        <form method="POST" action="/add_friend/">
+		        {% csrf_token %}
+		        <p>{{friend.from_profile_id}}</p>
+				<span>
+					<input type="hidden" value={{friend.from_profile_id.id}} name="from_profile">
+					<input type="submit" name="accept" value="Accept" />
+			        <input type="submit" name="reject" value="Reject" />
+				</span>
+		        </form>
+	        </div>
+		{% endfor %}
+
+	{% else %}
+		<h1> No Friend Requests </h1>
+	{% endif %}
+</body>
+<html>
