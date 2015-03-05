@@ -1,6 +1,6 @@
 # CMPUT410W15-project
 
-Group Memebers:
+###Group Members:
 
 Sasha Babicki
 
@@ -12,3 +12,11 @@ Rooshil Patel
 
 Frank Yau
 
+<br>
+
+###Helpful commands: 
+
+source virt-env/bin/activate
+
+
+python manage.py runserver

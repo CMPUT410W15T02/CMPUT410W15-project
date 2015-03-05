@@ -2,50 +2,63 @@
 {% load static %}
 
 <html>
-    <head>
-        <title>Social Distribution</title>
-	<link rel="stylesheet" href="{% static 'css/post.css' %}" />
-	<script src="{% static 'js/jquery-1.11.0.min.js' %}"></script>
-	<script src="{% static 'js/post.js' %}"></script>
-        
-    </head>
+	<head>
+		<title>Social Distribution</title>
+		<link rel="stylesheet" href="{% static 'css/post.css' %}" />
+		<script src="{% static 'js/jquery-1.11.0.min.js' %}"></script>
+		<script src="{% static 'js/post.js' %}"></script>
+	</head>
    
-    <body>
-        <h2>Make a Post</h2>
-	{% if user.is_authenticated %}
-	<p>Authenticated {{ user.username }}</p>
-	
-	{% else %}
-	<p>Not authenticated </p>
-	{% endif %}
-
-        <form id="post_form" method="post" action="/posts/"
-                enctype="multipart/form-data">
-
-            {% csrf_token %}
-	    <div>
-		Title:</br>
-		{{post_form.title}}
-		</br>
-	    </div>
-            <div>
-		Post:</br>
-		{{post_form.post_text}}
-		</br>
-	    </div>
-	    <div>
-		Privacy:</br>
-		{{post_form.privacy}}
-		</br>
-	    </div>
-            <div id="allowed">
-		Choose:</br>
+	<body>
 		
-		{{post_form.allowed}}</br>
-		Use Control or Command to select multiple users
-		</br>
-	    </div>
-            <input type="submit" name="submit" value="Post" />
-        </form>
-    </body>
+		<h2>Make a Post</h2>
+	
+		{% if user.is_authenticated %}
+		
+		<p>Authenticated {{ user.username }}</p>
+		
+			<form id="post_form" method="post" action="/posts/" 
+				enctype="multipart/form-data">
+				{% csrf_token %}
+		
+				<div>
+					Title:
+					</br>
+					{{post_form.title}}
+					</br>
+				</div>
+			
+				<div>
+					Post:
+					</br>
+					{{post_form.post_text}}
+					</br>
+				</div>
+			
+				<div>
+					Privacy:
+					</br>
+					{{post_form.privacy}}
+					</br>
+				</div>
+			
+				<div id="allowed">
+					Choose:
+					</br>
+					{{post_form.allowed}}</br>
+					Use Control or Command to select multiple users
+					</br>
+				</div>
+		
+				<input type="submit" name="submit" value="Post" />
+			</form>
+	
+		{% else %}
+		
+			<p>Not authenticated</p>
+			<a href="/login/">Login</a>
+		
+		{% endif %}
+		
+	</body>
 </html>
