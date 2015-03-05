@@ -10,12 +10,12 @@ from datetime import datetime
 from django.contrib.auth.models import User
 
 import time
-# Create your views here.
+# Create your views here. 
 def posts(request):
     context =RequestContext(request)
     
     if request.method == 'POST':
-        post_form = PostForm(data=request.POST)
+        post_form = PostForm(request.user,data=request.POST)
         if post_form.is_valid():
             privacy = post_form.cleaned_data['privacy']
             post_text=post_form.cleaned_data['post_text']
@@ -28,18 +28,18 @@ def posts(request):
             if privacy=="3":
 		allowed=post_form.cleaned_data['allowed']
                 for user in allowed: 
-		    a.allowed.add(User.objects.get(username=user))                    
+		    a.allowed.add(User.objects.get(username=user))
+		a.allowed.add(User.objects.get(username=author))
             elif privacy=="4":
 		all_friends=Profile.objects.get(user=current)
 		for friend in all_friends.friends.all():
 		    a.allowed.add(User.objects.get(username=friend.user))
-		#TODO when posting get all friends names and add them to allowed names
-               
-		
-		#TODO when posting make allowed empty
+		a.allowed.add(User.objects.get(username=author))
+	    elif privacy=="2":
+		a.allowed.add(User.objects.get(username=author))
         else:
             print post_form.errors  
 	    
     else:
-        post_form=PostForm()
+        post_form=PostForm(request.user)
     return render(request, 'posts/posts.html', {'post_form':post_form})

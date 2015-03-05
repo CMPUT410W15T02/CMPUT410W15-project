@@ -10,9 +10,3 @@ $(document).ready(function(){
 		}	
 	});
 });
-/*
-*Removes admin from a selection of usernames
-*/
-$(document).ready(function(){
-	$("#id_allowed option[value='1']").remove();
-});
