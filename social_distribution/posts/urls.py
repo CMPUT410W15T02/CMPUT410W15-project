@@ -1,7 +1,14 @@
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
-from posts import views
+from posts import views, api
 
 urlpatterns = patterns('',
     url(r'^posts/$', views.posts, name='posts'),
+    url(r'^api/author/posts/$', api.author_posts, name="api/author/posts"),
+    url(r'^api/posts/$', api.posts, name="api/posts"),
+    url(r'^api/author/(?P<author_id>.+)/$', api.authorid_posts, name="api/author/author_id/posts"),
+    url(r'^api/posts/(?P<post_id>.+)/$', api.postid_post, name="api/posts/post_id"),
+    url(r'^api/friends/(?P<friend1>.+)/(?P<friend2>.+)/$', api.friends_get, name="api/friends_get"),
+    url(r'^api/friends/(?P<uuid>.+)/$', api.friends_post, name="api/friends_post"),
+    url(r'^api/friendrequest/$', api.friend_request, name="api/friendrequest")
 )
