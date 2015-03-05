@@ -18,7 +18,7 @@ class Profile(models.Model):
     image = models.ImageField(upload_to='profile_images', blank=True)
     workspace = models.CharField(max_length=128, blank=True)
     school = models.CharField(max_length=128, blank=True)
-    follows = models.ManyToManyField('self', blank=True, symmetrical=False)
+    follows = models.ManyToManyField('self', blank=True, symmetrical=False, through='Follow')
     friends = models.ManyToManyField('self', blank=True)
 
     @classmethod
@@ -29,3 +29,12 @@ class Profile(models.Model):
 
     def __unicode__(self):
         return str(self.user)
+
+class Follow(models.Model):
+    STATUS = (('REJECTED', 'Rejected'),
+            ('PENDING', 'Pending'),
+    )
+    
+    from_profile_id = models.ForeignKey(Profile, related_name='from_profile_id')
+    to_profile_id = models.ForeignKey(Profile, related_name='to_profile_id')
+    status = models.CharField(max_length=10, choices=STATUS)
