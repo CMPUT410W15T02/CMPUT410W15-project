@@ -27,6 +27,10 @@
     
     <h3><a href="/posts/all/">View Public Posts</a></h3>
     
+     <h3><a href="/posts/friends/">View Posts By Friend</a></h3>
+
+     <h3><a href="/posts/custom/">View Posts By Custom Filter</a></h3>
+
     {% if user.is_authenticated %}
     <h3><a href="/author/{{user.username}}/posts/">View Your Posts</a></h3>
     {% endif %}

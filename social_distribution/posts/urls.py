@@ -6,6 +6,10 @@ urlpatterns = patterns('',
     url(r'^posts/$', views.posts, name='posts'),
     url(r'^author/(?P<author_id>.+)/posts/$', views.posts_by_author, name='author/author_id/posts'),
     url(r'^posts/all/$', views.public_posts, name='posts/all'),
+    url(r'^posts/friends/$', views.friends_posts, name='posts/friends'),
+    url(r'^posts/custom/$', views.custom_posts, name='posts/custom'),
+
+
     url(r'^delete/post/(?P<post_id>.+)$', views.delete_post, name='delete/post/post_id'),    
     url(r'^api/author/posts/$', api.author_posts, name="api/author/posts"),
     url(r'^api/posts/$', api.posts, name="api/posts"),
