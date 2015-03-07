@@ -29,10 +29,21 @@
                 Body: {{post.post_text}}
             </div>
             <div>
-                Privacy: {{post.privacy}}
+                Author: {{post.author}}
             </div>
             
+            {% if edit %}
+            <div>
+                Privacy: {{post.privacy}}
+            </div>
+            <form id="delete_post" method="post" action="/delete/post/{{post.id}}">
+                {% csrf_token %}
+                <input type="submit" name="submit" value="Delete" />
+                
+            </form>
+            {% endif %}
             <br/><br/>
+            
     	{% endfor %}
 		
 	</body>

@@ -8,7 +8,7 @@
     <p>Hello {{ user.username }}!</p>
     <a href='/logout/'>Logout</a>
     {% else %}
-    <p>Hello World!</p>
+    <p>Hello World! Click <a href="/login/">here</a> to login</p>
     {% endif %}
 
         	<!-- Testing -->
@@ -27,6 +27,9 @@
     
     <h3><a href="/posts/all/">View Public Posts</a></h3>
     
+    {% if user.is_authenticated %}
+    <h3><a href="/author/{{user.username}}/posts/">View Your Posts</a></h3>
+    {% endif %}
 	<!-- End Testing -->
 </body>
 <html>
