@@ -83,14 +83,13 @@ def author(request, username):
 
 def author_manage(request):
     context = RequestContext(request)
-
+    profile = Profile.objects.get(user_id=request.user.id)
     updated = False
 
     if request.method == 'POST':
         profile_form = UserProfileForm(data=request.POST)
 
         if profile_form.is_valid():
-            profile = Profile.objects.get(user_id=request.user.id)
             profile.displayname = profile_form.cleaned_data['displayname']
             profile.body = profile_form.cleaned_data['body']
             profile.birthdate = profile_form.cleaned_data['birthdate']
@@ -106,7 +105,7 @@ def author_manage(request):
             print profile_form.errors
 
     else:
-        profile_form = UserProfileForm()
+        profile_form = UserProfileForm(instance=profile)
 
     if updated == True:
         return HttpResponse("Profile Successfully edited! Click "
