@@ -5,7 +5,7 @@ import uuid
 # Create your models here.
 
 class Profile(models.Model):
-    uuid = models.CharField(max_length=32, default = uuid.uuid4)
+    uuid = models.CharField(max_length=36, default = uuid.uuid4)
     GENDER_CHOICES = (('M', 'Male'),
                       ('F', 'Female'))
 
@@ -16,6 +16,7 @@ class Profile(models.Model):
     birthdate = models.DateField('birthdate',null=True, blank=True)
     gender = models.CharField(max_length=1, blank=True, choices=GENDER_CHOICES)
     image = models.ImageField(upload_to='profile_images', blank=True)
+    github = models.CharField(max_length=39, blank=True)
     workspace = models.CharField(max_length=128, blank=True)
     school = models.CharField(max_length=128, blank=True)
     follows = models.ManyToManyField('self', blank=True, symmetrical=False, through='Follow')
@@ -34,7 +35,7 @@ class Follow(models.Model):
     STATUS = (('REJECTED', 'Rejected'),
             ('PENDING', 'Pending'),
     )
-    
+
     from_profile_id = models.ForeignKey(Profile, related_name='from_profile_id')
     to_profile_id = models.ForeignKey(Profile, related_name='to_profile_id')
     status = models.CharField(max_length=10, choices=STATUS)
