@@ -63,17 +63,17 @@ def user_login(request):
                 login(request, user)
                 return HttpResponseRedirect('/')
             else:
-                return HttpResponse("This user has not been enabled by the admin yet.")
+                return HttpResponse("This user has not been enabled by the admin yet.<br/><a href=\"/login/\">Login</a>")
         else:
             print("Invalid login deatils: {0}, {1}".format(username, password))
-            return HttpResponse("Invalid login details supplied.")
+            return HttpResponse("Invalid login details supplied.<br/><a href=\"/login/\">Login</a>")
     else:
         return render(request, 'authors/login.html', {})
 
 @login_required
 def user_logout(request):
     logout(request)
-    return HttpResponseRedirect('/')
+    return HttpResponseRedirect('/login/')
 
 def author(request):
     context = RequestContext(request)
