@@ -9,10 +9,16 @@
 		<script src="{% static 'js/post.js' %}"></script>
 	</head>
    
-	<body>
+	<body>		
         
-		{% if user.is_authenticated %}		
+        {% if user.is_authenticated %}
+            <p>You are logged in as {{ user.username }}</p>
 		
+        {% else %}
+			<p>Not authenticated</p>
+			<a href="/login/">Login</a>
+		{% endif %}
+        
         <h2>{{ title }}</h2>
     	
         {% for post in list_of_posts %}
@@ -25,16 +31,9 @@
             <div>
                 Privacy: {{post.privacy}}
             </div>
+            
             <br/><br/>
     	{% endfor %}
-
-	
-		{% else %}
-		
-			<p>Not authenticated</p>
-			<a href="/login/">Login</a>
-		
-		{% endif %}
 		
 	</body>
 </html>

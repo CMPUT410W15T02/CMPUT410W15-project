@@ -89,7 +89,7 @@ def posts_by_author(request, author_id):
         # only retrieve posts that belong to the current user's profile
         list_of_posts = Post.objects.filter(Q(author=author))
         title = "View Posts by " + str(author)
-    
+        
     # if author does not exist or if they don't have any posts
     except:    
          list_of_posts = None
