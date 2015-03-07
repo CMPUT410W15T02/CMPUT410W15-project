@@ -1,0 +1,61 @@
+URLS:
+
+127.0.0.1:8000 (index.html)
+	-logged in: user's stream
+	-logged out: intro page?
+
+127.0.0.1:8000/author
+	-logged in: user's profile page
+	-logged out: redirect to login
+
+127.0.0.1:8000/author/{AUTHOR_ID}
+	-logged in: AUTHOR_ID's profile page
+	-logged out: redirect to login or?
+
+127.0.0.1:8000/author/{AUTHOR_ID}/posts
+	-logged in: AUTHOR_ID's posts
+	-logged out: redirect to login or?
+
+127.0.0.1:8000/posts
+	-logged in: all public posts
+	-logged out: all public posts or redirect to login?
+
+127.0.0.1:8000/posts/{POSTID}
+	-logged in: POSTID's post
+	-logged out: POSTID's post if public or redirect to login?
+
+127.0.0.1:8000/posts/friends
+	-logged in: All posts by user's friends
+	-logged out: redirect to login
+
+127.0.0.1:8000/posts/custom
+	-logged in: All posts customly set to allow user to view
+	-logged out: redirect to login
+
+127.0.0.1:8000/manage
+	-logged in: Management of user's profile
+	-logged out: redirect to login
+
+127.0.0.1:8000/createposts
+	-logged in: creation of new post by user
+	-logged out: redirect to login
+
+127.0.0.1:8000/register
+	-logged in: redirect to index.html
+	-logged out: creation of account via registration
+
+127.0.0.1:8000/login
+	-logged in: redirect to index.html
+	-logged out: login to account field
+
+127.0.0.1:8000/logout
+	-logged in: logs user out, redirects to index.html
+	-logged out: redirect to index.html
+
+127.0.0.1:8000/friend_request
+	-logged in: send friend request to requested user?
+	-logged out: redirect to login
+
+127.0.0.1:8000/add_friend
+	-logged in: Friend requests
+	-logged out: redirect to login
