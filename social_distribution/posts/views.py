@@ -77,7 +77,7 @@ def posts(request):
         
     return render(request, 'posts/posts.html', {'post_form':post_form})
 
-# current user can view and delete/edit their own posts
+# view all posts of an author specified by author_id
 def posts_by_author(request, author_id):
     context = RequestContext(request)
     
@@ -88,11 +88,18 @@ def posts_by_author(request, author_id):
         
         # only retrieve posts that belong to the current user's profile
         list_of_posts = Post.objects.filter(Q(author=author))
+        title = "View Posts by " + str(author)
     
     # if author does not exist or if they don't have any posts
     except:    
          list_of_posts = None
-         author = author_id
+         title = "There are no posts by " + str(author_id)
 
-    return render(request, 'posts/view_posts.html', {'list_of_posts':list_of_posts, 'author':author})
+    return render(request, 'posts/view_posts.html', {'list_of_posts':list_of_posts, 'title':title})
+
+# view all public posts
+def public_posts(request):
+    list_of_posts = Post.objects.filter(Q(privacy=1))
+    title = "View All Public Posts"
+    return render(request, 'posts/view_posts.html', {'list_of_posts':list_of_posts, 'title':title})
     
