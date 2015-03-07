@@ -10,54 +10,70 @@ from datetime import datetime
 from django.contrib.auth.models import User
 
 import time
-# Create your views here. 
+
+# create new posts 
 def posts(request):
-    context =RequestContext(request)
     
+    context = RequestContext(request)
+    
+    # retrieve form data
     if request.method == 'POST':
         post_form = PostForm(request.user,data=request.POST)
         if post_form.is_valid():
             privacy = post_form.cleaned_data['privacy']
-            post_text=post_form.cleaned_data['post_text']
-            title=post_form.cleaned_data['title']
-            date=datetime.now()
+            post_text = post_form.cleaned_data['post_text']
+            title = post_form.cleaned_data['title']
+            date = datetime.now()
             
+            # get current user
             currentUser=request.user
-            #author=Profile.objects.get(user=current)
             
+            # if profile for current user already exists, retrieve it
             try:
                 author=Profile.objects.get(user=currentUser)
+                
+            # create new profile for current user if one doesn't exist
             except:
                 userObject = User.objects.get(username=currentUser)
                 profile = Profile.create_profile(userObject)
                 profile.host = request.get_host()
                 profile.save()
                 author = profile
-                            
-            a=Post(post_text=post_text, title=title, date=date,author=author,privacy=privacy)
-            a.save()
             
-            print("TEST\n\n")
-            print(a.post_text)
-            	    
+            # create a new post given the form submission data                
+            newPost = Post(post_text=post_text, title=title, date=date,author=author,privacy=privacy)
+            
+            # save the new post in the database
+            newPost.save()
+            
+            # special privacy settings: custom	    
             if privacy=="3":
                 allowed=post_form.cleaned_data['allowed']
                 for user in allowed: 
-                    a.allowed.add(User.objects.get(username=user))
-                a.allowed.add(User.objects.get(username=author))
+                    newPost.allowed.add(User.objects.get(username=user))
+                newPost.allowed.add(User.objects.get(username=author))
+            
+            # special privacy settings: friends	
             elif privacy=="4":
-                all_friends=Profile.objects.get(user=current)
+                all_friends=Profile.objects.get(user=currentUser)
                 for friend in all_friends.friends.all():
-                    a.allowed.add(User.objects.get(username=friend.user))
-                a.allowed.add(User.objects.get(username=author))
+                    newPost.allowed.add(User.objects.get(username=friend.user))
+                newPost.allowed.add(User.objects.get(username=author))
+            
+            # special privacy settings: private
             elif privacy=="2":
-                a.allowed.add(User.objects.get(username=author))
+                newPost.allowed.add(User.objects.get(username=author))
+            
+            # no privacy set, display error
             else:
                 print post_form.errors  
             
+            # once the new post is added, return to homepage
             return redirect('/')
-                
+    
+    # display the post form            
     else:
-        post_form=PostForm(request.user)
+        post_form = PostForm(request.user)
         
     return render(request, 'posts/posts.html', {'post_form':post_form})
+    
