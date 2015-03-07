@@ -84,18 +84,31 @@ def author(request, username):
 def author_manage(request):
     context = RequestContext(request)
 
+    updated = False
+
     if request.method == 'POST':
         profile_form = UserProfileForm(data=request.POST)
 
         if profile_form.is_valid():
+            profile = Profile.objects.get(user_id=request.user.id)
+            profile.displayname = profile_form.cleaned_data['displayname']
+            profile.body = profile_form.cleaned_data['body']
+            profile.birthdate = profile_form.cleaned_data['birthdate']
+            profile.gender = profile_form.cleaned_data['gender']
+            profile.image = profile_form.cleaned_data['image']
+            profile.github = profile_form.cleaned_data['github']
+            profile.workspace = profile_form.cleaned_data['workspace']
+            profile.school = profile_form.cleaned_data['school']
             profile.save()
+
+            updated = True
         else:
             print profile_form.errors
 
     else:
         profile_form = UserProfileForm()
 
-    if True:
+    if updated == True:
         return HttpResponse("Profile Successfully edited! Click "
         "<a href=/author/>here</a> to return to your profile.")
     else:
