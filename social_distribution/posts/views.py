@@ -8,12 +8,12 @@ from posts.models import Post
 from authors.models import Profile
 from datetime import datetime
 from django.contrib.auth.models import User
+from django.db.models import Q
 
 import time
 
 # create new posts 
-def posts(request):
-    
+def posts(request):  
     context = RequestContext(request)
     
     # retrieve form data
@@ -76,4 +76,23 @@ def posts(request):
         post_form = PostForm(request.user)
         
     return render(request, 'posts/posts.html', {'post_form':post_form})
+
+# current user can view and delete/edit their own posts
+def posts_by_author(request, author_id):
+    context = RequestContext(request)
+    
+    try: 
+        # author in Post is a Profile object
+        userObject = User.objects.get(username=author_id)
+        author = Profile.objects.get(user=userObject)
+        
+        # only retrieve posts that belong to the current user's profile
+        list_of_posts = Post.objects.filter(Q(author=author))
+    
+    # if author does not exist or if they don't have any posts
+    except:    
+         list_of_posts = None
+         author = author_id
+
+    return render(request, 'posts/view_posts.html', {'list_of_posts':list_of_posts, 'author':author})
     

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+{% load static %}
+
+<html>
+	<head>
+		<title>Social Distribution</title>
+		<link rel="stylesheet" href="{% static 'css/post.css' %}" />
+		<script src="{% static 'js/jquery-1.11.0.min.js' %}"></script>
+		<script src="{% static 'js/post.js' %}"></script>
+	</head>
+   
+	<body>
+        
+		{% if user.is_authenticated %}		
+		
+        <h2>View Posts by {{ author }}</h2>
+    	
+        {% for post in list_of_posts %}
+    		<div>
+    			Title: {{post.title}}
+    		</div>
+            <div>
+                Body: {{post.post_text}}
+            </div>
+            <div>
+                Privacy: {{post.privacy}}
+            </div>
+            <br/><br/>
+    	{% endfor %}
+
+	
+		{% else %}
+		
+			<p>Not authenticated</p>
+			<a href="/login/">Login</a>
+		
+		{% endif %}
+		
+	</body>
+</html>

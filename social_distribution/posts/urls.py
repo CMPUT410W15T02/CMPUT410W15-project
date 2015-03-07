@@ -4,6 +4,7 @@ from posts import views, api
 
 urlpatterns = patterns('',
     url(r'^posts/$', views.posts, name='posts'),
+    url(r'^author/(?P<author_id>.+)/posts/$', views.posts_by_author, name='author/author_id/posts'),    
     url(r'^api/author/posts/$', api.author_posts, name="api/author/posts"),
     url(r'^api/posts/$', api.posts, name="api/posts"),
     url(r'^api/author/(?P<author_id>.+)/$', api.authorid_posts, name="api/author/author_id/posts"),
