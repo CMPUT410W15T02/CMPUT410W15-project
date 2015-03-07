@@ -80,32 +80,22 @@ def posts(request):
 # view all posts of an author specified by author_id
 def posts_by_author(request, author_id):
     context = RequestContext(request)
-   
-    # set edit to true if the author is the current user
-    edit = False
     
     try: 
         # author in Post is a Profile object
         userObject = User.objects.get(username=author_id)
-        
-        # setting edit to true will let the user edit the posts
-        if(userObject == request.user):
-            edit = True
-            
         author = Profile.objects.get(user=userObject)
         
         # only retrieve posts that belong to the current user's profile
         list_of_posts = Post.objects.filter(Q(author=author))
         title = "View Posts by " + str(author)
         
-        
-            
     # if author does not exist or if they don't have any posts
     except:    
          list_of_posts = None
          title = "There are no posts by " + str(author_id)    
 
-    return render(request, 'posts/view_posts.html', {'list_of_posts':list_of_posts, 'title':title, 'edit':edit})
+    return render(request, 'posts/view_posts.html', {'list_of_posts':list_of_posts, 'title':title})
 
 # view all public posts
 def public_posts(request):
