@@ -147,7 +147,7 @@ def edit_post(request, post_id):
     else:
         edit_form = EditForm(request.user, post)
         
-    return render(request, 'posts/edit_post.html', {'edit_form':edit_form})        
+    return render(request, 'posts/posts.html', {'post_form':edit_form,'edit':'edit'})        
    
 
 #view posts by friends of current logged in user

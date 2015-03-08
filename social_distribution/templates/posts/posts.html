@@ -10,15 +10,22 @@
 	</head>
    
 	<body>
-		
+		{% if edit %}
+		<h2>Edit Post</h2>
+		{% else %}
 		<h2>Make a Post</h2>
+		{% endif %}
 	
 		{% if user.is_authenticated %}
 		
 		<p>Authenticated {{ user.username }}</p>
-		
-			<form id="post_form" method="post" action="/posts/" 
+			{% if edit %}
+				<form id="post_form" method="post" action="" 
 				enctype="multipart/form-data">
+			{% else %}
+				<form id="post_form" method="post" action="/posts/" 
+				enctype="multipart/form-data">
+			{% endif %}
 				{% csrf_token %}
 		
 				<div>
@@ -56,7 +63,11 @@
 					</br>
 				</div>
 		
+				{% if edit %}
+				<input type="submit" name="submit" value="Edit" />
+				{% else %}
 				<input type="submit" name="submit" value="Post" />
+				{% endif %}
 			</form>
 	
 		{% else %}
