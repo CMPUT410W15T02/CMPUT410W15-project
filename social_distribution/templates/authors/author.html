@@ -1,0 +1,24 @@
+<html>
+<head>
+    <title>Social Distribution</title>
+</head>
+<body>
+	<h1>{{user.first_name}} {{user.last_name}}'s Profile</h1>
+	<div>
+		<p>USER ID: {{profile.user_id}} </p>
+	 	<p>PROFILE ID: {{profile.id}} </p>
+	 	<p>BODY: {{profile.body}} </p>
+	 	<p>DOB: {{profile.birthdate}} </p>
+	 	<p>UUID: {{profile.uuid}} </p>
+	 	<p>GENDER: {{profile.gender}}</p>
+ 	</div>
+ 	<div>
+		<form method="POST" action="/friend_request/">
+		{% csrf_token %}
+		<input type="hidden" value={{profile.id}} name="to_profile">
+        <input type="submit" name="submit" value="Send Friend Request" />
+    	</form>
+    </div>
+
+</body>
+<html>

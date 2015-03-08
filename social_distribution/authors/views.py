@@ -75,37 +75,44 @@ def user_logout(request):
     logout(request)
     return HttpResponseRedirect('/login/')
 
-def author(request):
+def author(request, username):
     context = RequestContext(request)
-
-    return render(request, 'authors/author.html', {})
+    user = User.objects.get(username=username)
+    profile = Profile.objects.get(user_id = user.id)
+    return render(request, 'authors/author.html',{'profile':profile, 'user':user})
 
 def author_manage(request):
     context = RequestContext(request)
+    profile = Profile.objects.get(user_id=request.user.id)
+    updated = False
 
     if request.method == 'POST':
         profile_form = UserProfileForm(data=request.POST)
 
         if profile_form.is_valid():
+            profile.displayname = profile_form.cleaned_data['displayname']
+            profile.body = profile_form.cleaned_data['body']
+            profile.birthdate = profile_form.cleaned_data['birthdate']
+            profile.gender = profile_form.cleaned_data['gender']
+            profile.image = profile_form.cleaned_data['image']
+            profile.github = profile_form.cleaned_data['github']
+            profile.workspace = profile_form.cleaned_data['workspace']
+            profile.school = profile_form.cleaned_data['school']
             profile.save()
+
+            updated = True
         else:
             print profile_form.errors
 
     else:
-        profile_form = UserProfileForm()
+        profile_form = UserProfileForm(instance=profile)
 
-    if True:
+    if updated == True:
         return HttpResponse("Profile Successfully edited! Click "
         "<a href=/author/>here</a> to return to your profile.")
     else:
         return render_to_response('authors/manage.html',
             {'profile_form': profile_form}, context)
-
-#Profile
-def profile(request, username):
-    user = User.objects.get(username=username)
-    profile = Profile.objects.get(user_id = user.id)
-    return render(request, 'authors/profile.html',{'profile':profile, 'user':user})
 
 #Send Friend Request
 def friend_request(request):

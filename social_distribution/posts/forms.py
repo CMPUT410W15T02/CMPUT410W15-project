@@ -23,9 +23,7 @@ class EditForm(forms.ModelForm):
         self.fields["title"].initial=post.title
         self.fields["description"].initial=post.description
         self.fields["post_text"].initial=post.post_text
-        #NASTY BUG HERE IF IT DEFAULTS CUSTOM THERE MAY BE SOME PROBLEMS
         self.fields["privacy"].initial=post.privacy
-        #if post.privacy==3:
         self.fields["allowed"].initial=[t.pk for t in post.allowed.all()]
        
           

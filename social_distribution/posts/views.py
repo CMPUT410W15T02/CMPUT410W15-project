@@ -105,6 +105,7 @@ def delete_post(request, post_id):
     Post.objects.filter(Q(id=post_id)).delete()
     return HttpResponse("Your post has been deleted. <a href=\"/\">Home</a>")
 
+
 def edit_post(request, post_id):
     post=Post.objects.get(id=post_id)
     if request.method == 'POST':
@@ -148,3 +149,33 @@ def edit_post(request, post_id):
         
     return render(request, 'posts/edit_post.html', {'edit_form':edit_form})        
    
+
+#view posts by friends of current logged in user
+def friends_posts(request):
+    friend_qs = Post.objects.filter(privacy=4).exclude(allowed=None) #removes posts with empty allowed list
+
+    list_of_posts = []
+
+    for post in friend_qs:
+        allowed_users = post.allowed.all()
+        for user in allowed_users:
+            if user.id == request.user.id:
+                list_of_posts.append(post)
+
+    return render(request, 'posts/view_posts.html', {'list_of_posts':list_of_posts})
+
+#view posts from custom privacy
+def custom_posts(request):
+    custom_qs = Post.objects.filter(privacy=3).exclude(allowed=None) #removes posts with empty allowed list
+
+    list_of_posts = []
+
+    for post in custom_qs:
+        allowed_users = post.allowed.all()
+        for user in allowed_users:
+            if user.id == request.user.id:
+                list_of_posts.append(post)
+
+    return render(request, 'posts/view_posts.html', {'list_of_posts':list_of_posts})
+
+
