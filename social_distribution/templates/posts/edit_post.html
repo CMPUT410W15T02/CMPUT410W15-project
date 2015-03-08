@@ -10,53 +10,52 @@
 	</head>
    
 	<body>
-		
-		<h2>Make a Post</h2>
 	
 		{% if user.is_authenticated %}
 		
 		<p>Authenticated {{ user.username }}</p>
-		
-			<form id="post_form" method="post" action="/posts/" 
+			
+			
+			<form id="edit_form" method="post" action="" 
 				enctype="multipart/form-data">
 				{% csrf_token %}
 		
 				<div>
 					Title:
 					</br>
-					{{post_form.title}}
+					{{edit_form.title}}
 					</br>
 				</div>
 				<div>
 					Description:
 					</br>
-					{{post_form.description}}
+					{{edit_form.description}}
 					</br>
 				</div>
 			
 				<div>
 					Post:
 					</br>
-					{{post_form.post_text}}
+					{{edit_form.post_text}}
 					</br>
 				</div>
 			
 				<div>
 					Privacy:
 					</br>
-					{{post_form.privacy}}
+					{{edit_form.privacy}}
 					</br>
 				</div>
 			
 				<div id="allowed">
 					Choose:
 					</br>
-					{{post_form.allowed}}</br>
+					{{edit_form.allowed}}</br>
 					Use Control or Command to select multiple users
 					</br>
 				</div>
 		
-				<input type="submit" name="submit" value="Post" />
+				<input type="submit" name="submit" value="Edit" />
 			</form>
 	
 		{% else %}

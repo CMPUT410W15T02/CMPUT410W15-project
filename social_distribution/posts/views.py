@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.shortcuts import redirect
-from posts.forms import PostForm
+from posts.forms import PostForm, EditForm
 from django.http import HttpResponseRedirect, HttpResponse
 from posts.models import Post
 from authors.models import Profile
@@ -23,6 +23,7 @@ def posts(request):
             privacy = post_form.cleaned_data['privacy']
             post_text = post_form.cleaned_data['post_text']
             title = post_form.cleaned_data['title']
+            description = post_form.cleaned_data['description']
             date = datetime.now()
             
             # get current user
@@ -41,7 +42,7 @@ def posts(request):
                 author = profile
             
             # create a new post given the form submission data                
-            newPost = Post(post_text=post_text, title=title, date=date,author=author,privacy=privacy)
+            newPost = Post(post_text=post_text, description=description, title=title, date=date,author=author,privacy=privacy)
             
             # save the new post in the database
             newPost.save()
@@ -63,14 +64,11 @@ def posts(request):
             # special privacy settings: private
             elif privacy=="2":
                 newPost.allowed.add(User.objects.get(username=author))
-            
-            # no privacy set, display error
-            else:
-                print post_form.errors  
-            
             # once the new post is added, return to homepage
             return redirect('/')
-    
+        # display error if fields aren't filled properly
+        else:
+            print post_form.errors  
     # display the post form            
     else:
         post_form = PostForm(request.user)
@@ -106,4 +104,47 @@ def public_posts(request):
 def delete_post(request, post_id):
     Post.objects.filter(Q(id=post_id)).delete()
     return HttpResponse("Your post has been deleted. <a href=\"/\">Home</a>")
-    
+
+def edit_post(request, post_id):
+    post=Post.objects.get(id=post_id)
+    if request.method == 'POST':
+        edit_form = EditForm(request.user, post, data=request.POST)
+        if edit_form.is_valid():
+            author=Profile.objects.get(user=request.user)
+            privacy = edit_form.cleaned_data['privacy']
+            post_text = edit_form.cleaned_data['post_text']
+            title = edit_form.cleaned_data['title']
+            description = edit_form.cleaned_data['description'] 
+        
+            post.title=title
+            post.post_text=post_text
+            post.description=description
+            post.privacy=privacy
+            post.save()
+            
+            allowed=edit_form.cleaned_data['allowed']
+            post.allowed.clear()
+            if privacy=="3":
+                for user in allowed: 
+                    post.allowed.add(User.objects.get(username=user))
+                    post.allowed.add(User.objects.get(username=author))
+                       
+                    # special privacy settings: friends	
+            elif privacy=="4":
+                all_friends=Profile.objects.get(user=request.user)
+                for friend in all_friends.friends.all():
+                    post.allowed.add(User.objects.get(username=friend.user))
+                    post.allowed.add(User.objects.get(username=author))
+                       
+                    # special privacy settings: private
+            elif privacy=="2":
+                post.allowed.add(User.objects.get(username=author))  
+            request.session.modified = True
+            return redirect('/')
+        else:
+            print edit_form.errors           
+    else:
+        edit_form = EditForm(request.user, post)
+        
+    return render(request, 'posts/edit_post.html', {'edit_form':edit_form})        
+   
