@@ -24,6 +24,7 @@ class EditForm(forms.ModelForm):
         self.fields["description"].initial=post.description
         self.fields["post_text"].initial=post.post_text
         self.fields["privacy"].initial=post.privacy
-        self.fields["allowed"].initial=[t.pk for t in post.allowed.all()]
+        if post.privacy=="3":
+            self.fields["allowed"].initial=[t.pk for t in post.allowed.all()]
        
           
