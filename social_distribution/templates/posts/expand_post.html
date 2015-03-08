@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+
+<html>
+	<head>
+		<title>Social Distribution</title>
+	</head>
+	<h1> Expanded Post </h1>
+   	<h1>Title: {{post.title}}</h1>
+	<body>
+			<div>
+			<p>Post ID: {{post.id}}</p>
+			<p>Post Text: {{post.post_text}}</p>
+			<p>Date: {{post.date}} </p>
+			<p>Privacy: {{post.privacy}} </p>
+			<p>Author_id: {{post.author_id}} </p>
+			<p>Content Type: {{post.content_type}} </p>
+			<p>Description: {{post.description}} </p>
+			<p>uuid: {{post.uuid}} </p>
+		</div>
+
+		<h3>Comments </h3>
+		<div>
+			{% for comment in comments %}
+				<span>Body: {{comment.body}}, Date: {{comment.date}} author_id: {{comment.author_id}}</span></br>
+			{% endfor %}
+		</div>
+
+		</hr>
+		<h3> Submit Comment</h3>
+		<div>
+			<span>
+				<form method="POST" action="/posts/{{post.id}}/">
+					{{comment_form.as_p}}
+					<input type='hidden' name='csrfmiddlewaretoken' value='{{ csrf_token }}' />
+		        	<input type="submit" name="submit_comment" value="Submit Comment" />
+		        </form>
+		    </span>
+		</div>
+	</body>
+</html>

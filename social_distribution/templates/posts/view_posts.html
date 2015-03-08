@@ -51,7 +51,14 @@
             
             {% endif %}
             
+            <div>
+            <form id="expand_post" method="get" action="/posts/{{post.id}}/">
+                {% csrf_token %}
+                <input type="submit" name="expand" value="Expand" />
+            </form>
             <br/><br/>
+                
+            </div>
             
     	{% endfor %}
 		

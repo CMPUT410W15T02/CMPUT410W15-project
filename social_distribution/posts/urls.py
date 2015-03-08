@@ -10,7 +10,7 @@ urlpatterns = patterns('',
     url(r'^edit/post/(?P<post_id>.+)$', views.edit_post, name='edit/post/post_id'),
     url(r'^posts/friends/$', views.friends_posts, name='posts/friends'),
     url(r'^posts/custom/$', views.custom_posts, name='posts/custom'),
-
+    url(r'^posts/(?P<post_id>\d+)/$',views.expand_post,name='expand_post'),
 
 
     url(r'^api/author/posts/$', api.author_posts, name="api/author/posts"),

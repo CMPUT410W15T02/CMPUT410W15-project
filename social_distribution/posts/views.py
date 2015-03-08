@@ -2,14 +2,14 @@ from django.shortcuts import render
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.shortcuts import redirect
-from posts.forms import PostForm, EditForm
+from posts.forms import PostForm, EditForm, CommentForm
 from django.http import HttpResponseRedirect, HttpResponse
-from posts.models import Post
+from posts.models import Post, Comment
 from authors.models import Profile
 from datetime import datetime
 from django.contrib.auth.models import User
 from django.db.models import Q
-
+from django.utils import timezone
 import time
 
 # create new posts 
@@ -179,3 +179,21 @@ def custom_posts(request):
     return render(request, 'posts/view_posts.html', {'list_of_posts':list_of_posts})
 
 
+def expand_post(request,post_id):
+    post = Post.objects.get(id=post_id)
+    current_profile = Profile.objects.get(user_id=request.user.id)
+    comments = None
+    if request.method == 'POST':
+        comment_form = CommentForm(data=request.POST)
+
+        if comment_form.is_valid():
+            body = comment_form.cleaned_data['body']
+            newComment = Comment(body=body, date=timezone.now(), author=current_profile, post_id=post)
+            newComment.save()
+        else:
+            print comment_form.errors
+        return redirect('/')
+    else:
+        comments = Comment.objects.filter(post_id=post_id).order_by('date')
+        comment_form = CommentForm()
+    return render(request, 'posts/expand_post.html',{'comments':comments, 'comment_form':comment_form, 'post':post})

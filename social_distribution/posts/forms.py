@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
-from posts.models import Post
+from posts.models import Post, Comment
 
 class PostForm(forms.ModelForm):
     class Meta:
@@ -27,4 +27,7 @@ class EditForm(forms.ModelForm):
         if post.privacy=="3":
             self.fields["allowed"].initial=[t.pk for t in post.allowed.all()]
        
-          
+class CommentForm(forms.ModelForm):
+    class Meta:
+        model= Comment
+        fields = ("body",)

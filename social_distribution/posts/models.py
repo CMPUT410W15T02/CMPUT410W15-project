@@ -29,7 +29,7 @@ class Comment(models.Model):
     post_id = models.ForeignKey(Post)
     uuid = models.CharField(max_length=36, default = uuid.uuid4)
     body = models.TextField(max_length=2048)
-    author = models.OneToOneField(Profile)
+    author = models.ForeignKey(Profile)
     date = models.DateTimeField('date posted')
 
     def __unicode__(self):
