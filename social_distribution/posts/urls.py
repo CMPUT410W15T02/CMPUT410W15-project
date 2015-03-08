@@ -6,16 +6,13 @@ urlpatterns = patterns('',
     url(r'^posts/$', views.posts, name='posts'),
     url(r'^author/(?P<author_id>.+)/posts/$', views.posts_by_author, name='author/author_id/posts'),
     url(r'^posts/all/$', views.public_posts, name='posts/all'),
-<<<<<<< HEAD
     url(r'^delete/post/(?P<post_id>.+)$', views.delete_post, name='delete/post/post_id'),
     url(r'^edit/post/(?P<post_id>.+)$', views.edit_post, name='edit/post/post_id'),
-=======
     url(r'^posts/friends/$', views.friends_posts, name='posts/friends'),
     url(r'^posts/custom/$', views.custom_posts, name='posts/custom'),
 
 
-    url(r'^delete/post/(?P<post_id>.+)$', views.delete_post, name='delete/post/post_id'),    
->>>>>>> d91e45e5042d6f4aced797b5f488569d88136484
+
     url(r'^api/author/posts/$', api.author_posts, name="api/author/posts"),
     url(r'^api/posts/$', api.posts, name="api/posts"),
     url(r'^api/author/(?P<author_id>.+)/posts/$', api.authorid_posts, name="api/author/author_id/posts"),
