@@ -17,8 +17,10 @@ def get_posts(posts):
         post_data['description'] = post.description
         post_data['content-type'] = post.content_type
         post_data['content'] = post.post_text
-        post_data['author'] = {'id':post.author.uuid,'host':post.author.host,
-        'displayname':post.author.displayname, 'url':''}
+        post_data['author'] = {'id':post.author.uuid,
+        'host':post.author.host,
+        'displayname':post.author.displayname,
+        'url':post.author.host + "/author/" + post.author.user.username}
         post_data['categories'] = []
         post_data['comments'] = []
 
@@ -122,7 +124,7 @@ def friends_get(request, friend1=None, friend2=None):
     if request.method == "GET":
         response = {}
         response['query'] = 'friends'
-        response['friends'] = [friend1, friend2]
+        response['authors'] = [friend1, friend2]
 
         isFriend = 'NO'
         try:
@@ -133,7 +135,7 @@ def friends_get(request, friend1=None, friend2=None):
         except:
             return HttpResponse(status=400)
 
-        response['areFriends'] = isFriend
+        response['friends'] = isFriend
         return JsonResponse(response)
     return HttpResponse(status=405)
 
@@ -194,7 +196,7 @@ def friend_request(request):
         received_data = json.loads(request.body)
         try:
             from_profile = Profile.objects.get(uuid=received_data['author']['id'])
-            to_profile = Profile.objects.get(uuid=received_data['friend']['author']['id'])
+            to_profile = Profile.objects.get(uuid=received_data['friend']['id'])
         except:
             return HttpResponse(status=400)
 
@@ -222,7 +224,7 @@ def authors(request):
             author_data['id'] = author.uuid
             author_data['host'] = author.host
             author_data['displayname'] = author.displayname
-            author_data['url'] = ""
+            author_data['url'] = author.host + "/author/" + author.user.username
             response.append(author_data)
 
         return JsonResponse(response, safe=False)
