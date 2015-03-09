@@ -19,5 +19,6 @@ urlpatterns = patterns('',
     url(r'^api/posts/(?P<post_id>.+)/$', api.postid_post, name="api/posts/post_id"),
     url(r'^api/friends/(?P<friend1>.+)/(?P<friend2>.+)/$', api.friends_get, name="api/friends_get"),
     url(r'^api/friends/(?P<uuid>.+)/$', api.friends_post, name="api/friends_post"),
-    url(r'^api/friendrequest/$', api.friend_request, name="api/friendrequest")
+    url(r'^api/friendrequest/$', api.friend_request, name="api/friendrequest"),
+    url(r'^api/authors/$', api.authors, name="api/authors"),
 )

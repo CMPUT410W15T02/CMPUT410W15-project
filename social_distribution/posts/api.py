@@ -17,7 +17,7 @@ def get_posts(posts):
         post_data['description'] = post.description
         post_data['content-type'] = post.content_type
         post_data['content'] = post.post_text
-        post_data['author'] = {'id':post.author.uuid,'host':'',
+        post_data['author'] = {'id':post.author.uuid,'host':post.author.host,
         'displayname':post.author.displayname, 'url':''}
         post_data['categories'] = []
         post_data['comments'] = []
@@ -26,7 +26,7 @@ def get_posts(posts):
             if comment.post_id.uuid == post.uuid:
                 comment_data = {}
                 comment_data['author'] = {'id':comment.author.uuid,
-                'host':'', 'displayname':comment.author.displayname}
+                'host':post.author.host, 'displayname':comment.author.displayname}
                 comment_data['comment'] = comment.body
                 comment_data['pubDate'] = comment.date
                 comment_data['guid'] = comment.uuid
@@ -40,6 +40,7 @@ def get_posts(posts):
     return response_posts
 
 # posts that are visible to the currently authenticated user
+@login_required
 def author_posts(request):
     if request.method == "GET":
         post_list = []
@@ -65,6 +66,7 @@ def author_posts(request):
 
         data = get_posts(post_list)
         return JsonResponse(data, safe=False)
+    return HttpResponse(status=405)
 
 # all posts marked as public on the server
 def posts(request):
@@ -72,8 +74,10 @@ def posts(request):
         public_posts = Post.objects.filter(privacy=1)
         data = get_posts(public_posts)
         return JsonResponse(data, safe=False)
+    return HttpResponse(status=405)
 
 # all posts made by {AUTHOR_ID} visible to the currently authenticated user
+@login_required
 def authorid_posts(request, author_id):
     if request.method == "GET":
         post_list = []
@@ -102,6 +106,7 @@ def authorid_posts(request, author_id):
 
         data = get_posts(post_list)
         return JsonResponse(data, safe=False)
+    return HttpResponse(status=405)
 
 # access to a single post with id = {POST_ID}
 def postid_post(request, post_id):
@@ -109,6 +114,7 @@ def postid_post(request, post_id):
         post = [Post.objects.get(uuid=post_id)]
         data = get_posts(post)
         return JsonResponse(data, safe=False)
+    return HttpResponse(status=405)
 """http://127.0.0.1:8000/api/posts/305b5f7c-1c08-4b14-bb7c-9156b62a/"""
 
 # a response if friends or not
@@ -125,10 +131,11 @@ def friends_get(request, friend1=None, friend2=None):
                 if friend.uuid == friend2:
                     isFriend='YES'
         except:
-            print("User does not exist")
+            return HttpResponse(status=400)
 
         response['areFriends'] = isFriend
         return JsonResponse(response)
+    return HttpResponse(status=405)
 
 # ask if anyone in the list is a friend
 @csrf_exempt
@@ -152,26 +159,28 @@ def friends_post(request, uuid):
                     friends_list.append(author)
 
         except:
-            print("User does not exist")
+            return HttpResponse(status=400)
 
         response['friends'] = friends_list
 
         return JsonResponse(response)
 
-        """
-        curl -H "Content-Type:application/json" -d '{"query":"friends",
-        "author":"72de3f1c-6645-46e8-b75e-48c4306c",
-        "authors":[
-        "ae254c4a-9888-4b48-9021-2e159d71886a",
-        "9d61ed1d-7e14-4bbf-ba12-749b14c9fa94",
-        "1d7e95e1-cd4d-4fb8-97b0-b42a0375b3c5",
-        "e81e0cb8-c097-11e4-b10f-080027df60ad",
-        "db0c413d-316f-443b-a696-8e3c4972112b",
-        "72de3f1c-6645-46e8-b75e-48c4306c",
-        "8485e927-8b76-45c7-b54c-51ee070d",
-        "e81e0cb8-c097-11e4-b10f-080027df60ad"
-        ]}' http://127.0.0.1:8000/api/friends/72de3f1c-6645-46e8-b75e-48c4306c/
-        """
+    return HttpResponse(status=405)
+
+    """
+    curl -H "Content-Type:application/json" -d '{"query":"friends",
+    "author":"72de3f1c-6645-46e8-b75e-48c4306c",
+    "authors":[
+    "ae254c4a-9888-4b48-9021-2e159d71886a",
+    "9d61ed1d-7e14-4bbf-ba12-749b14c9fa94",
+    "1d7e95e1-cd4d-4fb8-97b0-b42a0375b3c5",
+    "e81e0cb8-c097-11e4-b10f-080027df60ad",
+    "db0c413d-316f-443b-a696-8e3c4972112b",
+    "72de3f1c-6645-46e8-b75e-48c4306c",
+    "8485e927-8b76-45c7-b54c-51ee070d",
+    "e81e0cb8-c097-11e4-b10f-080027df60ad"
+    ]}' http://127.0.0.1:8000/api/friends/72de3f1c-6645-46e8-b75e-48c4306c/
+    """
 
 #XXX:TODO FOAF call
 def foaf(request):
@@ -187,17 +196,35 @@ def friend_request(request):
             from_profile = Profile.objects.get(uuid=received_data['author']['id'])
             to_profile = Profile.objects.get(uuid=received_data['friend']['author']['id'])
         except:
-            return HttpResponse("User does not exist")
+            return HttpResponse(status=400)
 
         try:
             newFollow = Follow(from_profile_id=from_profile, to_profile_id=to_profile, status='PENDING')
             newFollow.save()
         except:
-            return HttpResponse("Following failed")
+            return HttpResponse(status=500)
 
         return HttpResponse(status=200)
+    return HttpResponse(status=405)
 
 
     """
     curl -H "Content-Type: application/json" -d '{"query":"friendrequest", "author":{"id":"72de3f1c-6645-46e8-b75e-48c4306c", "host":"http://127.0.0.1:8000/", "displayname":"Greg"}, "friend": {"author":{"id":"1d7e95e1-cd4d-4fb8-97b0-b42a0375b3c5", "host":"http://127.0.0.1:5454/", "displayname":"Lara", "url":"http://127.0.0.1:5454/author/1d7e95e1-cd4d-4fb8-97b0-b42a0375b3c5"}}}' http://127.0.0.1:8000/api/friendrequest
     """
+
+def authors(request):
+    if request.method == "GET":
+        response = []
+        all_authors = Profile.objects.all()
+        for author in all_authors:
+            author_data = {}
+            author_data['username'] = author.user.username
+            author_data['id'] = author.uuid
+            author_data['host'] = author.host
+            author_data['displayname'] = author.displayname
+            author_data['url'] = ""
+            response.append(author_data)
+
+        return JsonResponse(response, safe=False)
+
+    return HttpResponse(status=405)
