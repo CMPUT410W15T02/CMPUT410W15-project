@@ -35,5 +35,49 @@
     <h3><a href="/author/{{user.username}}/posts/">View Your Posts</a></h3>
     {% endif %}
 	<!-- End Testing -->
+    {% if user.is_authenticated %}
+
+    {% for post in list_of_posts %}
+        <div>
+         Title: {{post.title}}
+        </div>
+        <div>
+            Body: {{post.post_text}}
+        </div>
+        
+        
+        {% if post.author.user = user %}
+        <div>
+            Privacy: {{post.privacy}}
+        </div>
+        
+        <form id="delete_post" method="post" action="/delete/post/{{post.id}}">
+            {% csrf_token %}
+            <input type="submit" name="delete" value="Delete" />
+        </form>
+        <form id="edit_post" method="get" action="/edit/post/{{post.id}}">
+            {% csrf_token %}
+            <input type="submit" name="edit" value="Edit" />
+        </form>
+        
+        {% else %}
+        <div>
+            Author: {{post.author}}
+        </div>
+        
+        {% endif %}
+        
+        <div>
+        <form id="expand_post" method="get" action="/posts/{{post.id}}/">
+            {% csrf_token %}
+            <input type="submit" name="expand" value="Expand" />
+        </form>
+        <br/><br/>
+            
+        </div>
+        
+    {% endfor %}
+
+    {% endif %}
 </body>
 <html>

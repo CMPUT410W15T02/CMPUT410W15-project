@@ -5,15 +5,25 @@ from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.decorators import login_required
 from authors.models import Profile, Follow
+from posts.models import Post
 from django.contrib.auth.models import User
 from django.db.models import Q
 
 # Create your views here.
 def index(request):
     context = RequestContext(request)
+    post_query = Post.objects.filter(Q(privacy=1) | Q(privacy=3) | Q(privacy=4)).exclude(allowed=None).order_by('-date')
     list_of_users = User.objects.exclude( Q(username=request.user) | Q(username='admin'))
 
-    return render(request, 'authors/index.html', {'list_of_users':list_of_users})
+    list_of_posts = []
+    for post in post_query:
+        allowed_users = post.allowed.all()
+        for user in allowed_users:
+            if user.id == request.user.id:
+                list_of_posts.append(post)
+
+
+    return render(request, 'authors/index.html', {'list_of_users':list_of_users, 'list_of_posts':list_of_posts})
 
 
 def register(request):
