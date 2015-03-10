@@ -14,7 +14,15 @@ class PostTestCase(TestCase):
         user = User.objects.create(username="test_user1")
         user.set_password("password1")
         user.save()
+        user2 = User.objects.create(username="test_user2")
+        user2.set_password("password2")
+        user2.save()     
+        user3 = User.objects.create(username="test_user3")
+        user3.set_password("password3")
+        user3.save()                
         profile = Profile.objects.create(user=user, displayname="John")
+        profile2 = Profile.objects.create(user=user2, displayname="John2")
+        profile3 = Profile.objects.create(user=user3, displayname="John3")
         Post.objects.create(title="test1",description="d1",post_text="p1",author=profile, privacy="1",date=date)
         Post.objects.create(title="test2",description="d2",post_text="p2",author=profile, privacy="2",date=date)
         Post.objects.create(title="test3",description="d3",post_text="p3",author=profile, privacy="3",date=date)
@@ -22,16 +30,27 @@ class PostTestCase(TestCase):
         self.client = Client()
 
     def test_posts(self):
+        user=User.objects.get(username="test_user1")
+        user2=User.objects.get(username="test_user2")
+        user3=User.objects.get(username="test_user3")
         post1 = Post.objects.get(title="test1")
         post2 = Post.objects.get(title="test2")
         post3 = Post.objects.get(title="test3")
         post4 = Post.objects.get(title="test4")
+        
+        post3.allowed.add(user)
+        post3.allowed.add(user2)
+        post3.allowed.add(user3)
+        
 
         #Privacy tests
         self.assertEqual(post1.privacy, "1")
         self.assertEqual(post2.privacy, "2")
         self.assertEqual(post3.privacy, "3")
         self.assertEqual(post4.privacy, "4")
+        
+        self.assertEqual(post1.allowed.all().count(), 0)
+        self.assertEqual(post3.allowed.all().count(), 3)
 
         #Editing tests
         self.assertEqual(post1.title, "test1")
@@ -106,3 +125,4 @@ class FormTestCase(TestCase):
         #Test that i can edit post with id=1
         response = self.client.get('/edit/post/1')
         self.assertEqual(response.status_code,200)
+               
