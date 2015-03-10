@@ -84,11 +84,14 @@ def authorid_posts(request, author_id):
     if request.method == "GET":
         post_list = []
 
-        author_profile = Profile.objects.get(uuid=author_id)
-        author_posts = Post.objects.filter(author=author_profile)
+        try:
+            author_profile = Profile.objects.get(uuid=author_id)
+            author_posts = Post.objects.filter(author=author_profile)
 
-        current_user = User.objects.get(username=request.user.username)
-        current_profile = Profile.objects.get(user=current_user)
+            current_user = User.objects.get(username=request.user.username)
+            current_profile = Profile.objects.get(user=current_user)
+        except:
+            return HttpResponse(status=404)
 
         for post in author_posts:
             # Custom and public
@@ -113,15 +116,18 @@ def authorid_posts(request, author_id):
 # access to a single post with id = {POST_ID}
 def postid_post(request, post_id):
     if request.method == "GET":
-        post = [Post.objects.get(uuid=post_id)]
-        data = get_posts(post)
+        try:
+            post = [Post.objects.get(uuid=post_id)]
+            data = get_posts(post)
+        except:
+            return HttpResponse(status=404)
         return JsonResponse(data, safe=False)
     return HttpResponse(status=405)
 """http://127.0.0.1:8000/api/posts/305b5f7c-1c08-4b14-bb7c-9156b62a/"""
 
 # a response if friends or not
 def friends_get(request, friend1=None, friend2=None):
-    if request.method == "GET":
+    if request.method == "POST":
         response = {}
         response['query'] = 'friends'
         response['authors'] = [friend1, friend2]
@@ -133,7 +139,7 @@ def friends_get(request, friend1=None, friend2=None):
                 if friend.uuid == friend2:
                     isFriend='YES'
         except:
-            return HttpResponse(status=400)
+            return HttpResponse(status=404)
 
         response['friends'] = isFriend
         return JsonResponse(response)
@@ -161,7 +167,7 @@ def friends_post(request, uuid):
                     friends_list.append(author)
 
         except:
-            return HttpResponse(status=400)
+            return HttpResponse(status=404)
 
         response['friends'] = friends_list
 
@@ -198,7 +204,7 @@ def friend_request(request):
             from_profile = Profile.objects.get(uuid=received_data['author']['id'])
             to_profile = Profile.objects.get(uuid=received_data['friend']['id'])
         except:
-            return HttpResponse(status=400)
+            return HttpResponse(status=404)
 
         try:
             newFollow = Follow(from_profile_id=from_profile, to_profile_id=to_profile, status='PENDING')
