@@ -85,7 +85,7 @@ def posts_by_author(request, author_id):
         author = Profile.objects.get(user=userObject)
         
         # only retrieve posts that belong to the current user's profile
-        list_of_posts = Post.objects.filter(Q(author=author))
+        list_of_posts = Post.objects.filter(Q(author=author)).order_by('-date')
         title = "View Posts by " + str(author)
         
     # if author does not exist or if they don't have any posts
@@ -97,7 +97,7 @@ def posts_by_author(request, author_id):
 
 # view all public posts
 def public_posts(request):
-    list_of_posts = Post.objects.filter(Q(privacy=1))
+    list_of_posts = Post.objects.filter(Q(privacy=1)).order_by('-date')
     title = "View All Public Posts"
     return render(request, 'posts/view_posts.html', {'list_of_posts':list_of_posts, 'title':title})
 
@@ -152,7 +152,7 @@ def edit_post(request, post_id):
 
 #view posts by friends of current logged in user
 def friends_posts(request):
-    friend_qs = Post.objects.filter(privacy=4).exclude(allowed=None) #removes posts with empty allowed list
+    friend_qs = Post.objects.filter(privacy=4).exclude(allowed=None).order_by('-date') #removes posts with empty allowed list
 
     list_of_posts = []
 
@@ -166,7 +166,7 @@ def friends_posts(request):
 
 #view posts from custom privacy
 def custom_posts(request):
-    custom_qs = Post.objects.filter(privacy=3).exclude(allowed=None) #removes posts with empty allowed list
+    custom_qs = Post.objects.filter(privacy=3).exclude(allowed=None).order_by('-date') #removes posts with empty allowed list
 
     list_of_posts = []
 
