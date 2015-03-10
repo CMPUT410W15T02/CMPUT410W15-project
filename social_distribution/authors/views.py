@@ -12,15 +12,33 @@ from django.db.models import Q
 # Create your views here.
 def index(request):
     context = RequestContext(request)
-    post_query = Post.objects.filter(Q(privacy=1) | Q(privacy=3) | Q(privacy=4)).exclude(allowed=None).order_by('-date')
+    profile = Profile.objects.get(user_id = request.user.id)
+    post_query = Post.objects.filter(Q(privacy=1) | Q(privacy=3) | Q(privacy=4) | Q(author=profile)).order_by('-date')
     list_of_users = User.objects.exclude( Q(username=request.user) | Q(username='admin'))
 
     list_of_posts = []
+    # for post in post_query:
+    #     if post.author == profile:
+    #         list_of_posts.append(post)
+
+
     for post in post_query:
-        allowed_users = post.allowed.all()
-        for user in allowed_users:
-            if user.id == request.user.id:
+        if (post.privacy == '1'):
+            if post.author == profile:
                 list_of_posts.append(post)
+                continue
+
+            friends_list = profile.friends.all()
+            for friend in friends_list:
+                if post.author == friend:
+                    list_of_posts.append(post)
+        elif ((post.privacy == '3') or (post.privacy == '4')):
+            allowed_users = post.allowed.all()
+            for user in allowed_users:
+                if user.id == request.user.id:
+                    list_of_posts.append(post)
+        elif (post.author == profile):
+            list_of_posts.append(post)
 
 
     return render(request, 'authors/index.html', {'list_of_users':list_of_users, 'list_of_posts':list_of_posts})
