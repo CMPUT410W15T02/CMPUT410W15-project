@@ -2,21 +2,23 @@ from django import forms
 from django.contrib.auth.models import User
 from posts.models import Post, Comment
 from django.utils.safestring import mark_safe
-from django.forms.widgets import FileInput
+from django.forms.widgets import FileInput, CheckboxInput
 from django.utils.html import format_html
 from django.utils.encoding import force_text
 
 # source: http://stackoverflow.com/questions/17293627/hide-django-clearablefileinput-checkbox
 class NotClearableFileInput(FileInput):
     
-    template_with_initial = '%(initial_text)s: %(initial)s <br />%(input_text)s: %(input)s'
+    template_with_initial = '%(initial_text)s: %(initial)s <br />%(clear_text)s: %(clear)s<br />%(input_text)s: %(input)s<br />'
 
     url_markup_template = '<br/><img src="/static/{0}" height="100" width="100"/>'
 
     def render(self, name, value, attrs=None):
         substitutions = {
             'initial_text': "Current File",
+            'clear_text': "Remove Current Image",
             'input_text': "Change",
+            
         }
         template = '%(input)s'
         substitutions['input'] = super(NotClearableFileInput, self).render(name, value, attrs)
@@ -26,6 +28,7 @@ class NotClearableFileInput(FileInput):
             substitutions['initial'] = format_html(self.url_markup_template,
                                                value.url,
                                                force_text(value))
+            substitutions['clear'] = CheckboxInput().render("clear", False, attrs={'id': 'clear'})                            
 
         return mark_safe(template % substitutions)
 

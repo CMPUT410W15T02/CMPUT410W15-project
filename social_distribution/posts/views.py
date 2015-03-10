@@ -123,7 +123,8 @@ def edit_post(request, post_id):
             post_text = edit_form.cleaned_data['post_text']
             title = edit_form.cleaned_data['title']
             description = edit_form.cleaned_data['description'] 
-        
+            newclear = request.POST.get('clear')
+            
             post.title=title
             post.post_text=post_text
             post.description=description
@@ -135,6 +136,8 @@ def edit_post(request, post_id):
                 post.image=image
             except:
                 if (post.image == None):
+                    post.image=""
+                elif (newclear == "on"):
                     post.image=""
             post.save()
             
