@@ -25,7 +25,7 @@ def posts(request):
             title = post_form.cleaned_data['title']
             description = post_form.cleaned_data['description']
             date = datetime.now()
-            image = request.FILES['photo']
+            image = request.FILES['image']
             
             # get current user
             currentUser=request.user
@@ -123,6 +123,13 @@ def edit_post(request, post_id):
             post.post_text=post_text
             post.description=description
             post.privacy=privacy
+            
+            # check if a new photo was uploaded
+            try:
+                image = request.FILES['image']
+                post.image=image
+            except:
+                post.image=""
             post.save()
             
             allowed=edit_form.cleaned_data['allowed']

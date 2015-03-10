@@ -5,7 +5,7 @@ from posts.models import Post, Comment
 class PostForm(forms.ModelForm):
     class Meta:
         model=Post
-        fields=("post_text","title","privacy","allowed","description")
+        fields=("post_text","title","privacy","allowed","description", "image")
     def __init__(self, user, *args, **kwargs):  
         self.user = user
         super(PostForm, self).__init__(*args, **kwargs) 
@@ -16,7 +16,7 @@ class PostForm(forms.ModelForm):
 class EditForm(forms.ModelForm):
     class Meta:
         model=Post
-        fields=("post_text","title","privacy","allowed","description")
+        fields=("post_text","title","privacy","allowed","description","image")
     def __init__(self, user, post,*args, **kwargs):  
         self.post=post
         self.user = user
@@ -27,6 +27,7 @@ class EditForm(forms.ModelForm):
         self.fields["description"].initial=post.description
         self.fields["post_text"].initial=post.post_text
         self.fields["privacy"].initial=post.privacy
+        self.fields["image"].initial=post.image
         if post.privacy=="3":
             self.fields["allowed"].initial=[t.pk for t in post.allowed.all()]
        
