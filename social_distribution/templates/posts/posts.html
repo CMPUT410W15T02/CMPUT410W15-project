@@ -5,11 +5,23 @@
 	<head>
 		<title>Social Distribution</title>
 		<link rel="stylesheet" href="{% static 'css/post.css' %}" />
+		<link rel="stylesheet" href="{% static 'css/design.css' %}" />
 		<script src="{% static 'js/jquery-1.11.0.min.js' %}"></script>
 		<script src="{% static 'js/post.js' %}"></script>
 	</head>
    
 	<body>
+	<h1 class="banner"><a href="/">Social Distribution</a></h1>
+	<div >
+		<ul>
+			<a href="/"><li>My Feed</li></a><br/>
+			<a href="/"><li>Public Feed</li></a><br/>
+			<a href="/"><li>Friends</li></a><br/>
+			<a href="/"><li>Following</li></a><br/>
+		
+		</ul>
+	</div>
+	<div class="margins center">
 		{% if edit %}
 		<h2>Edit Post</h2>
 		{% else %}
@@ -81,6 +93,7 @@
 			<a href="/login/">Login</a>
 		
 		{% endif %}
+	</div>
 		
 	</body>
 </html>
