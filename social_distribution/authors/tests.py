@@ -41,7 +41,7 @@ class AuthorTestCase(TestCase):
         modify_profile.displayname = "changed name!"
 
         self.assertEqual(modify_profile.displayname, "changed name!")
-
+    
     def test_delete_users(self):
         delete_user = User.objects.get(username="aTest")
         delete_user.delete()
@@ -93,3 +93,42 @@ class AuthorTestCase(TestCase):
         response = self.client.post('/api/friendrequest/',
         content_type='application/json', data=post_string)
         self.assertEqual(response.status_code, 404)
+
+class FriendsTestCase(TestCase):
+    def setUp(self):
+        user1 = User.objects.create(username="user1")
+        user2 = User.objects.create(username="user2")
+        user3 = User.objects.create(username="user3")
+        user4 = User.objects.create(username="user4")
+
+        profile1 = Profile.objects.create(user=user1, displayname="user1")
+        profile2 = Profile.objects.create(user=user2, displayname="user2")
+        profile3 = Profile.objects.create(user=user3, displayname="user3")
+        profile4 = Profile.objects.create(user=user4, displayname="user4")
+
+    def test_follow(self):
+        profile1 = Profile.objects.get(displayname="user1")
+        profile2 = Profile.objects.get(displayname="user2")
+        profile3 = Profile.objects.get(displayname="user3")
+
+
+        testFollow1 = Follow(from_profile_id=profile1, to_profile_id=profile2, status='PENDING')
+        testFollow1.save()
+        testFollow2 = Follow(from_profile_id=profile2, to_profile_id=profile3, status='REJECTED')
+        testFollow2.save()
+
+        self.assertTrue(Follow.objects.all(),2)
+
+    def test_friendship(self):
+        profile1 = Profile.objects.get(displayname="user1")
+        profile2 = Profile.objects.get(displayname="user2")
+        profile3 = Profile.objects.get(displayname="user3")
+
+        profile1.friends.add(profile2)
+        profile1.save()
+
+        
+        self.assertIn(profile2, profile1.friends.all())
+        self.assertIn(profile1, profile2.friends.all())
+
+        self.assertNotIn(profile3, profile1.friends.all())
