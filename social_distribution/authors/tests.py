@@ -41,7 +41,7 @@ class AuthorTestCase(TestCase):
         modify_profile.displayname = "changed name!"
 
         self.assertEqual(modify_profile.displayname, "changed name!")
-    
+
     def test_delete_users(self):
         delete_user = User.objects.get(username="aTest")
         delete_user.delete()
@@ -62,18 +62,21 @@ class AuthorTestCase(TestCase):
 
         #Test /api/authors
         response = self.client.get('/api/authors/')
-        self.assertEqual(response['Content-Type'], 'application/json')
+        response_json = json.loads(response.content)
+        self.assertEqual(response_json[0]['username'], 'johnsmith')
 
         #Test /api/friends/{FRIEND1_ID}/{FRIEND2_ID}
         response = self.client.post('/api/friends/'+uuid1+'/'+uuid2+'/')
-        self.assertEqual(response['Content-Type'], 'application/json')
+        response_json = json.loads(response.content)
+        self.assertEqual(response_json['friends'], 'NO')
 
         #Test /api/friends/{AUTHOR_ID}
         post_data = {'query':'friends', 'author':uuid1, 'authors': [uuid2, uuid3]}
         post_string = json.dumps(post_data)
         response = self.client.post('/api/friends/'+uuid1+'/',
         content_type='application/json', data=post_string)
-        self.assertEqual(response['Content-Type'], 'application/json')
+        response_json = json.loads(response.content)
+        self.assertEqual(response_json['friends'], [])
         #Test invalid author
         response = self.client.post('/api/friends/INVALID_ID/',
         content_type='application/json', data=post_string)
@@ -127,7 +130,7 @@ class FriendsTestCase(TestCase):
         profile1.friends.add(profile2)
         profile1.save()
 
-        
+
         self.assertIn(profile2, profile1.friends.all())
         self.assertIn(profile1, profile2.friends.all())
 

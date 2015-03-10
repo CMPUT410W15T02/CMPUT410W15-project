@@ -4,6 +4,7 @@ from authors.models import Profile
 from django.contrib.auth.models import User
 from django.utils import timezone
 from posts.forms import PostForm,EditForm
+import json
 
 # Create your tests here.
 #Gives a warning because Django prefers timezone over datetime but tests
@@ -16,10 +17,10 @@ class PostTestCase(TestCase):
         user.save()
         user2 = User.objects.create(username="test_user2")
         user2.set_password("password2")
-        user2.save()     
+        user2.save()
         user3 = User.objects.create(username="test_user3")
         user3.set_password("password3")
-        user3.save()                
+        user3.save()
         profile = Profile.objects.create(user=user, displayname="John")
         profile2 = Profile.objects.create(user=user2, displayname="John2")
         profile3 = Profile.objects.create(user=user3, displayname="John3")
@@ -30,25 +31,25 @@ class PostTestCase(TestCase):
         self.client = Client()
 
     def test_posts(self):
-        user=User.objects.get(username="test_user1")
-        user2=User.objects.get(username="test_user2")
-        user3=User.objects.get(username="test_user3")
+        user1 = User.objects.get(username="test_user1")
+        user2 = User.objects.get(username="test_user2")
+        user3 = User.objects.get(username="test_user3")
         post1 = Post.objects.get(title="test1")
         post2 = Post.objects.get(title="test2")
         post3 = Post.objects.get(title="test3")
         post4 = Post.objects.get(title="test4")
-        
-        post3.allowed.add(user)
+
+        post3.allowed.add(user1)
         post3.allowed.add(user2)
         post3.allowed.add(user3)
-        
+
 
         #Privacy tests
         self.assertEqual(post1.privacy, "1")
         self.assertEqual(post2.privacy, "2")
         self.assertEqual(post3.privacy, "3")
         self.assertEqual(post4.privacy, "4")
-        
+
         self.assertEqual(post1.allowed.all().count(), 0)
         self.assertEqual(post3.allowed.all().count(), 3)
 
@@ -71,16 +72,19 @@ class PostTestCase(TestCase):
 
         #Test /api/author/posts/
         response = self.client.get('/api/author/posts/')
-        self.assertEqual(response['Content-Type'], 'application/json')
+        response_json = json.loads(response.content)
+        self.assertEqual(response_json[0]['title'], 'test1')
 
         #Test /api/posts/
         response = self.client.get('/api/posts/')
-        self.assertEqual(response['Content-Type'], 'application/json')
+        response_json = json.loads(response.content)
+        self.assertEqual(response_json[0]['title'], 'test1')
 
         #Test /api/author/{AUTHOR ID}/posts
         author_id = Profile.objects.get(displayname="John").uuid
         response = self.client.get('/api/author/'+author_id+'/posts/')
-        self.assertEqual(response['Content-Type'], 'application/json')
+        response_json = json.loads(response.content)
+        self.assertEqual(response_json[0]['title'], 'test1')
         #Test invalid author id
         response = self.client.get('/api/author/SHOULD_NOT_WORK/posts/')
         self.assertEqual(response.status_code, 404)
@@ -88,7 +92,8 @@ class PostTestCase(TestCase):
         #Test /api/posts/{POST_ID}
         post_id = Post.objects.get(title="test1").uuid
         response = self.client.get('/api/posts/'+post_id+'/')
-        self.assertEqual(response['Content-Type'], 'application/json')
+        response_json = json.loads(response.content)
+        self.assertEqual(response_json[0]['title'], 'test1')
         #Test invalid post
         response = self.client.get('/api/posts/NOT_VALID_POST_ID/')
         self.assertEqual(response.status_code, 404)
@@ -122,7 +127,6 @@ class FormTestCase(TestCase):
         #Test can connect to posts.html
         response = self.client.get('/posts/')
         self.assertEqual(response.status_code,200)
-        #Test that i can edit post with id=1
+        #Test that I can edit post with id=1
         response = self.client.get('/edit/post/1')
         self.assertEqual(response.status_code,200)
-               
