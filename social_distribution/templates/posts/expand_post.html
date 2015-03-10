@@ -12,8 +12,7 @@
         
             <p>Image: 
             {% if post.image %}
-                {% load staticfiles %}
-                <br/> <img src="{% static post.image.url %}" alt="{{post.image.url}}" height="100" width="100"/></p>
+                <br/> <img src="/static/{{post.image.url}}" alt="{{post.image.url}}" height="100" width="100"/></p>
             {% else %}
                 None</p>
             {% endif %}

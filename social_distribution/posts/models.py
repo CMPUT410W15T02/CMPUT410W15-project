@@ -21,7 +21,9 @@ class Post(models.Model):
     privacy = models.CharField(max_length=1, choices=PRIVACY_CHOICES)
     #This will get all the Users for custom do we want that?
     allowed=models.ManyToManyField(User,null=True,blank=True)
-
+    
+    def get_image_name(image):
+        return image.url
     def __unicode__(self):
         return str(self.author)
 

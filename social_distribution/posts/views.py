@@ -134,7 +134,8 @@ def edit_post(request, post_id):
                 image = request.FILES['image']
                 post.image=image
             except:
-                post.image=""
+                if (post.image == None):
+                    post.image=""
             post.save()
             
             allowed=edit_form.cleaned_data['allowed']
