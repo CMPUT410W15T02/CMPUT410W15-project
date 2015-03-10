@@ -25,6 +25,7 @@ def posts(request):
             title = post_form.cleaned_data['title']
             description = post_form.cleaned_data['description']
             date = datetime.now()
+            image = request.FILES['photo']
             
             # get current user
             currentUser=request.user
@@ -42,7 +43,7 @@ def posts(request):
                 author = profile
             
             # create a new post given the form submission data                
-            newPost = Post(post_text=post_text, description=description, title=title, date=date,author=author,privacy=privacy)
+            newPost = Post(post_text=post_text, description=description, title=title, date=date,author=author,privacy=privacy, image=image)
             
             # save the new post in the database
             newPost.save()
