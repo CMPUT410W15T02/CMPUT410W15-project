@@ -15,7 +15,7 @@ class Post(models.Model):
     description = models.CharField(max_length=512, blank=True)
     content_type = models.CharField(max_length=16)
     post_text = models.TextField(max_length=2048)
-    image = models.ImageField(upload_to='post_images', blank=True)
+    image = models.ImageField(upload_to='social_distribution/static/post_images', blank=True)
     author = models.ForeignKey(Profile)
     date = models.DateTimeField('date posted')
     privacy = models.CharField(max_length=1, choices=PRIVACY_CHOICES)

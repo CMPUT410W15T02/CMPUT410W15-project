@@ -9,6 +9,15 @@
 	<body>
 			<div>
 			<p>Post ID: {{post.id}}</p>
+        
+            <p>Image: 
+            {% if post.image %}
+                {% load staticfiles %}
+                <br/> <img src="{% static post.image.url %}" alt="{{post.image.url}}" height="100" width="100"/></p>
+            {% else %}
+                None</p>
+            {% endif %}
+            
 			<p>Post Text: {{post.post_text}}</p>
 			<p>Date: {{post.date}} </p>
 			<p>Privacy: {{post.privacy}} </p>
