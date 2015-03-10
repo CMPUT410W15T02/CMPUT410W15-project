@@ -25,7 +25,12 @@ def posts(request):
             title = post_form.cleaned_data['title']
             description = post_form.cleaned_data['description']
             date = datetime.now()
-            image = request.FILES['image']
+            # check if a new photo was uploaded
+            try:
+                image = request.FILES['image']
+                
+            except:
+                image=""
             
             # get current user
             currentUser=request.user
