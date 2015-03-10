@@ -90,8 +90,8 @@ def posts_by_author(request, author_id):
         
     # if author does not exist or if they don't have any posts
     except:    
-         list_of_posts = None
-         title = "There are no posts by " + str(author_id)    
+        list_of_posts = None
+        title = "There are no posts by " + str(author_id)    
 
     return render(request, 'posts/view_posts.html', {'list_of_posts':list_of_posts, 'title':title})
 
@@ -105,12 +105,13 @@ def delete_post(request, post_id):
     Post.objects.filter(Q(id=post_id)).delete()
     return HttpResponse("Your post has been deleted. <a href=\"/\">Home</a>")
 
-
+#Editing a post
 def edit_post(request, post_id):
     post=Post.objects.get(id=post_id)
     if request.method == 'POST':
         edit_form = EditForm(request.user, post, data=request.POST)
         if edit_form.is_valid():
+            #Takes all the Posts data and overwrites it with the new data being sent
             author=Profile.objects.get(user=request.user)
             privacy = edit_form.cleaned_data['privacy']
             post_text = edit_form.cleaned_data['post_text']
@@ -130,14 +131,14 @@ def edit_post(request, post_id):
                     post.allowed.add(User.objects.get(username=user))
                     post.allowed.add(User.objects.get(username=author))
                        
-                    # special privacy settings: friends	
+            # special privacy settings: friends	
             elif privacy=="4":
                 all_friends=Profile.objects.get(user=request.user)
                 for friend in all_friends.friends.all():
                     post.allowed.add(User.objects.get(username=friend.user))
                     post.allowed.add(User.objects.get(username=author))
                        
-                    # special privacy settings: private
+            # special privacy settings: private
             elif privacy=="2":
                 post.allowed.add(User.objects.get(username=author))  
             request.session.modified = True
