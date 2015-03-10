@@ -98,6 +98,14 @@ class PostTestCase(TestCase):
         response = self.client.get('/api/posts/NOT_VALID_POST_ID/')
         self.assertEqual(response.status_code, 404)
 
+        #Test /api/post
+        post_data = {'title':'New post', 'description':'Look at this',
+        'content':'This is the content', 'content-type':'plaintext'}
+        post_string = json.dumps(post_data)
+        response = self.client.post('/api/post/',
+        content_type='application/json', data=post_string)
+        self.assertEqual(Post.objects.count(), 4)
+
 
 #Testing EditForm and PostForm
 class FormTestCase(TestCase):

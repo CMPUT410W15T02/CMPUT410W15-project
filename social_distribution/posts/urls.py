@@ -21,4 +21,5 @@ urlpatterns = patterns('',
     url(r'^api/friends/(?P<uuid>.+)/$', api.friends_post, name="api/friends_post"),
     url(r'^api/friendrequest/$', api.friend_request, name="api/friendrequest"),
     url(r'^api/authors/$', api.authors, name="api/authors"),
+    url(r'^api/post/$', api.post, name="api/post"),
 )

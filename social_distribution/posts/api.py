@@ -236,3 +236,22 @@ def authors(request):
         return JsonResponse(response, safe=False)
 
     return HttpResponse(status=405)
+
+def post(request):
+    if request.method == "POST":
+        received_data = json.loads(request.body)
+        try:
+            author = received_data['author']
+            title = received_data['title']
+            description = received_data['description']
+            content_type = received_data['content-type']
+            content = received_data['content']
+            new_post = Post(title=title, description=description,
+            content_type=content_type, post_text=content)
+            new_post.save()
+        except:
+            return HttpResponse(status=500)
+
+        return HttpResponse(status=200)
+
+    return HttpResponse(status=405)
