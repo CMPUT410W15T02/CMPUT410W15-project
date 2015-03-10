@@ -1,10 +1,14 @@
 <!DOCTYPE html>
+{% load static %}
 <html>
     <head>
         <title>Social Distribution</title>
+        <link rel="stylesheet" href="{% static 'css/design.css' %}" />
     </head>
 
     <body>
+        <h1 class="banner"><a href="/login">Social Distribution</a></h1>
+        <div class="margins  center">
         <h1>Register with Social Distribution</h1>
 
         {% if registered %}
@@ -27,7 +31,8 @@
             <!-- Provide a button to click to submit the form. -->
             <input type="submit" name="submit" value="Register" />
         </form>
-        <a href="/login/">Or login here!</a>
+        <a href="/login/"><p class="blue">Or login here!<p></a>
         {% endif %}
+        </div>
     </body>
 </html>

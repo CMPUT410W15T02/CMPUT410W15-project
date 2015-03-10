@@ -1,20 +1,28 @@
 <!DOCTYPE HTML>
+{% load static %}
 <html>
 <head>
     <title>Login</title>
+    <link rel="stylesheet" href="{% static 'css/design.css' %}" />
 </head>
 <body>
+    <h1 class="banner"><a href="/login">Social Distribution</a></h1>
+    <div class="margins  center">
     <h1>Login to Social Distribution</h1>
     <form id="login_form" method="post" action="/login/">
         {% csrf_token %}
-        Username: <input type="text" name="username" />
+        Username:<br/>
+        <input type="text" name="username" />
         <br />
-        Password: <input type="password" name="password" />
+        Password: 
+        <br/>
+        <input type="password" name="password" />
         <br />
-
+        <br/>
         <input type="submit" value="submit" />
     </form>
 
-    <a href="/register/">Or register here!</a>
+    <a href="/register/"><p class="blue">Or register here!</p></a>
+    </div>
 </body>
 </html>
