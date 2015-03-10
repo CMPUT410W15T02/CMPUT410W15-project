@@ -66,11 +66,14 @@ a:link {
 
 ul{
 	list-style-type:none;
+	position: fixed;
+	display: inline-block;
+	vertical-align: top;
 	margin:0;
 	float:left;
 	background: black;
 	height:100%;
-	padding:0 4.25em 22em 0;
+	padding:0 4.25em 0 0;
 	}
 ul li{
 	text-align:left;
