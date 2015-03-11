@@ -1,8 +1,16 @@
+<!DOCTYPE html>
+{% load static %}
 <html>
 <head>
     <title>Social Distribution</title>
+    <link rel="stylesheet" href="{% static 'css/design.css' %}" />
 </head>
 <body>
+    <div class="banner">
+	<h1 class="inline"><a href="/">Social Distribution</a></h1> 
+	<a class="pads" href="/logout">Logout</a>
+    </div>
+    <div class="margins center">
 	<h1>{{user.first_name}} {{user.last_name}}'s Profile</h1>
 	<div>
 		<p>USER ID: {{profile.user_id}} </p>
@@ -18,6 +26,7 @@
 		<input type="hidden" value={{profile.id}} name="to_profile">
         <input type="submit" name="submit" value="Send Friend Request" />
     	</form>
+    </div>
     </div>
 
 </body>
