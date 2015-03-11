@@ -3,6 +3,7 @@ from django.http import JsonResponse, HttpResponse
 from django.core import serializers
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
+from django.utils import timezone
 from authors.models import Profile, Follow
 from django.contrib.auth.models import User
 from posts.models import Post, Comment
@@ -242,12 +243,20 @@ def post(request):
         received_data = json.loads(request.body)
         try:
             author = received_data['author']
+            author_id = author['id']
+            author_host = author['host']
+            author_displayname = author['displayname']
+            author_profile = Profile.objects.get(uuid=author_id)
+            author_profile.host = author_host
+            author_profile.displayname = author_displayname
+
             title = received_data['title']
             description = received_data['description']
             content_type = received_data['content-type']
             content = received_data['content']
-            new_post = Post(title=title, description=description,
-            content_type=content_type, post_text=content)
+            date = timezone.now()
+            new_post = Post(author=author_profile, title=title, description=description,
+            content_type=content_type, post_text=content, date=date)
             new_post.save()
         except:
             return HttpResponse(status=500)
