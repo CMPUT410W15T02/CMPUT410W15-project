@@ -42,7 +42,7 @@
                 {% csrf_token %}
                 <input type="submit" name="delete" value="Delete" />
             </form>
-	    <form id="edit_post" method="get" action="/edit/post/{{post.id}}">
+	        <form id="edit_post" method="get" action="/edit/post/{{post.id}}">
                 {% csrf_token %}
                 <input type="submit" name="edit" value="Edit" />
             </form>

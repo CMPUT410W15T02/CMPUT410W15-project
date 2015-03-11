@@ -83,21 +83,48 @@ def posts(request):
 
 # view all posts of an author specified by author_id
 def posts_by_author(request, author_id):
-    context = RequestContext(request)
     
-    try: 
-        # author in Post is a Profile object
-        userObject = User.objects.get(username=author_id)
-        author = Profile.objects.get(user=userObject)
+    list_of_posts = []
+    
+    try:
+        if request.user.is_authenticated():
+            
+            context = RequestContext(request)
         
-        # only retrieve posts that belong to the current user's profile
-        list_of_posts = Post.objects.filter(Q(author=author)).order_by('-date')
-        title = "View Posts by " + str(author)
-        
-    # if author does not exist or if they don't have any posts
-    except:    
-        list_of_posts = None
-        title = "There are no posts by " + str(author_id)    
+            # get profile from author id
+            userObject = User.objects.get(username=author_id)
+            profile = Profile.objects.get(user=userObject)
+            
+            # if the requested user is the current user show private posts too
+            if(profile == request.user.profile): 
+                 post_query = Post.objects.filter(Q(author=profile))
+            
+            # the requested user is not the current user
+            else:
+                post_query = Post.objects.filter(Q(author=profile) & (Q(privacy=1) | Q(privacy=3) | Q(privacy=4)) ).order_by('-date')
+
+            for post in post_query:
+                
+                # public posts by the author
+                if (post.privacy == '1'):
+                    if post.author == profile:
+                        list_of_posts.append(post)
+                
+                # check if current user is allowed to see remaining posts 
+                elif ((post.privacy == '3') or (post.privacy == '4')):
+                    allowed_users = post.allowed.all()
+                    for user in allowed_users:
+                        if user.id == request.user.id:
+                            list_of_posts.append(post)
+               
+                # for when the requested user is the current user            
+                elif (post.author == profile):
+                    list_of_posts.append(post)
+                
+            title = "View Posts by " + str(author_id)
+
+    except: 
+        title = "There are no posts by " + str(author_id)
 
     return render(request, 'posts/view_posts.html', {'list_of_posts':list_of_posts, 'title':title})
 
