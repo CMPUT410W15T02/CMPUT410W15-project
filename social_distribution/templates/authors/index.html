@@ -20,30 +20,41 @@
 
         	<!-- Testing -->
     <h1>Testing. Grabs all the users and sends it to profile.html </br> Profile.html loads all the data under a profile </h1>
-	<h2> List of Users</h2>
-	{% for users in list_of_users%}
-		<div>
-			<a href="/author/{{ users.username }}/"> {{users.username}} </a>
-		</div>
-	{% endfor %}
-
-	<a href="/add_friend/"> Friend Requests</a>
+    <br/>
+    
+    <h3>View Posts By Author:</h3> 
+    <select id="selectbox" onchange="javascript:location.href = this.value;">
+        <option>Select User</option>
+        {% for users in list_of_users%}
+            <option value="author/{{ users.username }}">
+                {{users.username}}
+            </option>
+        {% endfor %}
+    </select>
+    
+    <br/><br/>
+    <h3><a href="/add_friend/"> View Friend Requests</a></h3>
 	
-	<br/><br/>
+	<br/>
 	<h3><a href="/posts/">Create Post</a></h3>
     
+    <br/>
     <h3><a href="/posts/all/">View Public Posts</a></h3>
     
-     <h3><a href="/posts/friends/">View Posts By Friend</a></h3>
+    <br/>
+    <h3><a href="/posts/friends/">View Posts By Friend</a></h3>
 
-     <h3><a href="/posts/custom/">View Posts By Custom Filter</a></h3>
-
+    <br/>
+    <h3><a href="/posts/custom/">View Posts By Custom Filter</a></h3>
+    
+    <br/>
     {% if user.is_authenticated %}
     <h3><a href="/author/{{user.username}}/posts/">View Your Posts</a></h3>
     {% endif %}
 	<!-- End Testing -->
     {% if user.is_authenticated %}
 
+    <br/>
     {% for post in list_of_posts %}
         <div>
          Title: {{post.title}}
