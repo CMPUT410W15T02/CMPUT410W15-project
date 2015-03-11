@@ -137,7 +137,7 @@ def author_manage(request):
 
     if updated == True:
         return HttpResponse("Profile Successfully edited! Click "
-        "<a href=/author/>here</a> to return to your profile.")
+        "<a href=/author/"+request.user.username+">here</a> to return to your profile.")
     else:
         return render_to_response('authors/manage.html',
             {'profile_form': profile_form}, context)
