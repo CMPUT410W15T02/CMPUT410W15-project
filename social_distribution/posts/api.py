@@ -238,24 +238,20 @@ def authors(request):
 
     return HttpResponse(status=405)
 
+@login_required
 def post(request):
     if request.method == "POST":
         received_data = json.loads(request.body)
         try:
-            author = received_data['author']
-            author_id = author['id']
-            author_host = author['host']
-            author_displayname = author['displayname']
-            author_profile = Profile.objects.get(uuid=author_id)
-            author_profile.host = author_host
-            author_profile.displayname = author_displayname
+            current_user = User.objects.get(username=request.user.username)
+            current_profile = Profile.objects.get(user=current_user)
 
             title = received_data['title']
             description = received_data['description']
             content_type = received_data['content-type']
             content = received_data['content']
             date = timezone.now()
-            new_post = Post(author=author_profile, title=title, description=description,
+            new_post = Post(author=current_profile, title=title, description=description,
             content_type=content_type, post_text=content, date=date)
             new_post.save()
         except:

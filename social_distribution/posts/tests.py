@@ -147,8 +147,7 @@ class PostTestCase(TestCase):
         #Test /api/post
         profile_id = Profile.objects.get(displayname='John').uuid
         post_data = {'title':'New post', 'description':'Look at this',
-        'content':'This is the content', 'content-type':'plaintext',
-        'author':{'id':profile_id, 'host':'localhost:8000', 'displayname':'John'}}
+        'content':'This is the content', 'content-type':'plaintext'}
         post_string = json.dumps(post_data)
         response = self.client.post('/api/post/', \
         content_type='application/json', data=post_string)
@@ -229,6 +228,6 @@ class FormTestCase(TestCase):
         response = self.client.get('/posts/')
         self.assertEqual(response.status_code,200)
 
-        #Test that i can edit post with id=1
+        #Test that I can edit post with id=1
         response = self.client.get('/edit/post/1')
         self.assertEqual(response.status_code,200)
