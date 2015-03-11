@@ -11,15 +11,13 @@
 	<a class="logout" href="/logout"><p class="white inline">Logout</p></a>
     </div>
     <div class="margins center">
-    {% if user.is_authenticated %}
-    <p>Hello {{ user.username }}!</p>
-    <a href='/logout/'>Logout</a>
-    {% else %}
-    <p>Hello World! Click <a href="/login/">here</a> to login</p>
-    {% endif %}
 
         	<!-- Testing -->
-    <h1>Testing. Grabs all the users and sends it to profile.html </br> Profile.html loads all the data under a profile </h1>
+    {% if user.is_authenticated %}
+        <h1>Hello {{ user.username }}!</h1>
+    {% else %}
+        <p>Hello World! Click <a href="/login/">here</a> to login</p>
+    {% endif %}
     
     <br/>
     <h3>View Author Profile:
@@ -46,7 +44,7 @@
     </h3>
     
     <br/>
-    <h3><a href="/add_friend/"> View Friend Requests</a></h3>
+    <h3><a href="/add_friend/">View Friend Requests</a></h3>
 	
 	<br/>
 	<h3><a href="/posts/">Create Post</a></h3>
@@ -55,7 +53,7 @@
     <h3><a href="/posts/all/">View Public Posts</a></h3>
     
     <br/>
-    <h3><a href="/posts/friends/">View Posts By Friend</a></h3>
+    <h3><a href="/posts/friends/">View Posts By Friends</a></h3>
 
     <br/>
     <h3><a href="/posts/custom/">View Posts By Custom Filter</a></h3>

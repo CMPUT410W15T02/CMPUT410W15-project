@@ -14,57 +14,59 @@
         </div>
         <div class="margins center">
         
-        {% if user.is_authenticated %}
-            <p>You are logged in as {{ user.username }}</p>
+            {% if user.is_authenticated %}
+                <p>You are logged in as {{ user.username }}</p>
 		
-        {% else %}
-			<p>Not authenticated</p>
-			<a href="/login/">Login</a>
-		{% endif %}
-        
-        <h2>{{ title }}</h2>
-    	
-        {% for post in list_of_posts %}
-    		<div>
-		     Title: {{post.title}}
-    		</div>
-            <div>
-                Body: {{post.post_text}}
-            </div>
-            
-            
-            {% if post.author.user = user %}
-            <div>
-                Privacy: {{post.privacy}}
-            </div>
-            
-            <form id="delete_post" method="post" action="/delete/post/{{post.id}}">
-                {% csrf_token %}
-                <input type="submit" name="delete" value="Delete" />
-            </form>
-	        <form id="edit_post" method="get" action="/edit/post/{{post.id}}">
-                {% csrf_token %}
-                <input type="submit" name="edit" value="Edit" />
-            </form>
-            
             {% else %}
-            <div>
-                Author: {{post.author}}
-            </div>
-            
-            {% endif %}
-            
-            <div>
-            <form id="expand_post" method="get" action="/posts/{{post.id}}/">
-                {% csrf_token %}
-                <input type="submit" name="expand" value="Expand" />
-            </form>
+    			<p>Not authenticated</p>
+    			<a href="/login/">Login</a>
+    		{% endif %}
+        
             <br/><br/>
-                
-            </div>
+            <h2>{{ title }}</h2>
+    	
+            <br/>
+            {% for post in list_of_posts %}
+        		<div>
+    		        Title: {{post.title}}
+        		</div>
+                <div>
+                    Body: {{post.post_text}}
+                </div>
             
-    	{% endfor %}
-	</div>
-		
+            
+                {% if post.author.user = user %}
+                <div>
+                    Privacy: {{post.privacy}}
+                </div>
+            
+                <form id="delete_post" method="post" action="/delete/post/{{post.id}}">
+                    {% csrf_token %}
+                    <input type="submit" name="delete" value="Delete" />
+                </form>
+    	        <form id="edit_post" method="get" action="/edit/post/{{post.id}}">
+                    {% csrf_token %}
+                    <input type="submit" name="edit" value="Edit" />
+                </form>
+            
+                {% else %}
+                <div>
+                    Author: {{post.author}}
+                </div>
+            
+                {% endif %}
+            
+                <div>
+                <form id="expand_post" method="get" action="/posts/{{post.id}}/">
+                    {% csrf_token %}
+                    <input type="submit" name="expand" value="Expand" />
+                </form>
+                <br/><br/>
+                
+                </div>
+            
+        	{% endfor %}
+	    </div>
+        
 	</body>
 </html>

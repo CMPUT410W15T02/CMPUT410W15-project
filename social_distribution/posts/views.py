@@ -121,7 +121,7 @@ def posts_by_author(request, author_id):
                 elif (post.author == profile):
                     list_of_posts.append(post)
                 
-            title = "View Posts by " + str(author_id)
+        title = "View Posts by " + str(author_id)
 
     except: 
         title = "There are no posts by " + str(author_id)
@@ -207,7 +207,7 @@ def friends_posts(request):
             if user.id == request.user.id:
                 list_of_posts.append(post)
 
-    return render(request, 'posts/view_posts.html', {'list_of_posts':list_of_posts})
+    return render(request, 'posts/view_posts.html', {'list_of_posts':list_of_posts, 'title':"Friend's Posts"})
 
 #view posts from custom privacy
 def custom_posts(request):
