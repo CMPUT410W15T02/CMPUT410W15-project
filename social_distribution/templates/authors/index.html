@@ -63,6 +63,12 @@
     <br/>
     {% if user.is_authenticated %}
     <h3><a href="/author/{{user.username}}/posts/">View Your Posts</a></h3>
+
+    <br/>
+    <h3><a href="/manage/">Manage your Profile</a></h3>
+
+    <br/>
+    
     {% endif %}
 	<!-- End Testing -->
     {% if user.is_authenticated %}
