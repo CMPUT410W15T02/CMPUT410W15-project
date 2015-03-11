@@ -1,8 +1,16 @@
+<!DOCTYPE html>
+{% load static %}
 <html>
 <head>
     <title>Social Distribution</title>
+    <link rel="stylesheet" href="{% static 'css/design.css' %}" />
 </head>
 <body>
+    <div class="banner">
+	<h1 class="inline"><a href="/">Social Distribution</a></h1> 
+	<a class="pads" href="/logout">Logout</a>
+    </div>
+    <div class="margins center">
     <p>Friend Request Sent </p>
 
     {% if friends %}
@@ -24,5 +32,6 @@
 	{% else %}
 		<h1> No Friend Requests </h1>
 	{% endif %}
+	</div>
 </body>
 <html>

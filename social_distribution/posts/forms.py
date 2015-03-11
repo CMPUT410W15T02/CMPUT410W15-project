@@ -42,7 +42,6 @@ class PostForm(forms.ModelForm):
         #Excludes the username of the current user and admin from the list of possible users
         #that can be choosen for a post to be custom to
         self.fields["allowed"].queryset = User.objects.exclude(username="admin").exclude(username=user)
-        self.fields['title'].length = 128
 
 class EditForm(forms.ModelForm):
     class Meta:

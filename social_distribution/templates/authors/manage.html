@@ -1,10 +1,17 @@
 <!DOCTYPE html>
+{% load static %}
 <html>
     <head>
         <title>Social Distribution</title>
+        <link rel="stylesheet" href="{% static 'css/design.css' %}" />
     </head>
 
     <body>
+     <div class="banner">
+	<h1 class="inline"><a href="/">Social Distribution</a></h1> 
+	<a class="pads" href="/logout">Logout</a>
+     </div>
+     <div class="margins center">
         <h1>Manage your Social Distribution Profile</h1>
 
         <strong>Your profile information here!</strong><br />
@@ -22,5 +29,6 @@
             <!-- Provide a button to click to submit the form. -->
             <input type="submit" name="submit" value="Edit" />
         </form>
+	</div>
     </body>
 </html>

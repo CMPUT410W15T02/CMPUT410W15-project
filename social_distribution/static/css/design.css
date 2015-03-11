@@ -1,14 +1,21 @@
 .banner{
     background: linear-gradient(grey, black);
-    height: 1.5em;
     width: 100%;
-    margin-left:0px;
-    margin-top:0px;
-    margin-bottom:0px;
-    padding:0;
+    height:2.5em;
+    position: absolute; 
+    top: 0; 
+    left: 0; 
     padding-left:3em;
-
+    border-bottom: 0.15em solid red;
 }
+.inline{
+    display:inline;
+}
+.pads{
+    padding-left:62em;
+   
+}
+
 
 input[type="submit"] {
   -webkit-border-radius: 21;
@@ -35,10 +42,10 @@ input[type="submit"]:hover {
 .margins{
     margin-left:10em;
     margin-right:10em;
+    margin-top:2.65em;
     }
 .center{
-    border: 2px solid black;
-    padding:3em;
+    padding:1em;
 }
 .blue{
     color:blue;
@@ -46,10 +53,10 @@ input[type="submit"]:hover {
 .blue:hover{
     color:black;
 }
-html, body {
-    margin: 0;
-    padding: 0;   
-}
+* {
+    margin: 0; 
+    padding: 0;
+    }
 
 html{
    background-color:#F0F0F0 ;
@@ -65,15 +72,12 @@ a:link {
 }
 
 ul{
-	list-style-type:none;
 	position: fixed;
 	display: inline-block;
+	width: 10em;
 	vertical-align: top;
-	margin:0;
-	float:left;
-	background: black;
-	height:100%;
-	padding:0 4.25em 0 0;
+	background: #000000;
+	height: 700px; 
 	}
 ul li{
 	text-align:left;
