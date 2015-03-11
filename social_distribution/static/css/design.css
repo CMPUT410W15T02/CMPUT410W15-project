@@ -11,9 +11,10 @@
 .inline{
     display:inline;
 }
-.pads{
-    padding-left:62em;
-   
+.logout{
+    position:absolute;
+    right:4em;
+    top:1.5em;
 }
 
 
@@ -72,7 +73,7 @@ a:link {
 }
 
 ul{
-	position: fixed;
+	position: absolute;
 	display: inline-block;
 	width: 10em;
 	vertical-align: top;
