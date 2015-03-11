@@ -22,17 +22,18 @@
     <h1>Testing. Grabs all the users and sends it to profile.html </br> Profile.html loads all the data under a profile </h1>
     <br/>
     
-    <h3>View Posts By Author:</h3> 
+    <h3>View Author Profile:
     <select id="selectbox" onchange="javascript:location.href = this.value;">
         <option>Select User</option>
-        {% for users in list_of_users%}
+        {% for users in list_of_users %}
             <option value="author/{{ users.username }}">
                 {{users.username}}
             </option>
         {% endfor %}
     </select>
+    </h3> 
     
-    <br/><br/>
+    <br/>
     <h3><a href="/add_friend/"> View Friend Requests</a></h3>
 	
 	<br/>
