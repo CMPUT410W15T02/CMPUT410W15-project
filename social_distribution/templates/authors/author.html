@@ -22,13 +22,24 @@
 	 	<p>UUID: {{profile.uuid}} </p>
 	 	<p>GENDER: {{profile.gender}}</p>
  	</div>
- 	<div>
-		<form method="POST" action="/friend_request/">
-		{% csrf_token %}
-		<input type="hidden" value={{profile.id}} name="to_profile">
-        <input type="submit" name="submit" value="Send Friend Request" />
-    	</form>
-    </div>
+
+ 	{% if isFriends %}
+ 		<div>
+			<form method="POST" action="/remove_friend/">
+			{% csrf_token %}
+			<input type="hidden" value={{profile.id}} name="remove_profile_id">
+	        <input type="submit" name="submit" value="Remove Friend" />
+	    	</form>
+	    </div>
+	{% else %}
+		<div>
+			<form method="POST" action="/friend_request/">
+			{% csrf_token %}
+			<input type="hidden" value={{profile.id}} name="to_profile">
+	        <input type="submit" name="submit" value="Send Friend Request" />
+	    	</form>
+	    </div>
+	{% endif %}
     </div>
 
 </body>

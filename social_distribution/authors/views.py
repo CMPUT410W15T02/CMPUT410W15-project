@@ -105,9 +105,22 @@ def user_logout(request):
 
 def author(request, username):
     context = RequestContext(request)
+
+    isFriends = False
+
+    current_profile = Profile.objects.get(user_id=request.user.id)
+
     user = User.objects.get(username=username)
     profile = Profile.objects.get(user_id = user.id)
-    return render(request, 'authors/author.html',{'profile':profile, 'user':user})
+
+    #Check if friends
+    friend_qs = current_profile.friends.filter(id=profile.id)
+
+    if(friend_qs):
+        isFriends = True
+
+
+    return render(request, 'authors/author.html',{'profile':profile, 'user':user,'isFriends':isFriends})
 
 def author_manage(request):
     context = RequestContext(request)
@@ -156,6 +169,7 @@ def friend_request(request):
 #Accept or Reject Friend Reject
 def add_friend(request):
     current_profile = Profile.objects.get(user_id=request.user.id)
+    friends = None
 
     if request.method == 'POST':
         from_profile_id = request.POST.get('from_profile', '')
@@ -176,6 +190,16 @@ def add_friend(request):
         qs = Follow.objects.filter(to_profile_id=current_profile.id).filter(status='PENDING')
         if qs:
             friends = qs
-        else:
-            friends = None
         return render(request, 'authors/add_friend.html',{'friends':friends})
+
+#Remove friends
+def remove_friend(request):
+    current_profile = Profile.objects.get(user_id=request.user.id)
+
+    if request.method == 'POST':
+        remove_profile_id = request.POST.get('remove_profile_id', '')
+        remove_profile = Profile.objects.get(id=remove_profile_id)
+
+        current_profile.friends.remove(remove_profile)
+
+    return redirect('/')
