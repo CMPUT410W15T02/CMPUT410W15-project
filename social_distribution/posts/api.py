@@ -116,6 +116,7 @@ def authorid_posts(request, author_id):
 
 # access to a single post with id = {POST_ID}
 def postid_post(request, post_id):
+    # get post with id in url
     if request.method == "GET":
         try:
             post = [Post.objects.get(uuid=post_id)]
@@ -123,12 +124,78 @@ def postid_post(request, post_id):
         except:
             return HttpResponse(status=404)
         return JsonResponse(data, safe=False)
+    # update post with id in url
+    if request.method == "PUT":
+        received_data = json.loads(request.body)
+        try:
+            current_user = User.objects.get(username=request.user.username)
+            current_profile = Profile.objeects.get(user=current_user)
+            post = Post.objects.get(uuid=post_id)
+
+            title = received_data['title']
+            description = received_data['description']
+            content_type = received_data['content-type']
+            content = received_data['content']
+
+            post.title = received_data['title']
+            post.description = received_data['description']
+            post.content_type = received_data['content-type']
+            post.post_text = received_data['content']
+            post.save()
+        except:
+            return HttpResponse(status=404)
+
+        return HttpResponse(status=200)
+
+    # create post with id in url
+    if request.method == "POST":
+        received_data = json.loads(request.body)
+        try:
+            current_user = User.objects.get(username=request.user.username)
+            current_profile = Profile.objects.get(user=current_user)
+
+            title = received_data['title']
+            description = received_data['description']
+            content_type = received_data['content-type']
+            content = received_data['content']
+            date = timezone.now()
+            new_post = Post(uuid=post_id, author=current_profile, title=title, description=description,
+            content_type=content_type, post_text=content, date=date)
+            new_post.save()
+        except:
+            return HttpResponse(status=404)
+
+        return HttpResponse(status=200)
+
     return HttpResponse(status=405)
 """http://127.0.0.1:8000/api/posts/305b5f7c-1c08-4b14-bb7c-9156b62a/"""
 
+@login_required
+def post(request):
+    if request.method == "POST":
+        received_data = json.loads(request.body)
+        try:
+            current_user = User.objects.get(username=request.user.username)
+            current_profile = Profile.objects.get(user=current_user)
+
+            title = received_data['title']
+            description = received_data['description']
+            content_type = received_data['content-type']
+            content = received_data['content']
+            date = timezone.now()
+            new_post = Post(author=current_profile, title=title, description=description,
+            content_type=content_type, post_text=content, date=date)
+            new_post.save()
+        except:
+            return HttpResponse(status=500)
+
+        return HttpResponse(status=200)
+
+    return HttpResponse(status=405)
+
 # a response if friends or not
 def friends_get(request, friend1=None, friend2=None):
-    if request.method == "POST":
+    if request.method == "GET":
         response = {}
         response['query'] = 'friends'
         response['authors'] = [friend1, friend2]
@@ -235,28 +302,5 @@ def authors(request):
             response.append(author_data)
 
         return JsonResponse(response, safe=False)
-
-    return HttpResponse(status=405)
-
-@login_required
-def post(request):
-    if request.method == "POST":
-        received_data = json.loads(request.body)
-        try:
-            current_user = User.objects.get(username=request.user.username)
-            current_profile = Profile.objects.get(user=current_user)
-
-            title = received_data['title']
-            description = received_data['description']
-            content_type = received_data['content-type']
-            content = received_data['content']
-            date = timezone.now()
-            new_post = Post(author=current_profile, title=title, description=description,
-            content_type=content_type, post_text=content, date=date)
-            new_post.save()
-        except:
-            return HttpResponse(status=500)
-
-        return HttpResponse(status=200)
 
     return HttpResponse(status=405)
