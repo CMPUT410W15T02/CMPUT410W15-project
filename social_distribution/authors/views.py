@@ -8,6 +8,7 @@ from authors.models import Profile, Follow
 from posts.models import Post
 from django.contrib.auth.models import User
 from django.db.models import Q
+import markdown2
 
 # Create your views here.
 def index(request):
@@ -23,6 +24,9 @@ def index(request):
         post_query = Post.objects.filter(Q(privacy=1) | Q(privacy=3) | Q(privacy=4) | Q(author=profile)).order_by('-date')
 
         for post in post_query:
+            if (post.content_type == 'text/x-markdown'):
+                post.post_text = markdown2.markdown(post.post_text)
+
             if (post.privacy == '1'):
                 if post.author == profile:
                     list_of_posts.append(post)

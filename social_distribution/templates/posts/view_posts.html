@@ -6,40 +6,40 @@
 		<title>Social Distribution</title>
 		<link rel="stylesheet" href="{% static 'css/design.css' %}" />
 	</head>
-   
-	<body>	
+
+	<body>
 	<div class="banner">
-	    <a href="/"><h1 class="white inline">Social Distribution</h1></a> 
+	    <a href="/"><h1 class="white inline">Social Distribution</h1></a>
 	    <a class="logout" href="/logout"><p class="white inline">Logout</p></a>
         </div>
         <div class="margins center">
-        
+
             {% if user.is_authenticated %}
                 <p>You are logged in as {{ user.username }}</p>
-		
+
             {% else %}
     			<p>Not authenticated</p>
     			<a href="/login/">Login</a>
     		{% endif %}
-        
+
             <br/><br/>
             <h2>{{ title }}</h2>
-    	
+
             <br/>
             {% for post in list_of_posts %}
         		<div>
     		        Title: {{post.title}}
         		</div>
                 <div>
-                    Body: {{post.post_text}}
+                    Body: {{post.post_text|safe|escape}}
                 </div>
-            
-            
+
+
                 {% if post.author.user = user %}
                 <div>
                     Privacy: {{post.privacy}}
                 </div>
-            
+
                 <form id="delete_post" method="post" action="/delete/post/{{post.id}}">
                     {% csrf_token %}
                     <input type="submit" name="delete" value="Delete" />
@@ -48,25 +48,25 @@
                     {% csrf_token %}
                     <input type="submit" name="edit" value="Edit" />
                 </form>
-            
+
                 {% else %}
                 <div>
                     Author: {{post.author}}
                 </div>
-            
+
                 {% endif %}
-            
+
                 <div>
                 <form id="expand_post" method="get" action="/posts/{{post.id}}/">
                     {% csrf_token %}
                     <input type="submit" name="expand" value="Expand" />
                 </form>
                 <br/><br/>
-                
+
                 </div>
-            
+
         	{% endfor %}
 	    </div>
-        
+
 	</body>
 </html>

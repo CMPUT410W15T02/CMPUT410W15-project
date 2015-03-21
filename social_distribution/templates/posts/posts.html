@@ -9,7 +9,7 @@
 		<script src="{% static 'js/jquery-1.11.0.min.js' %}"></script>
 		<script src="{% static 'js/post.js' %}"></script>
 	</head>
-   
+
 	<body>
 	<div class="banner">
 	    <a href="/"><h1 class="white inline">Social Distribution</h1></a>
@@ -21,7 +21,7 @@
 			<a href="/posts/all/"><li class="white">Public Feed</li></a><br/>
 			<a href="/"><li class="white">Friends</li></a><br/>
 			<a href="/"><li class="white">Following</li></a><br/>
-		
+
 		</ul>
 	</div>
 	<div class="margins center">
@@ -30,19 +30,19 @@
 		{% else %}
 		<h2>Make a Post</h2>
 		{% endif %}
-	
+
 		{% if user.is_authenticated %}
-		
+
 		<p>Authenticated {{ user.username }}</p>
 			{% if edit %}
-				<form id="post_form" method="post" action="" 
+				<form id="post_form" method="post" action=""
 				enctype="multipart/form-data">
 			{% else %}
-				<form id="post_form" method="post" action="/posts/" 
+				<form id="post_form" method="post" action="/posts/"
 				enctype="multipart/form-data">
 			{% endif %}
 				{% csrf_token %}
-		
+
 				<div>
 					Title:
 					</br>
@@ -55,26 +55,33 @@
 					{{post_form.description}}
 					</br>
 				</div>
-			
+
+				<div>
+					Content type:
+					</br>
+					{{post_form.content_type}}
+					</br>
+				</div>
+
 				<div>
 					Post:
 					</br>
 					{{post_form.post_text}}
 					</br>
 				</div>
-			
+
 				<div>
 					Privacy:
 					</br>
 					{{post_form.privacy}}
 					</br>
 				</div>
-                
+
                 <div>
                     Upload Image: </br>
                     {{post_form.image}}
 			    </div>
-                
+
 				<div id="allowed">
 					Choose:
 					</br>
@@ -82,21 +89,21 @@
 					Use Control or Command to select multiple users
 					</br>
 				</div>
-		
+
 				{% if edit %}
 				<input type="submit" name="submit" value="Edit" />
 				{% else %}
 				<input type="submit" name="submit" value="Post" />
 				{% endif %}
 			</form>
-	
+
 		{% else %}
-		
+
 			<p>Not authenticated</p>
 			<a href="/login/">Login</a>
-		
+
 		{% endif %}
 	</div>
-		
+
 	</body>
 </html>

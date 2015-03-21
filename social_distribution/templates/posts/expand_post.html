@@ -8,7 +8,7 @@
 	</head>
 	<body>
 	<div class="banner">
-		<a href="/"><h1 class="white inline">Social Distribution</h1></a> 
+		<a href="/"><h1 class="white inline">Social Distribution</h1></a>
 		<a class="logout" href="/logout"><p class="white inline">Logout</p></a>
 	</div>
     <div class="margins center">
@@ -16,15 +16,15 @@
    	<h1>Title: {{post.title}}</h1>
 			<div>
 			<p>Post ID: {{post.id}}</p>
-        
-            <p>Image: 
+
+            <p>Image:
             {% if post.image %}
                 <br/> <img src="/static/{{post.image.url}}" alt="{{post.image.url}}" height="100" width="100"/></p>
             {% else %}
                 None</p>
             {% endif %}
-            
-			<p>Post Text: {{post.post_text}}</p>
+
+			<p>Post Text: {{post.post_text|safe|escape}}</p>
 			<p>Date: {{post.date}} </p>
 			<p>Privacy: {{post.privacy}} </p>
 			<p>Author_id: {{post.author_id}} </p>

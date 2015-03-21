@@ -7,7 +7,7 @@
 </head>
 <body>
     <div class="banner">
-	<a href="/"><h1 class="white inline">Social Distribution</h1></a> 
+	<a href="/"><h1 class="white inline">Social Distribution</h1></a>
 	<a class="logout" href="/logout"><p class="white inline">Logout</p></a>
     </div>
     <div class="margins center">
@@ -18,7 +18,7 @@
     {% else %}
         <p>Hello World! Click <a href="/login/">here</a> to login</p>
     {% endif %}
-    
+
     <br/>
     <h3>View Author Profile:
     <select id="selectbox" onchange="javascript:location.href = this.value;">
@@ -29,8 +29,8 @@
             </option>
         {% endfor %}
     </select>
-    </h3> 
-    
+    </h3>
+
     <br/>
     <h3>View Posts by Author:
     <select id="selectbox" onchange="javascript:location.href = this.value;">
@@ -42,22 +42,22 @@
         {% endfor %}
     </select>
     </h3>
-    
+
     <br/>
     <h3><a href="/add_friend/">View Friend Requests</a></h3>
-	
+
 	<br/>
 	<h3><a href="/posts/">Create Post</a></h3>
-    
+
     <br/>
     <h3><a href="/posts/all/">View Public Posts</a></h3>
-    
+
     <br/>
     <h3><a href="/posts/friends/">View Posts By Friends</a></h3>
 
     <br/>
     <h3><a href="/posts/custom/">View Posts By Custom Filter</a></h3>
-    
+
     <br/>
     {% if user.is_authenticated %}
     <h3><a href="/author/{{user.username}}/posts/">View Your Posts</a></h3>
@@ -66,7 +66,7 @@
     <h3><a href="/manage/">Manage your Profile</a></h3>
 
     <br/>
-    
+
     {% endif %}
 	<!-- End Testing -->
     {% if user.is_authenticated %}
@@ -77,20 +77,20 @@
          Title: {{post.title}}
         </div>
         <div>
-            Body: {{post.post_text}}
+            Body: {{post.post_text|safe|escape}}
         </div>
-        
+
         {% if post.image %}
             <div>
                 <img src="/static/{{post.image}}" alt="{{post.image}}" height="100" width="100"/>
             </div>
-        {% endif %}    
-        
+        {% endif %}
+
         {% if post.author.user = user %}
         <div>
             Privacy: {{post.privacy}}
         </div>
-        
+
         <form id="delete_post" method="post" action="/delete/post/{{post.id}}">
             {% csrf_token %}
             <input type="submit" name="delete" value="Delete" />
@@ -99,23 +99,23 @@
             {% csrf_token %}
             <input type="submit" name="edit" value="Edit" />
         </form>
-        
+
         {% else %}
         <div>
             Author: {{post.author}}
         </div>
-        
+
         {% endif %}
-        
+
         <div>
         <form id="expand_post" method="get" action="/posts/{{post.id}}/">
             {% csrf_token %}
             <input type="submit" name="expand" value="Expand" />
         </form>
         <br/><br/>
-            
+
         </div>
-        
+
     {% endfor %}
 
     {% endif %}
