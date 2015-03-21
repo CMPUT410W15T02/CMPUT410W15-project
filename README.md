@@ -28,6 +28,7 @@ Frank Yau
 The following packages are required to run the server:
 - Django
 - Pillow
+- markdown2
 
 If virtualenv is already on the machine, then the virtual environment included already has the required packages.
 
