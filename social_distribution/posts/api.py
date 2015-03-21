@@ -43,32 +43,33 @@ def get_posts(posts):
     return response_posts
 
 # posts that are visible to the currently authenticated user
-@login_required
 def author_posts(request):
     if request.method == "GET":
         post_list = []
-
-        author_user = User.objects.get(username=request.user.username)
-        author_profile = Profile.objects.get(user=author_user)
-        all_posts = Post.objects.all()
-        for post in all_posts:
-            # Custom and public
-            if author_user in post.allowed.all()\
-             or post.get_privacy_display() == 'Public':
-                post_list.append(post)
-
-            # Private
-            if post.get_privacy_display() == 'Private'\
-            and post.author == author_profile:
-                post_list.append(post)
-
-            # Friends
-            if post.get_privacy_display() == "Friends":
-                if author_profile in post.author.friends.all():
+        if request.user.is_authenticated():
+            author_user = User.objects.get(username=request.user.username)
+            author_profile = Profile.objects.get(user=author_user)
+            all_posts = Post.objects.all()
+            for post in all_posts:
+                # Custom and public
+                if author_user in post.allowed.all()\
+                 or post.get_privacy_display() == 'Public':
                     post_list.append(post)
 
-        data = get_posts(post_list)
-        return JsonResponse(data, safe=False)
+                # Private
+                if post.get_privacy_display() == 'Private'\
+                and post.author == author_profile:
+                    post_list.append(post)
+
+                # Friends
+                if post.get_privacy_display() == "Friends":
+                    if author_profile in post.author.friends.all():
+                        post_list.append(post)
+
+            data = get_posts(post_list)
+            return JsonResponse(data, safe=False)
+        else:
+            return JsonResponse(post_list, safe=False)
     return HttpResponse(status=405)
 
 # all posts marked as public on the server
@@ -280,7 +281,7 @@ def friend_request(request):
         except:
             return HttpResponse(status=500)
 
-        return HttpResponse(status=200)
+        return JsonResponse('Success!', safe=False)
     return HttpResponse(status=405)
 
 
