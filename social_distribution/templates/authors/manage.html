@@ -1,16 +1,5 @@
-<!DOCTYPE html>
-{% load static %}
-<html>
-    <head>
-        <title>Social Distribution</title>
-        <link rel="stylesheet" href="{% static 'css/design.css' %}" />
-    </head>
-
-    <body>
-     <div class="banner">
-	<a href="/"><h1 class="white inline">Social Distribution</h1></a> 
-	<a class="logout" href="/logout"><p class="white inline">Logout</p></a>
-     </div>
+{% extends 'authors/base.html' %}
+{% block block_body %}
      <div class="margins center">
         <h1>Manage your Social Distribution Profile</h1>
 
@@ -30,5 +19,4 @@
             <input type="submit" name="submit" value="Edit" />
         </form>
 	</div>
-    </body>
-</html>
+{% endblock %}

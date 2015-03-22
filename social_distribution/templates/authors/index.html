@@ -1,15 +1,5 @@
-<!DOCTYPE html>
-{% load static %}
-<html>
-<head>
-    <title>Social Distribution</title>
-    <link rel="stylesheet" href="{% static 'css/design.css' %}" />
-</head>
-<body>
-    <div class="banner">
-	<a href="/"><h1 class="white inline">Social Distribution</h1></a>
-	<a class="logout" href="/logout"><p class="white inline">Logout</p></a>
-    </div>
+{% extends 'authors/base.html' %}
+{% block block_body %}
     <div class="margins center">
 
         	<!-- Testing -->
@@ -42,32 +32,6 @@
         {% endfor %}
     </select>
     </h3>
-
-    <br/>
-    <h3><a href="/add_friend/">View Friend Requests</a></h3>
-
-	<br/>
-	<h3><a href="/posts/">Create Post</a></h3>
-
-    <br/>
-    <h3><a href="/posts/all/">View Public Posts</a></h3>
-
-    <br/>
-    <h3><a href="/posts/friends/">View Posts By Friends</a></h3>
-
-    <br/>
-    <h3><a href="/posts/custom/">View Posts By Custom Filter</a></h3>
-
-    <br/>
-    {% if user.is_authenticated %}
-    <h3><a href="/author/{{user.username}}/posts/">View Your Posts</a></h3>
-
-    <br/>
-    <h3><a href="/manage/">Manage your Profile</a></h3>
-
-    <br/>
-
-    {% endif %}
 	<!-- End Testing -->
     {% if user.is_authenticated %}
 
@@ -90,35 +54,40 @@
         <div>
             Privacy: {{post.privacy}}
         </div>
-
-        <form id="delete_post" method="post" action="/delete/post/{{post.id}}">
+	<div class="button-container">
+	<form id="delete_post" method="post" action="/delete/post/{{post.id}}">
             {% csrf_token %}
-            <input type="submit" name="delete" value="Delete" />
+            <input class="btn btn-danger btn-sm" type="submit" value="Delete" />
         </form>
         <form id="edit_post" method="get" action="/edit/post/{{post.id}}">
             {% csrf_token %}
-            <input type="submit" name="edit" value="Edit" />
+           <input class="btn btn-warning btn-sm" type="submit" value="Edit" />
         </form>
+	<form id="expand_post" method="get" action="/posts/{{post.id}}/">
+            {% csrf_token %}
+	<input class="btn btn-success btn-sm" type="submit" value="Expand" />
+        </form>
+	<br/>
+	<br/>
+	</div>
+
 
         {% else %}
         <div>
             Author: {{post.author}}
         </div>
-
-        {% endif %}
-
-        <div>
+	<div>
         <form id="expand_post" method="get" action="/posts/{{post.id}}/">
             {% csrf_token %}
-            <input type="submit" name="expand" value="Expand" />
+	<input class="btn btn-success btn-sm" type="submit" value="Expand" />
         </form>
         <br/><br/>
 
         </div>
+        {% endif %}
 
     {% endfor %}
 
     {% endif %}
     </div>
-</body>
-<html>
+{% endblock %}

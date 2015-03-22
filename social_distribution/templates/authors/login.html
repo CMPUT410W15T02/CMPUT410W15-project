@@ -4,24 +4,21 @@
 <head>
     <title>Login</title>
     <link rel="stylesheet" href="{% static 'css/design.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}" />
 </head>
 <body>
-    <div class="banner">
-	    <a href="/login"><h1 class="white">Social Distribution</h1></a>
+    <div class="navbar navbar-default navbar-fixed-top navbar-header">
+	    <a href="/login" class="navbar-brand">Social Distribution</a>
     </div>
-    <div class="margins  center">
+    <div class="margins top center">
     <h1>Login to Social Distribution</h1>
     <form id="login_form" method="post" action="/login/">
         {% csrf_token %}
-        Username:<br/>
-        <input type="text" name="username" />
-        <br />
-        Password: 
+        <input type="text" name="username"  class="form-control" placeholder="Username" />
+        <br /> 
+        <input type="password" name="password" class="form-control" placeholder="Password" />
         <br/>
-        <input type="password" name="password" />
-        <br />
-        <br/>
-        <input type="submit" value="submit" />
+        <input class="btn btn-primary btn-sm" type="submit" value="Login" />
     </form>
 
     <a href="/register/">Or register here!</a>

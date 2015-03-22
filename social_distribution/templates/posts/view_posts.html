@@ -1,17 +1,5 @@
-<!DOCTYPE html>
-{% load static %}
-
-<html>
-	<head>
-		<title>Social Distribution</title>
-		<link rel="stylesheet" href="{% static 'css/design.css' %}" />
-	</head>
-
-	<body>
-	<div class="banner">
-	    <a href="/"><h1 class="white inline">Social Distribution</h1></a>
-	    <a class="logout" href="/logout"><p class="white inline">Logout</p></a>
-        </div>
+{% extends 'authors/base.html' %}
+{% block block_body %}
         <div class="margins center">
 
             {% if user.is_authenticated %}
@@ -40,33 +28,37 @@
                     Privacy: {{post.privacy}}
                 </div>
 
-                <form id="delete_post" method="post" action="/delete/post/{{post.id}}">
-                    {% csrf_token %}
-                    <input type="submit" name="delete" value="Delete" />
-                </form>
-    	        <form id="edit_post" method="get" action="/edit/post/{{post.id}}">
-                    {% csrf_token %}
-                    <input type="submit" name="edit" value="Edit" />
-                </form>
+                <div class="button-container">
+		<form id="delete_post" method="post" action="/delete/post/{{post.id}}">
+		  {% csrf_token %}
+		<input class="btn btn-danger btn-sm" type="submit" value="Delete" />
+		</form>
+		<form id="edit_post" method="get" action="/edit/post/{{post.id}}">
+		 {% csrf_token %}
+		<input class="btn btn-warning btn-sm" type="submit" value="Edit" />
+		</form>
+		<form id="expand_post" method="get" action="/posts/{{post.id}}/">
+		    {% csrf_token %}
+		<input class="btn btn-success btn-sm" type="submit" value="Expand" />
+		</form>
+		</div>
 
-                {% else %}
-                <div>
-                    Author: {{post.author}}
-                </div>
 
-                {% endif %}
+		{% else %}
+		<div>
+		    Author: {{post.author}}
+		</div>
+		<div>
+		    <form id="expand_post" method="get" action="/posts/{{post.id}}/">
+		    {% csrf_token %}
+		    <input class="btn btn-success btn-sm" type="submit" value="Expand" />
+		</form>
+		<br/><br/>
 
-                <div>
-                <form id="expand_post" method="get" action="/posts/{{post.id}}/">
-                    {% csrf_token %}
-                    <input type="submit" name="expand" value="Expand" />
-                </form>
-                <br/><br/>
-
-                </div>
+        </div>
+        {% endif %}
 
         	{% endfor %}
 	    </div>
 
-	</body>
-</html>
+{% endblock %}

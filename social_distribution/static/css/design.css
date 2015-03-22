@@ -17,39 +17,18 @@
     top:1.5em;
 }
 
-
-input[type="submit"] {
-  -webkit-border-radius: 21;
-  -moz-border-radius: 21;
-  border-radius: 21px;
-  font-family: Arial;
-  color: #ffffff;
-  font-size: 16px;
-  background: #008080;
-  padding: 3px 6px 4px 7px;
-  text-decoration: none;
-}
-
-input[type="submit"]:hover {
-  background: #3cb0fd;
-  background-image: -webkit-linear-gradient(top, #3cb0fd, #3498db);
-  background-image: -moz-linear-gradient(top, #3cb0fd, #3498db);
-  background-image: -ms-linear-gradient(top, #3cb0fd, #3498db);
-  background-image: -o-linear-gradient(top, #3cb0fd, #3498db);
-  background-image: linear-gradient(to bottom, #3cb0fd, #3498db);
-  text-decoration: none;
-}
-
 .margins{
     margin-left:10em;
     margin-right:10em;
-    margin-top:2.65em;
     }
+.top{
+    margin-top:2.5em;
+}
 .center{
     padding:1em;
 }
 .white{
-    color:white;
+    color:black;
 }
 .white:hover{
     color:blue;
@@ -59,9 +38,6 @@ input[type="submit"]:hover {
     padding: 0;
     }
 
-html{
-   background-color:#F0F0F0 ;
-}
 a{
   color:blue;
 }
@@ -72,7 +48,7 @@ a:link {
     text-decoration: none;
 }
 
-ul{
+sidebar{
 	position: absolute;
 	display: inline-block;
 	width: 10em;
@@ -80,7 +56,16 @@ ul{
 	background: #000000;
 	height: 700px; 
 	}
-ul li{
+sidebaritem{
 	text-align:left;
 	padding:0.5em;
    }
+.button-container form,
+.button-container form div {
+    display: inline;
+}
+
+.button-container button {
+    display: inline;
+    vertical-align: middle;
+}

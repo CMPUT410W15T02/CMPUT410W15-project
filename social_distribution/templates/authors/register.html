@@ -1,16 +1,17 @@
 <!DOCTYPE html>
 {% load static %}
 <html>
-    <head>
-        <title>Social Distribution</title>
-        <link rel="stylesheet" href="{% static 'css/design.css' %}" />
+   <head>
+     <title>Login</title>
+     <link rel="stylesheet" href="{% static 'css/design.css' %}" />
+     <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}" />
     </head>
 
     <body>
-        <div class="banner">
-	    <a href="/login"><h1 class="white">Social Distribution</h1></a>
-	</div>
-        <div class="margins  center">
+        <div class="navbar navbar-default navbar-fixed-top navbar-header">
+	    <a href="/login" class="navbar-brand">Social Distribution</a>
+        </div>
+        <div class="margins top center">
         <h1>Register with Social Distribution</h1>
 
         {% if registered %}
@@ -31,7 +32,7 @@
             <!--{{ profile_form.as_p }}-->
 
             <!-- Provide a button to click to submit the form. -->
-            <input type="submit" name="submit" value="Register" />
+            <input class="btn btn-primary btn-sm" type="submit" value="Register" />
         </form>
         <a href="/login/">Or login here!</a>
         {% endif %}
