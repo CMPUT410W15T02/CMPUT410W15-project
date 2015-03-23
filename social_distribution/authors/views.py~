@@ -124,7 +124,7 @@ def author(request, username):
         isFriends = True
 
 
-    return render(request, 'authors/author.html',{'profile':profile, 'user':user,'isFriends':isFriends,'current':request.user})
+    return render(request, 'authors/author.html',{'profile':profile, 'user':user,'isFriends':isFriends,'Current':request.user})
 
 def author_manage(request):
     context = RequestContext(request)
