@@ -32,7 +32,7 @@ class Profile(models.Model):
         return str(self.user)
 
 class Follow(models.Model):
-    STATUS = (('REJECTED', 'Rejected'),
+    STATUS = (('FOLLOWING', 'Following'),
             ('PENDING', 'Pending'),
     )
 

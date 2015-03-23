@@ -14,5 +14,7 @@ urlpatterns = patterns('',
     url(r'^remove_friend/$', views.remove_friend, name='remove_friend'),
     url(r'^manage/(?P<path>.*)$', 'django.views.static.serve', {
     'document_root': settings.MEDIA_ROOT}),
+    url(r'^follow_author/$', views.follow_author, name='follow_author'),
+    url(r'^unfollow_author/$', views.unfollow_author, name='unfollow_author'),
     url(r'^$', views.index, name='index')
 )

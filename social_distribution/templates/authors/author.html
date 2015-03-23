@@ -1,36 +1,53 @@
 {% extends 'authors/base.html' %}
 {% block block_body %}
     <div class="margins">
-	<h1> {{user.username}}'s Profile</h1>
-	<div>
-        <p>FIRST NAME: {{user.first_name}}</p>
-        <p>LAST NAME: {{user.last_name}}</p>
-	<p>USER ID: {{profile.user_id}} </p>
-	<p>PROFILE ID: {{profile.id}} </p>
-	<p>BODY: {{profile.body}} </p>
-	<p>DOB: {{profile.birthdate}} </p>
-	<p>UUID: {{profile.uuid}} </p>
-	<p>GENDER: {{profile.gender}}</p>
- 	</div>
-	
- 	{% if isFriends %}
- 		<div>
-		    <form method="POST" action="/remove_friend/">
-			{% csrf_token %}
-			 <input class="btn btn-primary btn-sm" type="hidden" value={{profile.id}} name="remove_profile_id" />
-	        <input class="btn btn-info btn-sm" type="submit" name="submit" value="Remove Friend" />
-	    	</form>
-	    </div>
-	{% else %}
-		{% if profile.user.username != current.username %}
+		<h1> {{user.username}}'s Profile</h1>
+
 		<div>
-		    <form method="POST" action="/friend_request/">
-		    {% csrf_token %}
-		    <input class="btn btn-primary btn-sm" type="hidden" value={{profile.id}} name="to_profile" />
-	            <input  class="btn btn-info btn-sm" type="submit" name="submit" value="Send Friend Request" />
-	    	    </form>
-	    	</div>
-		{% endif %}
-	{% endif %}
+	        <p>FIRST NAME: {{user.first_name}}</p>
+	        <p>LAST NAME: {{user.last_name}}</p>
+			<p>USER ID: {{profile.user_id}} </p>
+			<p>PROFILE ID: {{profile.id}} </p>
+			<p>BODY: {{profile.body}} </p>
+			<p>DOB: {{profile.birthdate}} </p>
+			<p>UUID: {{profile.uuid}} </p>
+			<p>GENDER: {{profile.gender}}</p>
+ 		</div>
+
+		<div class="button-container">
+		    {% if sentFR %}
+		        <input class="btn btn-info btn-sm" type="submit" name="submit" value="Pending Friend Request"/>
+		    {% else %}
+		        {% if isFriends %}
+					<form method="POST" action="/remove_friend/">
+					{% csrf_token %}
+					<input class="btn btn-primary btn-sm" type="hidden" value={{profile.id}} name="remove_profile_id" />
+					<input class="btn btn-info btn-sm" type="submit" name="submit" value="Remove Friend" />
+					</form>
+		        {% else %}
+					{% if profile.user.username != current.username %}
+				    	<form method="POST" action="/friend_request/">
+				    	{% csrf_token %}
+				    	<input class="btn btn-primary btn-sm" type="hidden" value={{profile.id}} name="to_profile" />
+			            <input  class="btn btn-info btn-sm" type="submit" name="submit" value="Send Friend Request" />
+			    	    </form>
+				    {% endif %}
+
+		            {% if isFollowing %}
+		                <form method="POST" action="/unfollow_author/">
+		                {% csrf_token %}
+		                <input class="btn btn-primary btn-sm" type="hidden" value={{profile.id}} name="unfollow_profile_id">
+		                <input class="btn btn-info btn-sm" type="submit" name="submit" value="Unfollow Author" />
+		                </form>
+		            {% else %}
+		                <form method="POST" action="/follow_author/">
+		                {% csrf_token %}
+		                <input class="btn btn-primary btn-sm" type="hidden" value={{profile.id}} name="follow_profile_id">
+		                <input class="btn btn-info btn-sm" type="submit" name="submit" value="Follow Author" />
+		                </form>
+		            {% endif %}
+		        {% endif %}
+		    {% endif %}
+	  	</div>
     </div>
 {% endblock %}

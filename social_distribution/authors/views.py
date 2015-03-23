@@ -108,23 +108,29 @@ def user_logout(request):
     return HttpResponseRedirect('/login')
 
 def author(request, username):
-    context = RequestContext(request)
-
-    isFriends = False
-
     current_profile = Profile.objects.get(user_id=request.user.id)
 
     user = User.objects.get(username=username)
     profile = Profile.objects.get(user_id = user.id)
 
-    #Check if friends
+    #Check if friends and following
+    isFriends = False
+    isFollowing = False
+    sentFR = False
+
     friend_qs = current_profile.friends.filter(id=profile.id)
+    follow_qs = Follow.objects.filter( Q(from_profile_id=current_profile) & Q(to_profile_id=profile) ).first()
 
     if(friend_qs):
         isFriends = True
 
+    if(follow_qs):
+        isFollowing = True
+        if(follow_qs.status ==  "PENDING"):
+            sentFR = True
 
-    return render(request, 'authors/author.html',{'profile':profile, 'user':user,'isFriends':isFriends,'current':request.user})
+    return render(request, 'authors/author.html',
+        {'profile':profile, 'user':user,'isFriends':isFriends, 'isFollowing':isFollowing, "sentFR":sentFR, 'current':request.user})
 
 def author_manage(request):
     context = RequestContext(request)
@@ -174,9 +180,15 @@ def friend_request(request):
         current_profile = Profile.objects.get(user_id=request.user.id)
         to_profile = Profile.objects.get(id=to_profile_id)
 
-        newFollow = Follow(from_profile_id=current_profile, to_profile_id=to_profile, status='PENDING')
-        newFollow.save()
-    return render(request, 'authors/index.html')
+        checkFollow = Follow.objects.filter( Q(from_profile_id=current_profile) & Q(to_profile_id=to_profile) ).first()
+        if checkFollow:
+            checkFollow.status ="PENDING"
+            checkFollow.save()
+        else:
+            newFollow = Follow(from_profile_id=current_profile, to_profile_id=to_profile, status='PENDING')
+            newFollow.save()
+
+    return redirect('/')
 
 #Accept or Reject Friend Reject
 def add_friend(request):
@@ -196,7 +208,7 @@ def add_friend(request):
 
         elif 'reject' in request.POST:
             #change status form PENDING to REJECT
-            qs = Follow.objects.filter(from_profile_id=from_profile_id).filter(to_profile_id=current_profile.id).update(status='REJECTED')
+            qs = Follow.objects.filter(from_profile_id=from_profile_id).filter(to_profile_id=current_profile.id).update(status='FOLLOWING')
         return redirect('index')
     else:
         qs = Follow.objects.filter(to_profile_id=current_profile.id).filter(status='PENDING')
@@ -214,4 +226,30 @@ def remove_friend(request):
 
         current_profile.friends.remove(remove_profile)
 
+    return redirect('/')
+
+#Follow an author
+def follow_author(request):
+    current_profile = Profile.objects.get(user_id=request.user.id)
+
+    if request.method == 'POST':
+        follow_profile_id = request.POST.get("follow_profile_id"," ")
+        follow_profile = Profile.objects.get(id=follow_profile_id)
+
+        newFollow = Follow(from_profile_id=current_profile, to_profile_id=follow_profile, status='FOLLOWING')
+        newFollow.save()
+
+    return redirect('/')
+
+#unfollow an author
+def unfollow_author(request):
+    current_profile = Profile.objects.get(user_id=request.user.id)
+
+    if request.method == 'POST':
+        unfollow_profile_id = request.POST.get("unfollow_profile_id"," ")
+        unfollow_profile = Profile.objects.get(id=unfollow_profile_id)
+
+        unfollow = Follow.objects.filter(from_profile_id=current_profile).filter(to_profile_id=unfollow_profile)
+        unfollow.delete()
+        
     return redirect('/')
