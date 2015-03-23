@@ -1,6 +1,7 @@
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
 from authors import views
+from django.conf import settings
 
 urlpatterns = patterns('',
     url(r'^register/$', views.register, name='register'),
@@ -11,5 +12,7 @@ urlpatterns = patterns('',
     url(r'^friend_request/$', views.friend_request, name='friend_request'),
     url(r'^add_friend/$', views.add_friend, name='add_friend'),
     url(r'^remove_friend/$', views.remove_friend, name='remove_friend'),
+    url(r'^manage/(?P<path>.*)$', 'django.views.static.serve', {
+    'document_root': settings.MEDIA_ROOT}),
     url(r'^$', views.index, name='index')
 )

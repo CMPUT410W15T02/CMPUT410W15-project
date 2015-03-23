@@ -139,7 +139,15 @@ def author_manage(request):
             profile.body = profile_form.cleaned_data['body']
             profile.birthdate = profile_form.cleaned_data['birthdate']
             profile.gender = profile_form.cleaned_data['gender']
-            profile.image = profile_form.cleaned_data['image']
+            newclear = request.POST.get('image-clear')
+            print(newclear)
+            #profile.image = profile_form.cleaned_data['image']
+            try:
+                profile.image = request.FILES['image']
+            except:
+                if newclear == "on":
+                    profile.image=""
+
             profile.github = profile_form.cleaned_data['github']
             profile.workspace = profile_form.cleaned_data['workspace']
             profile.school = profile_form.cleaned_data['school']
