@@ -1,22 +1,3 @@
-.banner{
-    background: linear-gradient(grey, black);
-    width: 100%;
-    height:2.5em;
-    position: absolute; 
-    top: 0; 
-    left: 0; 
-    padding-left:3em;
-    border-bottom: 0.15em solid red;
-}
-.inline{
-    display:inline;
-}
-.logout{
-    position:absolute;
-    right:4em;
-    top:1.5em;
-}
-
 .margins{
     margin-left:10em;
     margin-right:10em;
@@ -27,39 +8,6 @@
 .center{
     padding:1em;
 }
-.white{
-    color:black;
-}
-.white:hover{
-    color:blue;
-}
-* {
-    margin: 0; 
-    padding: 0;
-    }
-
-a{
-  color:blue;
-}
-a:hover{
-    color:black;
-	}
-a:link {
-    text-decoration: none;
-}
-
-sidebar{
-	position: absolute;
-	display: inline-block;
-	width: 10em;
-	vertical-align: top;
-	background: #000000;
-	height: 700px; 
-	}
-sidebaritem{
-	text-align:left;
-	padding:0.5em;
-   }
 .button-container form,
 .button-container form div {
     display: inline;

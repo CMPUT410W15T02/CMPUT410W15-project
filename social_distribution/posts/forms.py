@@ -79,6 +79,7 @@ class EditForm(forms.ModelForm):
         self.fields['content_type'].widget.attrs['class'] = 'form-control'
         self.fields['post_text'].widget.attrs['class'] = 'form-control'
         self.fields['privacy'].widget.attrs['class'] = 'form-control'
+       
 
 class CommentForm(forms.ModelForm):
     class Meta:

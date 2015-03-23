@@ -1,6 +1,7 @@
 {% extends 'authors/base.html' %}
 {% block block_body %}
-<div class="margins center">
+<div class="margins">
+	{{ post_form.errors }}
 		{% if edit %}
 		<h2>Edit Post</h2>
 		{% else %}
@@ -32,25 +33,19 @@
 					</br>
 				</div>
 
-				<div class="rows">
-				<div class="col-lg-2">
+				<div>
 					Privacy:
 					</br>
 					{{post_form.privacy}}
 					</br>
 				</div>
-				<div class="col-lg-2">
+				<div>
 					Content type:
 					</br>
 					{{post_form.content_type}}
 					</br>
 				
 				</div>
-				</div>
-				<br/>
-				<br/>
-				<br/>
-				<br/>
 
 				<div>
 					Post:
@@ -63,7 +58,8 @@
                 <div>
                     Upload Image: </br>
                     {{post_form.image}}
-			    </div>
+		    <br/>
+		</div>
 
 				<div id="allowed">
 					Choose:
