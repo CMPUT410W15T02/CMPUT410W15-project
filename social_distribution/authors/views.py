@@ -197,14 +197,21 @@ def add_friend(request):
 
     if request.method == 'POST':
         from_profile_id = request.POST.get('from_profile', '')
+        from_profile = Profile.objects.get(id=from_profile_id)
 
         if 'accept' in request.POST:
-            current_profile.friends.add(Profile.objects.get(id=from_profile_id))
+            current_profile.friends.add(from_profile)
             current_profile.save()
 
             #Remove from follow
-            qs = Follow.objects.filter(from_profile_id=from_profile_id).filter(to_profile_id=current_profile.id)
+            qs = Follow.objects.filter(from_profile_id=from_profile.id).filter(to_profile_id=current_profile.id)
             qs.delete()
+
+            #Add new friend to all friend's post
+            posts_qs = Post.objects.filter( Q(privacy=4) & Q(author=from_profile.id))
+
+            for post in posts_qs:
+                post.allowed.add(User.objects.get(id=current_profile.user_id))
 
         elif 'reject' in request.POST:
             #change status form PENDING to REJECT
