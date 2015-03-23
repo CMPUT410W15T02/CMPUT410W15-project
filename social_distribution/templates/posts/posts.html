@@ -1,6 +1,6 @@
 {% extends 'authors/base.html' %}
 {% block block_body %}
-	<div class="margins center">
+<div class="margins center">
 		{% if edit %}
 		<h2>Edit Post</h2>
 		{% else %}
@@ -18,56 +18,52 @@
 				enctype="multipart/form-data">
 			{% endif %}
 				{% csrf_token %}
-
+				{{ post_form.non_field_errors }}
 				<div>
 					Title:
 					</br>
-					 <input type="text" name="title"  class="form-control" placeholder="Title" />
+					{{post_form.title}}
 					</br>
 				</div>
 				<div>
 					Description:
 					</br>
-					 <input type="text" name="description"  class="form-control" placeholder="Description" />
+					{{post_form.description}}
 					</br>
 				</div>
 
-
-				 <div class="row">
-				 <div class="col-lg-2">
+				<div class="rows">
+				<div class="col-lg-2">
+					Privacy:
+					</br>
+					{{post_form.privacy}}
+					</br>
+				</div>
+				<div class="col-lg-2">
 					Content type:
 					</br>
-					<select class="form-control" id="select" name="content_type">
-						<option value="text/plain">Plain text</option>
-						<option value="text/x-markdown">Markdown</option>
-						<option value="text/html">HTML</option>
-					</select>
+					{{post_form.content_type}}
+					</br>
+				
 				</div>
 				</div>
+				<br/>
+				<br/>
+				<br/>
+				<br/>
+
 				<div>
 					Post:
 					</br>
-					 <textarea name="post_text"  rows="5" class="form-control" placeholder="Post Text" /></textarea>
+					{{post_form.post_text}}
 					</br>
 				</div>
 
-				<div class="row">
-				 <div class="col-lg-2">
-					Privacy:
-					</br>
-					<select class="form-control" id="select" name="privacy">
-						<option value="1">Public</option>
-						<option value="2">Private</option>
-						<option value="4">Friends</option>
-					</select>
-					</br>
-				</div>
-				</div>
 
                 <div>
                     Upload Image: </br>
                     {{post_form.image}}
-		</div>
+			    </div>
 
 				<div id="allowed">
 					Choose:
@@ -78,9 +74,9 @@
 				</div>
 
 				{% if edit %}
-				<input class="btn btn-primary btn-sm" type="submit" value="Edit" />
+				<input class="btn btn-success btn-sm" type="submit" name="submit" value="Edit" />
 				{% else %}
-				<input class="btn btn-primary btn-sm" type="submit" value="Post" />
+				<input class="btn btn-success btn-sm" type="submit" name="submit" value="Post" />
 				{% endif %}
 			</form>
 

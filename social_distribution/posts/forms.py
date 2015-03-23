@@ -41,7 +41,15 @@ class PostForm(forms.ModelForm):
         super(PostForm, self).__init__(*args, **kwargs)
         #Excludes the username of the current user and admin from the list of possible users
         #that can be choosen for a post to be custom to
-        self.fields["allowed"].queryset = User.objects.exclude(username="admin").exclude(username=user)
+        #self.fields["allowed"].queryset = User.objects.exclude(username="admin").exclude(username=user)
+        
+        
+        #make the forms better 
+        self.fields['title'].widget.attrs['class'] = 'form-control'
+        self.fields['description'].widget.attrs['class'] = 'form-control'
+        self.fields['content_type'].widget.attrs['class'] = 'form-control'
+        self.fields['post_text'].widget.attrs['class'] = 'form-control'
+        self.fields['privacy'].widget.attrs['class'] = 'form-control'        
 
 class EditForm(forms.ModelForm):
     class Meta:
@@ -55,17 +63,28 @@ class EditForm(forms.ModelForm):
         self.user = user
         super(EditForm, self).__init__(*args, **kwargs)
         #Initializes all the fields with the existing posts information
-        self.fields["allowed"].queryset = User.objects.exclude(username="admin").exclude(username=user)
+        #self.fields["allowed"].queryset = User.objects.exclude(username="admin").exclude(username=user)
         self.fields["title"].initial=post.title
         self.fields["description"].initial=post.description
         self.fields["content_type"].initial=post.content_type
         self.fields["post_text"].initial=post.post_text
         self.fields["privacy"].initial=post.privacy
         self.fields["image"].initial=post.image
-        if post.privacy=="3":
-            self.fields["allowed"].initial=[t.pk for t in post.allowed.all()]
+        #if post.privacy=="3":
+         #   self.fields["allowed"].initial=[t.pk for t in post.allowed.all()]
+        
+        #make the forms better  
+        self.fields['title'].widget.attrs['class'] = 'form-control'
+        self.fields['description'].widget.attrs['class'] = 'form-control'
+        self.fields['content_type'].widget.attrs['class'] = 'form-control'
+        self.fields['post_text'].widget.attrs['class'] = 'form-control'
+        self.fields['privacy'].widget.attrs['class'] = 'form-control'
 
 class CommentForm(forms.ModelForm):
     class Meta:
         model= Comment
         fields = ("body",)
+        
+    def __init__(self, *args, **kwargs):
+        super(CommentForm, self).__init__(*args, **kwargs) 
+        self.fields['body'].widget.attrs['class'] = 'form-control'    
