@@ -9,10 +9,12 @@ from authors.models import Profile
 from django.contrib.auth.models import User
 from django.db.models import Q
 from django.utils import timezone
+from django.contrib.auth.decorators import login_required
 import markdown2
 import time
 
 # create new posts
+@login_required
 def posts(request):
     context = RequestContext(request)
     # retrieve form data
@@ -77,9 +79,10 @@ def posts(request):
             print post_form.errors
     # display the post form
     else:
+        my_profile = Profile.objects.get(user=request.user)
         post_form = PostForm(request.user)
 
-    return render(request, 'posts/posts.html', {'post_form':post_form})
+    return render(request, 'posts/posts.html', {'post_form':post_form, 'my_profile':my_profile})
 
 # view all posts of an author specified by author_id
 def posts_by_author(request, author_id):
@@ -92,8 +95,9 @@ def posts_by_author(request, author_id):
             context = RequestContext(request)
 
             # get profile from author id
-            userObject = User.objects.get(username=author_id)
-            profile = Profile.objects.get(user=userObject)
+            #userObject = User.objects.get(username=author_id)
+            profile = Profile.objects.get(uuid=author_id)
+            user = profile.user
 
             # if the requested user is the current user show private posts too
             if(profile == request.user.profile):
@@ -106,7 +110,7 @@ def posts_by_author(request, author_id):
             for post in post_query:
                 if post.content_type == 'text/x-markdown':
                     post.post_text = markdown2.markdown(post.post_text)
-                    
+
                 # public posts by the author
                 if (post.privacy == '1'):
                     if post.author == profile:
@@ -123,10 +127,10 @@ def posts_by_author(request, author_id):
                 elif (post.author == profile):
                     list_of_posts.append(post)
 
-        title = "View Posts by " + str(author_id)
+        title = "View Posts by " + user.username
 
     except:
-        title = "There are no posts by " + str(author_id)
+        title = "There are no posts by " + user.username
 
     return render(request, 'posts/view_posts.html', {'list_of_posts':list_of_posts, 'title':title})
 

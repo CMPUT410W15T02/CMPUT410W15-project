@@ -12,7 +12,13 @@ import markdown2
 
 # Create your views here.
 def index(request):
-    list_of_users = User.objects.exclude( Q(username=request.user) | Q(username='admin'))
+    list_of_users = User.objects.filter( Q(username=request.user) | Q(username='admin'))
+    list_of_profiles = Profile.objects.exclude(id__in=list_of_users)
+    if request.user.is_authenticated():
+        my_profile = Profile.objects.get(user=request.user)
+    else:
+        my_profile = ''
+
     list_of_posts = []
     # for post in post_query:
     #     if post.author == profile:
@@ -44,8 +50,7 @@ def index(request):
             elif (post.author == profile):
                 list_of_posts.append(post)
 
-
-    return render(request, 'authors/index.html', {'list_of_users':list_of_users, 'list_of_posts':list_of_posts})
+    return render(request, 'authors/index.html', {'list_of_profiles':list_of_profiles, 'list_of_posts':list_of_posts, 'my_profile':my_profile})
 
 
 def register(request):
@@ -107,31 +112,36 @@ def user_logout(request):
     logout(request)
     return HttpResponseRedirect('/login')
 
-def author(request, username):
-    current_profile = Profile.objects.get(user_id=request.user.id)
+def author(request, userid):
+    if request.user.is_authenticated():
+        current_profile = Profile.objects.get(user_id=request.user.id)
+    else:
+        current_profile = ''
 
-    user = User.objects.get(username=username)
-    profile = Profile.objects.get(user_id = user.id)
+    profile = Profile.objects.get(uuid = userid)
+    user = profile.user
 
     #Check if friends and following
     isFriends = False
     isFollowing = False
     sentFR = False
 
-    friend_qs = current_profile.friends.filter(id=profile.id)
-    follow_qs = Follow.objects.filter( Q(from_profile_id=current_profile) & Q(to_profile_id=profile) ).first()
+    if request.user.is_authenticated():
+        friend_qs = current_profile.friends.filter(id=profile.id)
+        follow_qs = Follow.objects.filter( Q(from_profile_id=current_profile) & Q(to_profile_id=profile) ).first()
 
-    if(friend_qs):
-        isFriends = True
+        if(friend_qs):
+            isFriends = True
 
-    if(follow_qs):
-        isFollowing = True
-        if(follow_qs.status ==  "PENDING"):
-            sentFR = True
+        if(follow_qs):
+            isFollowing = True
+            if(follow_qs.status ==  "PENDING"):
+                sentFR = True
 
     return render(request, 'authors/author.html',
-        {'profile':profile, 'user':user,'isFriends':isFriends, 'isFollowing':isFollowing, "sentFR":sentFR, 'current':request.user})
+        {'profile':profile, 'user_object':user,'isFriends':isFriends, 'isFollowing':isFollowing, "sentFR":sentFR, 'current':request.user, 'my_profile':current_profile})
 
+@login_required
 def author_manage(request):
     context = RequestContext(request)
     profile = Profile.objects.get(user_id=request.user.id)
@@ -191,6 +201,7 @@ def friend_request(request):
     return redirect('/')
 
 #Accept or Reject Friend Reject
+@login_required
 def add_friend(request):
     current_profile = Profile.objects.get(user_id=request.user.id)
     friends = None
@@ -221,7 +232,7 @@ def add_friend(request):
         qs = Follow.objects.filter(to_profile_id=current_profile.id).filter(status='PENDING')
         if qs:
             friends = qs
-        return render(request, 'authors/add_friend.html',{'friends':friends})
+        return render(request, 'authors/add_friend.html',{'friends':friends, 'my_profile':current_profile})
 
 #Remove friends
 def remove_friend(request):
@@ -258,5 +269,5 @@ def unfollow_author(request):
 
         unfollow = Follow.objects.filter(from_profile_id=current_profile).filter(to_profile_id=unfollow_profile)
         unfollow.delete()
-        
+
     return redirect('/')

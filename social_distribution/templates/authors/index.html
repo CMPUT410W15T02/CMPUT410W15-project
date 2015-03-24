@@ -12,10 +12,10 @@
     <br/>
     <h3>View Author Profile:
     <select id="selectbox" onchange="javascript:location.href = this.value;">
-        <option>Select User</option>
-        {% for users in list_of_users %}
-            <option value="author/{{ users.username }}">
-                {{users.username}}
+        <option disabled>Select User</option>
+        {% for profile in list_of_profiles %}
+            <option value="author/{{ profile.uuid }}">
+                {{profile.user.username}}
             </option>
         {% endfor %}
     </select>
@@ -24,10 +24,10 @@
     <br/>
     <h3>View Posts by Author:
     <select id="selectbox" onchange="javascript:location.href = this.value;">
-        <option>Select User</option>
-        {% for users in list_of_users %}
-            <option value="author/{{ users.username }}/posts">
-                {{users.username}}
+        <option disabled>Select User</option>
+        {% for profile in list_of_profiles %}
+            <option value="author/{{ profile.uuid }}/posts">
+                {{profile.user.username}}
             </option>
         {% endfor %}
     </select>
