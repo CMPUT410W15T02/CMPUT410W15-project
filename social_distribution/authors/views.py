@@ -8,21 +8,69 @@ from authors.models import Profile, Follow
 from posts.models import Post
 from django.contrib.auth.models import User
 from django.db.models import Q
+from django.utils import timezone
+import urllib, urllib2
+import json
 import markdown2
 
 # Create your views here.
 def index(request):
     list_of_users = User.objects.filter( Q(username=request.user) | Q(username='admin'))
     list_of_profiles = Profile.objects.exclude(id__in=list_of_users)
-    if request.user.is_authenticated():
-        my_profile = Profile.objects.get(user=request.user)
-    else:
-        my_profile = ''
-
     list_of_posts = []
+    list_of_github = []
     # for post in post_query:
     #     if post.author == profile:
     #         list_of_posts.append(post)
+
+    if request.user.is_authenticated():
+        my_profile = Profile.objects.get(user=request.user)
+
+        if my_profile.github != '':
+            github_url = 'https://api.github.com/users/' + my_profile.github + '/received_events'
+
+            response = urllib2.urlopen(github_url).read()
+            data = json.loads(response)
+            for event in data:
+                if event['type'] == 'PushEvent':
+                    github_post = Post(title='Push: ' + event['actor']['login'],
+                    description=event['repo']['name'], privacy='2',
+                    post_text=event['payload']['commits'][0]['message'], author=my_profile,
+                    date=event['created_at'])
+                    list_of_github.append(github_post)
+
+                elif event['type'] == 'IssuesEvent':
+                    github_post = Post(title='Issue: ' + event['actor']['login'],
+                    description=event['payload']['action'], privacy='2',
+                    post_text=event['payload']['issue']['title'], author=my_profile,
+                    date=event['created_at'])
+                    list_of_github.append(github_post)
+
+                elif event['type'] == 'GollumEvent':
+                    github_post = Post(title='Wiki: ' + event['actor']['login'],
+                    description=event['repo']['name'], privacy='2',
+                    post_text=event['payload']['pages'][0]['title'], author=my_profile,
+                    date=event['created_at'])
+                    list_of_github.append(github_post)
+
+                elif event['type'] == 'CreateEvent':
+                    github_post = Post(title='Create: ' + event['actor']['login'],
+                    description=event['repo']['name'], privacy='2',
+                    post_text=event['payload']['ref'], author=my_profile,
+                    date=event['created_at'])
+                    list_of_github.append(github_post)
+
+                elif event['type'] == 'DeleteEvent':
+                    github_post = Post(title='Delete: ' + event['actor']['login'],
+                    description=event['repo']['name'], privacy='2',
+                    post_text=event['payload']['ref'], author=my_profile,
+                    date=event['created_at'])
+                    list_of_github.append(github_post)
+
+                else:
+                    print(event)
+    else:
+        my_profile = ''
 
     if request.user.is_authenticated():
         context = RequestContext(request)
@@ -50,7 +98,7 @@ def index(request):
             elif (post.author == profile):
                 list_of_posts.append(post)
 
-    return render(request, 'authors/index.html', {'list_of_profiles':list_of_profiles, 'list_of_posts':list_of_posts, 'my_profile':my_profile})
+    return render(request, 'authors/index.html', {'list_of_profiles':list_of_profiles, 'list_of_posts':list_of_posts, 'list_of_github':list_of_github, 'my_profile':my_profile})
 
 
 def register(request):

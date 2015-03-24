@@ -36,6 +36,12 @@
     {% if user.is_authenticated %}
 
     <br/>
+    <ul class="nav nav-tabs">
+        <li class="Posts"><a href="#posts" data-toggle="tab" aria-expanded="true">Posts</a></li>
+        <li class=""><a href="#github" data-toggle="tab" aria-expanded="false">Github</a></li>
+    </ul>
+    <div id ="myTabContent" class="tab-content">
+        <div class="tab-pane fade active in" id="posts">
     {% for post in list_of_posts %}
         <div>
          Title: {{post.title}}
@@ -87,7 +93,33 @@
         {% endif %}
 
     {% endfor %}
+        </div>
+        <div class="tab-pane fade" id="github">
+        {% if my_profile.github and list_of_github %}
+        {% for event in list_of_github %}
+            <div>
+                {{ event.title }}
+            </div>
+            <div>
+                {{ event.description }}
+            </div>
+            <div>
+                {{ event.post_text }}
+            <div>
+                Created at: {{ event.date }}
+            </div>
+            <br/>
+        {% endfor %}
+        {% elif not my_profile.github %}
+            <div><h2>You haven't linked a <a href="http://www.github.com">Github</a>
+                account yet! Set one <a href="/manage">here</a>!</h2></div>
+        {% elif not list_of_github %}
+            <div><h2>There is no activity to display for this Github account!<h2></div>
 
+
+        {% endif %}
+        </div>
+    </div>
     {% endif %}
     </div>
 {% endblock %}
