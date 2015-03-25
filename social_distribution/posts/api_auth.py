@@ -23,7 +23,7 @@ class APIAuthMiddleware(object):
 		if not request.path.startswith('/api/'):
 			return
 
-		if 'HTTP_AUTHORIZATION' not in request.META:
+		if 'HTTP_AUTHORIZATION' in request.META:
 			auth = request.META['HTTP_AUTHORIZATION'].split()
 		else:
 			return response
