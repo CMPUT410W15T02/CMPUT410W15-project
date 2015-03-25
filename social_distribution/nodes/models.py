@@ -91,5 +91,11 @@ class Host(models.Model):
         data = json.loads(json_string)
         return data
 
+    @classmethod
+    def create_host(cls, name, host):
+        host = cls(name=name, host_url=host)
+        host.save()
+        return host
+
     def __unicode__(self):
         return str(self.name)
