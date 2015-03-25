@@ -1,5 +1,6 @@
 from django.http import HttpResponse
 from django.conf import settings
+from django.contrib.auth.models import User
 
 from authors.models import *
 from nodes.models import *
@@ -35,8 +36,19 @@ class APIAuthMiddleware(object):
 		if not Host.objects.filter(url=host).exists():
 			return response
 
-		if password != 'testpass':
+		if password != "testpass":
 			return response
+
+		try:
+			request.user = User.objects.get(username = uname)
+		except:
+			user = User.objects.create_user(uname, uname+'@'+host, host+'testpass')
+			user.is_active = False
+			user.save()
+			profile = Profile.create_profile(user)
+			profile.host = host
+			profile.save()
+			request.user = user
 
 		return response
 		
