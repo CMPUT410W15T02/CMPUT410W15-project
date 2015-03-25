@@ -33,10 +33,10 @@ class APIAuthMiddleware(object):
 		except:
 			return response
 
-		if not Host.objects.filter(url=host).exists():
+		if not Host.objects.filter(host_url=host).exists():
 			return response
 
-		if password != "testpass":
+		if passwd != "testpass":
 			return response
 
 		try:
@@ -49,8 +49,6 @@ class APIAuthMiddleware(object):
 			profile.host = host
 			profile.save()
 			request.user = user
-
-		return response
 		
 
 

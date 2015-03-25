@@ -4,6 +4,8 @@ from authors.models import Profile
 from django.contrib.auth.models import User
 from django.utils import timezone
 from posts.forms import PostForm,EditForm
+from nodes.models import Host
+import base64
 import json
 
 # Create your tests here.
@@ -115,6 +117,16 @@ class PostTestCase(TestCase):
 
     def test_api(self):
         self.client.login(username="test_user1", password="password1")
+        user = User.objects.get(username="test_user1")
+        Host.create_host("host","host")
+
+        #Test authorization
+        response = self.client.get('/api/posts/')
+        self.assertEqual(response.status_code, 401)
+
+        auth = "Basic " + base64.b64encode("user:host:testpass")
+        response = self.client.get('/api/posts/', HTTP_AUTHORIZATION=auth)
+        self.assertEqual(response.status_code, 200)
 
         #Test /api/author/posts/
         response = self.client.get('/api/author/posts/')
