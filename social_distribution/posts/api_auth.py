@@ -11,7 +11,7 @@ import base64
 # By schinckel
 class APIAuthMiddleware(object):
 	def process_request(self, request):
-				response = HttpResponse()
+		response = HttpResponse()
 		response.status_code = 401
 		try:
 			realm = settings.HTTP_AUTH_REALM
@@ -23,7 +23,7 @@ class APIAuthMiddleware(object):
 		if not request.path.startswith('/api/'):
 			return
 
-		if request.META.has.key('HTTP_AUTHORIZATION'):
+		if 'HTTP_AUTHORIZATION' not in request.META:
 			auth = request.META['HTTP_AUTHORIZATION'].split()
 		else:
 			return response

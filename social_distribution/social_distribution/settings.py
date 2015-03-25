@@ -49,6 +49,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'posts.api_auth.APIAuthMiddleware',
 )
 
 ROOT_URLCONF = 'social_distribution.urls'
