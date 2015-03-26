@@ -1,5 +1,5 @@
 from django.db import models
-import urllib, urllib2
+import urllib, urllib2, base64
 import json
 
 # Create your models here.
@@ -17,30 +17,48 @@ class Host(models.Model):
     friend_request = models.CharField(max_length=64, default='/friendrequest/')
     all_authors = models.CharField(max_length=64, default='/authors/')
 
+    def get_json(self, url, data=None):
+        try:
+            request = urllib2.Request(url)
+            username = 'user'
+            password = 'testpass'
+            host = 'localhost'
+            base64string = base64.encodestring('%s:%s:%s' % (username, host, password)).replace('\n', '')
+            request.add_header("Authorization", "Basic %s" % base64string)
+            if data:
+                json_string = urllib2.urlopen(request, data=data).read()
+            else:
+                json_string = urllib2.urlopen(request).read()
+        except:
+            if data:
+                json_string = urllib2.urlopen(url).read()
+            else:
+                json_string = urllib2.urlopen(url, data=data).read()
+        return json_string      
+
     def get_posts_visible_to_current_user(self):
-        # INCOMPLETE: DOES NOT GET CURRENT USER
         url = self.host_url + self.posts_visible_to_current_user
-        json_string = urllib2.urlopen(url).read()
+        json_string = self.get_json(url)
         data = json.loads(json_string)
         return data
 
     def get_public_posts(self):
         url = self.host_url + self.public_posts
-        json_string = urllib2.urlopen(url).read()
+        json_string = self.get_json(url)
         data = json.loads(json_string)
         return data
 
-    def get_all_posts_by_author(self):
-        # INCOMPLETE: DOES NOT GET CURRENT USER
+    def get_all_posts_by_author(self, authid):
         url = self.host_url + self.all_posts_by_author_visible
-        json_string = urllib2.urlopen(url).read()
+        url = url.replace("{AUTH_ID}", authid)
+        json_string = self.get_json(url)
         data = json.loads(json_string)
         return data
 
     def get_postid(self, postid):
         url = self.host_url + self.get_put_post_postid
         url = url.replace("{POST_ID}", postid)
-        json_string = urllib2.urlopen(url).read()
+        json_string = self.get_json(url)
         data = json.loads(json_string)
         return data
 
@@ -48,7 +66,7 @@ class Host(models.Model):
         url = self.host_url + self.friend_response
         url = url.replace("{AUTH1_ID}", auth1)
         url = url.replace("{AUTH2_ID}", auth2)
-        json_string = urllib2.urlopen(url).read()
+        json_string = self.get_json(url)
         data = json.loads(json_string)
         return data
 
@@ -60,7 +78,7 @@ class Host(models.Model):
         'author': author,
         'authors': friends_list}
         )
-        json_string = urllib2.urlopen(url=url, data=encoded_json).read()
+        json_string = self.get_json(url, encoded_json)
         data = json.loads(json_string)
         return data
 
@@ -81,13 +99,13 @@ class Host(models.Model):
             }
         }
         )
-        json_string = urllib2.urlopen(url=url, data=encoded_json).read()
+        json_string = self.get_json(url, encoded_json)
         data = json.loads(json_string)
         return data
 
     def get_all_authors(self):
         url = self.host_url + self.all_authors
-        json_string = urllib2.urlopen(url).read()
+        json_string = self.get_json(url)
         data = json.loads(json_string)
         return data
 
