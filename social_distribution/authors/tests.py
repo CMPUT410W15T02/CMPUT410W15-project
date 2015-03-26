@@ -60,7 +60,7 @@ class AuthorTestCase(TestCase):
         uuid1 = Profile.objects.get(displayname="xxxbadb0y23xxx").uuid
         uuid2 = Profile.objects.get(displayname="need_help").uuid
         uuid3 = Profile.objects.get(displayname="good name").uuid
-        test_auth = "Basic " + base64.b64encode("user:host:testpass")
+        test_auth = "Basic " + base64.b64encode("user:testpass")
 
         #Test /api/authors
         response = self.client.get('/api/authors/', 
