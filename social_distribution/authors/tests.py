@@ -2,6 +2,7 @@ from django.test import TestCase, Client
 from django.contrib.auth.models import User
 from authors.models import Profile, Follow
 import json
+import base64
 
 # Create your tests here.
 
@@ -59,14 +60,17 @@ class AuthorTestCase(TestCase):
         uuid1 = Profile.objects.get(displayname="xxxbadb0y23xxx").uuid
         uuid2 = Profile.objects.get(displayname="need_help").uuid
         uuid3 = Profile.objects.get(displayname="good name").uuid
+        test_auth = "Basic " + base64.b64encode("user:host:testpass")
 
         #Test /api/authors
-        response = self.client.get('/api/authors/')
+        response = self.client.get('/api/authors/', 
+        HTTP_AUTHORIZATION=test_auth)
         response_json = json.loads(response.content)
         self.assertEqual(response_json[0]['username'], 'johnsmith')
 
         #Test /api/friends/{FRIEND1_ID}/{FRIEND2_ID}
-        response = self.client.post('/api/friends/'+uuid1+'/'+uuid2+'/')
+        response = self.client.post('/api/friends/'+uuid1+'/'+uuid2+'/', 
+        HTTP_AUTHORIZATION=test_auth)
         response_json = json.loads(response.content)
         self.assertEqual(response_json['friends'], 'NO')
 
@@ -74,12 +78,14 @@ class AuthorTestCase(TestCase):
         post_data = {'query':'friends', 'author':uuid1, 'authors': [uuid2, uuid3]}
         post_string = json.dumps(post_data)
         response = self.client.post('/api/friends/'+uuid1+'/',
-        content_type='application/json', data=post_string)
+        content_type='application/json', data=post_string, 
+        HTTP_AUTHORIZATION=test_auth)
         response_json = json.loads(response.content)
         self.assertEqual(response_json['friends'], [])
         #Test invalid author
         response = self.client.post('/api/friends/INVALID_ID/',
-        content_type='application/json', data=post_string)
+        content_type='application/json', data=post_string, 
+        HTTP_AUTHORIZATION=test_auth)
         self.assertEqual(response.status_code, 404)
 
         #Test /api/friendrequest
@@ -88,13 +94,15 @@ class AuthorTestCase(TestCase):
         'friend':{'id':uuid2, 'host':'', 'displayname': 'need_help'}}
         post_string = json.dumps(post_data)
         response = self.client.post('/api/friendrequest/',
-        content_type='application/json', data=post_string)
+        content_type='application/json', data=post_string, 
+        HTTP_AUTHORIZATION=test_auth)
         self.assertEqual(Follow.objects.all().count(), 1)
         #Test invalid id
         post_data['author']['id'] = 'INVALID'
         post_string = json.dumps(post_data)
         response = self.client.post('/api/friendrequest/',
-        content_type='application/json', data=post_string)
+        content_type='application/json', data=post_string, 
+        HTTP_AUTHORIZATION=test_auth)
         self.assertEqual(response.status_code, 404)
 
 class FriendsTestCase(TestCase):
