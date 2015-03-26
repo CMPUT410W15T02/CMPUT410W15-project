@@ -123,24 +123,25 @@ class PostTestCase(TestCase):
         #Test authorization
         response = self.client.get('/api/posts/')
         self.assertEqual(response.status_code, 401)
+        test_auth = "Basic " + base64.b64encode("user:host:testpass")
 
         auth = "Basic " + base64.b64encode("user:host:testpass")
         response = self.client.get('/api/posts/', HTTP_AUTHORIZATION=auth)
         self.assertEqual(response.status_code, 200)
 
         #Test /api/author/posts/
-        response = self.client.get('/api/author/posts/')
+        response = self.client.get('/api/author/posts/', HTTP_AUTHORIZATION=test_auth)
         response_json = json.loads(response.content)
         self.assertEqual(response_json[0]['title'], 'test1')
 
         #Test /api/posts/
-        response = self.client.get('/api/posts/')
+        response = self.client.get('/api/posts/', HTTP_AUTHORIZATION=test_auth)
         response_json = json.loads(response.content)
         self.assertEqual(response_json[0]['title'], 'test1')
 
         #Test /api/author/{AUTHOR ID}/posts
         author_id = Profile.objects.get(displayname="John").uuid
-        response = self.client.get('/api/author/'+author_id+'/posts/')
+        response = self.client.get('/api/author/'+author_id+'/posts/', HTTP_AUTHORIZATION=test_auth)
         response_json = json.loads(response.content)
         self.assertEqual(response_json[0]['title'], 'test1')
         #Test invalid author id
@@ -149,7 +150,7 @@ class PostTestCase(TestCase):
 
         #Test /api/posts/{POST_ID}
         post_id = Post.objects.get(title="test1").uuid
-        response = self.client.get('/api/posts/'+post_id+'/')
+        response = self.client.get('/api/posts/'+post_id+'/', HTTP_AUTHORIZATION=test_auth)
         response_json = json.loads(response.content)
         self.assertEqual(response_json[0]['title'], 'test1')
         #Test invalid post
@@ -162,7 +163,7 @@ class PostTestCase(TestCase):
         'content':'This is the content', 'content-type':'plaintext'}
         post_string = json.dumps(post_data)
         response = self.client.post('/api/post/', \
-        content_type='application/json', data=post_string)
+        content_type='application/json', data=post_string, HTTP_AUTHORIZATION=test_auth)
         self.assertEqual(Post.objects.count(), 9)
 
 
