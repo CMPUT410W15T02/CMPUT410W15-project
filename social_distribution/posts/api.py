@@ -4,6 +4,7 @@ from django.core import serializers
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from django.utils import timezone
+from django.db.models import Q
 from authors.models import Profile, Follow
 from django.contrib.auth.models import User
 from posts.models import Post, Comment
@@ -261,7 +262,7 @@ def friends_post(request, uuid):
 
 #XXX:TODO FOAF call
 def foaf(request):
-    return HttpResponse('test')
+    return HttpResponse('TODO')
 
 
 # to make a friend request POST to
@@ -276,8 +277,10 @@ def friend_request(request):
             return HttpResponse(status=404)
 
         try:
-            newFollow = Follow(from_profile_id=from_profile, to_profile_id=to_profile, status='PENDING')
-            newFollow.save()
+            checkFollow = Follow.objects.filter( Q(from_profile_id=from_profile) & Q(to_profile_id=to_profile) ).first()
+            if not checkFollow:
+                newFollow = Follow(from_profile_id=from_profile, to_profile_id=to_profile, status='PENDING')
+                newFollow.save()
         except:
             return HttpResponse(status=500)
 

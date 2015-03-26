@@ -34,7 +34,7 @@ class Host(models.Model):
                 json_string = urllib2.urlopen(url).read()
             else:
                 json_string = urllib2.urlopen(url, data=data).read()
-        return json_string      
+        return json_string
 
     def get_posts_visible_to_current_user(self):
         url = self.host_url + self.posts_visible_to_current_user
