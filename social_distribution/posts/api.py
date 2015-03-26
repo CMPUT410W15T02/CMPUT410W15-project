@@ -40,8 +40,9 @@ def get_posts(posts):
         post_data['guid'] = post.uuid
         post_data['visibility'] = post.get_privacy_display()
         response_posts.append(post_data)
+    response_json = {'posts':response_posts}
 
-    return response_posts
+    return response_json
 
 # posts that are visible to the currently authenticated user
 def author_posts(request):

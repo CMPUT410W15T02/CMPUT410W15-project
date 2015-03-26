@@ -9,12 +9,10 @@ import urllib2
 def test(request):
     host = Host.objects.get(name="Our own")
 
-    # DOES NOT WORK, CANNOT PASS IN CURRENT USER
     #response = host.get_posts_visible_to_current_user()
     #response = host.get_all_posts_by_author('eaec831d-9556-4a7f-b2c6-91e53cb6b437')
 
-    # THESE WORK, UNCOMMENT TO TEST
-    #response = host.get_public_posts()
+    response = host.get_public_posts()
 
     #response = host.get_postid('bff6366a-2614-4f16-9e51-45a8a3688679')
 
@@ -29,6 +27,6 @@ def test(request):
     #response = host.post_friend_request(['eaec831d-9556-4a7f-b2c6-91e53cb6b437',
     #                                     'fe9ba287-de4a-48b3-b8e9-0bf216a7df81'])
 
-    response = host.get_all_authors()
+    #response = host.get_all_authors()
 
     return JsonResponse(response, safe=False)
