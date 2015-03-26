@@ -5,8 +5,8 @@ import json
 # Create your models here.
 
 class Host(models.Model):
-    name = models.CharField(max_length=128)
-    host_url = models.CharField(max_length=128)
+    name = models.CharField(max_length=128, blank=False)
+    host_url = models.CharField(max_length=128, blank=False)
     # url extensions for accessing API functions
     posts_visible_to_current_user = models.CharField(max_length=64, default='/author/posts/')
     public_posts = models.CharField(max_length=64, default='/posts/')
