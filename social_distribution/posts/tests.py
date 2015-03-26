@@ -145,7 +145,7 @@ class PostTestCase(TestCase):
         response_json = json.loads(response.content)
         self.assertEqual(response_json[0]['title'], 'test1')
         #Test invalid author id
-        response = self.client.get('/api/author/SHOULD_NOT_WORK/posts/')
+        response = self.client.get('/api/author/SHOULD_NOT_WORK/posts/', HTTP_AUTHORIZATION=test_auth)
         self.assertEqual(response.status_code, 404)
 
         #Test /api/posts/{POST_ID}
@@ -154,7 +154,7 @@ class PostTestCase(TestCase):
         response_json = json.loads(response.content)
         self.assertEqual(response_json[0]['title'], 'test1')
         #Test invalid post
-        response = self.client.get('/api/posts/NOT_VALID_POST_ID/')
+        response = self.client.get('/api/posts/NOT_VALID_POST_ID/', HTTP_AUTHORIZATION=test_auth)
         self.assertEqual(response.status_code, 404)
 
         #Test /api/post
