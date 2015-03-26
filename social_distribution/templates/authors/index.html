@@ -12,7 +12,7 @@
     <br/>
     <h3>View Author Profile:
     <select id="selectbox" onchange="javascript:location.href = this.value;">
-        <option disabled>Select User</option>
+        <option disabled selected>Select User</option>
         {% for profile in list_of_profiles %}
             <option value="author/{{ profile.uuid }}">
                 {{profile.user.username}}
@@ -24,7 +24,7 @@
     <br/>
     <h3>View Posts by Author:
     <select id="selectbox" onchange="javascript:location.href = this.value;">
-        <option disabled>Select User</option>
+        <option disabled selected>Select User</option>
         {% for profile in list_of_profiles %}
             <option value="author/{{ profile.uuid }}/posts">
                 {{profile.user.username}}
@@ -80,7 +80,7 @@
 
         {% else %}
         <div>
-            Author: {{post.author}}
+            Author: {{post.author.user.username}}
         </div>
 	<div>
         <form id="expand_post" method="get" action="/posts/{{post.id}}/">

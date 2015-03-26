@@ -46,7 +46,7 @@
 
 		{% else %}
 		<div>
-		    Author: {{post.author}}
+		    Author: {{post.author.user.username}}
 		</div>
 		<div>
 		    <form id="expand_post" method="get" action="/posts/{{post.id}}/">

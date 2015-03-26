@@ -69,7 +69,7 @@ def index(request):
                     list_of_github.append(github_post)
 
                 else:
-                    print(event)
+                    pass
     else:
         my_profile = ''
 
@@ -79,9 +79,9 @@ def index(request):
         post_query = Post.objects.filter(Q(privacy=1) | Q(privacy=3) | Q(privacy=4) | Q(author=profile)).order_by('-date')
         post_query = list(post_query)
 
-        try:
-            hosts = Host.objects.all()
-            for host in hosts:
+        hosts = Host.objects.all()
+        for host in hosts:
+            try:
                 host_posts = host.get_public_posts()
                 for post in host_posts['posts']:
                     title = post['title']
@@ -89,17 +89,18 @@ def index(request):
                     content_type = post['content-type']
                     post_text = post['content']
                     author = post['author']
+                    new_user = User(username=author['id'],password='')
                     new_profile = Profile(host=author['host'],displayname=author['displayname'],
-                    uuid=author['id'])
+                    uuid=author['id'],user=new_user)
                     date = timezone.now()
-                    #date = post['pubDate']
+                    #date = datetime.strptime(post['pubDate'], '%Y-%m-%dT%H:%M:%S.%fZ')
                     privacy = '1'
 
                     new_post = Post(title=title,description=description,author=new_profile,
                     date=date,content_type=content_type,post_text=post_text,privacy=privacy)
                     post_query.append(new_post)
-        except:
-            pass
+            except:
+                pass
 
         post_query.sort(key=lambda x: x.date,reverse=True)
 
@@ -221,6 +222,9 @@ def author_manage(request):
     profile = Profile.objects.get(user_id=request.user.id)
     updated = False
 
+    if request.user.is_authenticated():
+        my_profile = Profile.objects.get(user=request.user)
+
     if request.method == 'POST':
         profile_form = UserProfileForm(data=request.POST)
 
@@ -252,10 +256,10 @@ def author_manage(request):
 
     if updated == True:
         return HttpResponse("Profile Successfully edited! Click "
-        "<a href=/author/"+request.user.username+">here</a> to return to your profile.")
+        "<a href=/author/"+my_profile.uuid+">here</a> to return to your profile.")
     else:
         return render_to_response('authors/manage.html',
-            {'profile_form': profile_form}, context)
+            {'profile_form': profile_form, 'my_profile':my_profile}, context)
 
 #Send Friend Request
 def friend_request(request):

@@ -6,12 +6,13 @@ from posts.forms import PostForm, EditForm, CommentForm
 from django.http import HttpResponseRedirect, HttpResponse
 from posts.models import Post, Comment
 from authors.models import Profile
+from nodes.models import Host
 from django.contrib.auth.models import User
 from django.db.models import Q
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 import markdown2
-import time
+import time, datetime
 
 # create new posts
 @login_required
@@ -91,7 +92,7 @@ def posts_by_author(request, author_id):
 
     try:
         if request.user.is_authenticated():
-
+            my_profile = Profile.objects.get(user=request.user)
             context = RequestContext(request)
 
             # get profile from author id
@@ -132,17 +133,47 @@ def posts_by_author(request, author_id):
     except:
         title = "There are no posts by " + user.username
 
-    return render(request, 'posts/view_posts.html', {'list_of_posts':list_of_posts, 'title':title})
+    return render(request, 'posts/view_posts.html', {'list_of_posts':list_of_posts, 'title':title, 'my_profile':my_profile})
 
 # view all public posts
 def public_posts(request):
-    list_of_posts = Post.objects.filter(Q(privacy=1)).order_by('-date')
+    if request.user.is_authenticated():
+        my_profile = Profile.objects.get(user=request.user)
+    else:
+        my_profile = ''
+
+    list_of_posts = list(Post.objects.filter(Q(privacy=1)).order_by('-date'))
     for post in list_of_posts:
         if post.content_type == 'text/x-markdown':
             post.post_text = markdown2.markdown(post.post_text)
 
+    hosts = Host.objects.all()
+    for host in hosts:
+        try:
+            host_posts = host.get_public_posts()
+            for post in host_posts['posts']:
+                title = post['title']
+                description = post['description']
+                content_type = post['content-type']
+                post_text = post['content']
+                author = post['author']
+                new_user = User(username=author['id'],password='')
+                new_profile = Profile(host=author['host'],displayname=author['displayname'],
+                uuid=author['id'],user=new_user)
+                date = timezone.now()
+                #date = datetime.datetime.strptime(post['pubDate'], '%Y-%m-%dT%H:%M:%S.%fZ')
+                privacy = '1'
+
+                new_post = Post(title=title,description=description,author=new_profile,
+                date=date,content_type=content_type,post_text=post_text,privacy=privacy)
+                list_of_posts.append(new_post)
+        except:
+            pass
+
+    list_of_posts.sort(key=lambda x: x.date,reverse=True)
+
     title = "View All Public Posts"
-    return render(request, 'posts/view_posts.html', {'list_of_posts':list_of_posts, 'title':title})
+    return render(request, 'posts/view_posts.html', {'list_of_posts':list_of_posts, 'title':title, 'my_profile':my_profile})
 
 def delete_post(request, post_id):
     Post.objects.filter(Q(id=post_id)).delete()
@@ -151,6 +182,10 @@ def delete_post(request, post_id):
 #Editing a post
 def edit_post(request, post_id):
     post=Post.objects.get(id=post_id)
+
+    if request.user.is_authenticated():
+        my_profile = Profile.objects.get(user=request.user)
+
     if request.method == 'POST':
         edit_form = EditForm(request.user, post, data=request.POST)
         if edit_form.is_valid():
@@ -204,11 +239,14 @@ def edit_post(request, post_id):
     else:
         edit_form = EditForm(request.user, post)
 
-    return render(request, 'posts/posts.html', {'post_form':edit_form,'edit':'edit'})
+    return render(request, 'posts/posts.html', {'post_form':edit_form,'edit':'edit', 'my_profile':my_profile})
 
 
 #view posts by friends of current logged in user
 def friends_posts(request):
+    if request.user.is_authenticated():
+        my_profile = Profile.objects.get(user=request.user)
+
     friend_qs = Post.objects.filter(privacy=4).exclude(allowed=None).order_by('-date') #removes posts with empty allowed list
 
     list_of_posts = []
@@ -221,10 +259,13 @@ def friends_posts(request):
             if user.id == request.user.id:
                 list_of_posts.append(post)
 
-    return render(request, 'posts/view_posts.html', {'list_of_posts':list_of_posts, 'title':"Friend's Posts"})
+    return render(request, 'posts/view_posts.html', {'list_of_posts':list_of_posts, 'title':"Friend's Posts", 'my_profile':my_profile})
 
 #view posts from custom privacy
 def custom_posts(request):
+    if request.user.is_authenticated():
+        my_profile = Profile.objects.get(user=request.user)
+
     custom_qs = Post.objects.filter(privacy=3).exclude(allowed=None).order_by('-date') #removes posts with empty allowed list
 
     list_of_posts = []
@@ -237,10 +278,13 @@ def custom_posts(request):
             if user.id == request.user.id:
                 list_of_posts.append(post)
 
-    return render(request, 'posts/view_posts.html', {'list_of_posts':list_of_posts})
+    return render(request, 'posts/view_posts.html', {'list_of_posts':list_of_posts, 'my_profile':my_profile})
 
 
 def expand_post(request,post_id):
+    if request.user.is_authenticated():
+        my_profile = Profile.objects.get(user=request.user)
+
     post = Post.objects.get(id=post_id)
     if post.content_type == 'text/x-markdown':
         post.post_text = markdown2.markdown(post.post_text)
@@ -259,4 +303,4 @@ def expand_post(request,post_id):
     else:
         comments = Comment.objects.filter(post_id=post_id).order_by('date')
         comment_form = CommentForm()
-    return render(request, 'posts/expand_post.html',{'comments':comments, 'comment_form':comment_form, 'post':post})
+    return render(request, 'posts/expand_post.html',{'comments':comments, 'comment_form':comment_form, 'post':post, 'my_profile':my_profile})
