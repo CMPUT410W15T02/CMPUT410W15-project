@@ -6,6 +6,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.decorators import login_required
 from authors.models import Profile, Follow
 from posts.models import Post
+from nodes.models import Host
 from django.contrib.auth.models import User
 from django.db.models import Q
 from django.utils import timezone
@@ -76,6 +77,27 @@ def index(request):
         context = RequestContext(request)
         profile = Profile.objects.get(user_id = request.user.id)
         post_query = Post.objects.filter(Q(privacy=1) | Q(privacy=3) | Q(privacy=4) | Q(author=profile)).order_by('-date')
+        post_query = list(post_query)
+        hosts = Host.objects.all()
+        for host in hosts:
+            host_posts = host.get_public_posts()
+            for post in host_posts['posts']:
+                title = post['title']
+                description = post['description']
+                content_type = post['content-type']
+                post_text = post['content']
+                author = post['author']
+                new_profile = Profile(host=author['host'],displayname=author['displayname'],
+                uuid=author['id'])
+                date = timezone.now()
+                #date = post['pubDate']
+                privacy = '1'
+
+                new_post = Post(title=title,description=description,author=new_profile,
+                date=date,content_type=content_type,post_text=post_text,privacy=privacy)
+                post_query.append(new_post)
+
+        post_query.sort(key=lambda x: x.date,reverse=True)
 
         for post in post_query:
             if (post.content_type == 'text/x-markdown'):
