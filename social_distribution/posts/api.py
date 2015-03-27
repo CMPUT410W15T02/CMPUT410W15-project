@@ -279,7 +279,10 @@ def friend_request(request):
 
         try:
             checkFollow = Follow.objects.filter( Q(from_profile_id=from_profile) & Q(to_profile_id=to_profile) ).first()
-            if not checkFollow:
+            if checkFollow:
+                checkFollow.status = 'PENDING'
+                checkFollow.save()
+            else:
                 newFollow = Follow(from_profile_id=from_profile, to_profile_id=to_profile, status='PENDING')
                 newFollow.save()
         except:
