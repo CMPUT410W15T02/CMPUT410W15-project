@@ -20,10 +20,10 @@ class Host(models.Model):
     def get_json(self, url, data=None):
         try:
             request = urllib2.Request(url)
-            username = 'user'
-            password = 'testpass'
-            host = 'localhost'
-            base64string = base64.encodestring('%s:%s:%s' % (username, host, password)).replace('\n', '')
+            username = 'admin'
+            password = 'admin'
+            host = 'cs410-02'
+            base64string = base64.encodestring('%s:%s' % (username, password)).replace('\n', '')
             request.add_header("Authorization", "Basic %s" % base64string)
             if data:
                 json_string = urllib2.urlopen(request, data=data).read()
@@ -31,9 +31,9 @@ class Host(models.Model):
                 json_string = urllib2.urlopen(request).read()
         except:
             if data:
-                json_string = urllib2.urlopen(url).read()
-            else:
                 json_string = urllib2.urlopen(url, data=data).read()
+            else:
+                json_string = urllib2.urlopen(url).read()
         return json_string
 
     def get_posts_visible_to_current_user(self):
