@@ -49,7 +49,6 @@ def posts(request):
                 profile.host = request.get_host()
                 profile.save()
                 author = profile
-
             # create a new post given the form submission data
             newPost = Post(post_text=post_text, description=description, title=title, date=date,author=author,privacy=privacy, image=image, content_type=content_type)
 
@@ -60,19 +59,19 @@ def posts(request):
             if privacy=="3":
                 allowed=post_form.cleaned_data['allowed']
                 for user in allowed:
-                    newPost.allowed.add(User.objects.get(username=user))
-                newPost.allowed.add(User.objects.get(username=author))
+                    newPost.allowed.add(Profile.objects.get(user=User.objects.get(username=user)))
+                newPost.allowed.add(Profile.objects.get(user=User.objects.get(username=author)))
 
             # special privacy settings: friends
             elif privacy=="4":
                 all_friends=Profile.objects.get(user=currentUser)
                 for friend in all_friends.friends.all():
-                    newPost.allowed.add(User.objects.get(username=friend.user))
-                newPost.allowed.add(User.objects.get(username=author))
+                    newPost.allowed.add(Profile.objects.get(user=User.objects.get(username=friend.user)))
+                newPost.allowed.add(Profile.objects.get(user=User.objects.get(username=author)))
 
             # special privacy settings: private
             elif privacy=="2":
-                newPost.allowed.add(User.objects.get(username=author))
+                newPost.allowed.add(Profile.objects.get(user=User.objects.get(username=author)))
             # once the new post is added, return to homepage
             return redirect('/')
         # display error if fields aren't filled properly
@@ -80,8 +79,8 @@ def posts(request):
             print post_form.errors
     # display the post form
     else:
-        my_profile = Profile.objects.get(user=request.user)
         post_form = PostForm(request.user)
+    my_profile = Profile.objects.get(user=request.user)
 
     return render(request, 'posts/posts.html', {'post_form':post_form, 'my_profile':my_profile})
 
@@ -89,6 +88,7 @@ def posts(request):
 def posts_by_author(request, author_id):
 
     list_of_posts = []
+
 
     try:
         if request.user.is_authenticated():
@@ -102,7 +102,7 @@ def posts_by_author(request, author_id):
 
             # if the requested user is the current user show private posts too
             if(profile == request.user.profile):
-                 post_query = Post.objects.filter(Q(author=profile))
+                post_query = Post.objects.filter(Q(author=profile))
 
             # the requested user is not the current user
             else:
@@ -131,6 +131,8 @@ def posts_by_author(request, author_id):
         title = "View Posts by " + user.username
 
     except:
+	profile = Profile.objects.get(uuid=author_id)
+        user = profile.user
         title = "There are no posts by " + user.username
 
     return render(request, 'posts/view_posts.html', {'list_of_posts':list_of_posts, 'title':title, 'my_profile':my_profile})
@@ -215,23 +217,24 @@ def edit_post(request, post_id):
                     post.image=""
             post.save()
 
-            allowed=edit_form.cleaned_data['allowed']
             post.allowed.clear()
             if privacy=="3":
+		allowed=edit_form.cleaned_data['allowed']
                 for user in allowed:
-                    post.allowed.add(User.objects.get(username=user))
-                    post.allowed.add(User.objects.get(username=author))
+                    post.allowed.add(Profile.objects.get(user=User.objects.get(username=user)))
+                post.allowed.add(Profile.objects.get(user=Profile.objects.get(user=User.objects.get(username=author))))
+                
 
-            # special privacy settings: friends
-            elif privacy=="4":
+           
+            elif privacy=="4":  
                 all_friends=Profile.objects.get(user=request.user)
                 for friend in all_friends.friends.all():
-                    post.allowed.add(User.objects.get(username=friend.user))
-                    post.allowed.add(User.objects.get(username=author))
+                    post.allowed.add(Profile.objects.get(user=User.objects.get(username=friend.user)))
+                post.allowed.add(Profile.objects.get(user=User.objects.get(username=author)))
 
             # special privacy settings: private
             elif privacy=="2":
-                post.allowed.add(User.objects.get(username=author))
+                post.allowed.add(Profile.objects.get(user=User.objects.get(username=author)))
             request.session.modified = True
             return redirect('/')
         else:

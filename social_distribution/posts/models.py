@@ -8,7 +8,7 @@ import uuid
 class Post(models.Model):
     PRIVACY_CHOICES = (('1', 'Public'),
                       ('2', 'Private'),
-                      ('3','Custom'),
+                      ('3','Friend of a Friend'),
                       ('4','Friends'))
 
     CONTENT_TYPE_CHOICES = (('text/plain', 'Plain text'),
@@ -24,8 +24,7 @@ class Post(models.Model):
     author = models.ForeignKey(Profile)
     date = models.DateTimeField('date posted')
     privacy = models.CharField(max_length=1, choices=PRIVACY_CHOICES)
-    #This will get all the Users for custom do we want that?
-    allowed=models.ManyToManyField(User,null=True,blank=True)
+    allowed=models.ManyToManyField(Profile,null=True,blank=True, related_name="allowed")
 
     def get_image_name(image):
         return image.url
