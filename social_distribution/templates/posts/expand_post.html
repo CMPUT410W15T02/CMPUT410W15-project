@@ -2,6 +2,7 @@
 {% block block_body %}
     <div class="margins">
 		<h1> Expanded Post </h1>
+		<div class="well align">
 	   	<h1>Title: {{post.title}}</h1>
 
 		<div>
@@ -15,18 +16,20 @@
             {% endif %}
 
 			<p>Post Text: {{post.post_text|safe|escape}}</p>
-			<p>Date: {{post.date}} </p>
 			<p>Privacy: {{post.privacy}} </p>
-			<p>Author_id: {{post.author_id}} </p>
-			<p>Content Type: {{post.content_type}} </p>
 			<p>Description: {{post.description}} </p>
-			<p>uuid: {{post.uuid}} </p>
+			<p>Author_id: {{post.author_id}} </p>
+			<p>Date: {{post.date}} </p>
 		</div>
-
+		</div>
 		<h3>Comments </h3>
 		<div>
 			{% for comment in comments %}
-				<span>Body: {{comment.body}}, Date: {{comment.date}} author_id: {{comment.author_id}}</span></br>
+				<div class="well align">
+				<p>Body: {{comment.body}}</p>
+				<p> Date: {{comment.date}}</p>
+				<p> author_id: {{comment.author_id}}</p></br>
+				</div>
 			{% endfor %}
 		</div>
 

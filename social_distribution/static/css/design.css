@@ -1,12 +1,15 @@
 .margins{
-    margin-left:10em;
-    margin-right:10em;
+    margin-left:20em;
+    margin-right:20em;
     }
 .top{
     margin-top:2.5em;
 }
 .center{
     padding:1em;
+}
+.align{
+    text-align:center;
 }
 .button-container form,
 .button-container form div {
