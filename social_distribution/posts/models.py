@@ -9,7 +9,8 @@ class Post(models.Model):
     PRIVACY_CHOICES = (('1', 'Public'),
                       ('2', 'Private'),
                       ('3','Friend of a Friend'),
-                      ('4','Friends'))
+                      ('4','Friends on this Server'),
+                      ('5','Friends'))
 
     CONTENT_TYPE_CHOICES = (('text/plain', 'Plain text'),
                             ('text/x-markdown', 'Markdown'),

@@ -35,7 +35,7 @@ class NotClearableFileInput(FileInput):
 class PostForm(forms.ModelForm):
     class Meta:
         model=Post
-        fields=("post_text","title","privacy","allowed","description", "image", "content_type")
+        fields=("post_text","title","privacy", "description", "image", "content_type")
     def __init__(self, user, *args, **kwargs):
         self.user = user
         super(PostForm, self).__init__(*args, **kwargs)
