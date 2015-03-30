@@ -14,15 +14,15 @@ def get_posts(posts):
     for post in posts:
         post_data = {}
         post_data['title'] = post.title
-        post_data['source'] = ''
-        post_data['origin'] = ''
+        post_data['source'] = 'http://cs410.cs.ualberta.ca:41024/'
+        post_data['origin'] = 'http://cs410.cs.ualberta.ca:41024/'
         post_data['description'] = post.description
         post_data['content-type'] = post.content_type
         post_data['content'] = post.post_text
         post_data['author'] = {'id':post.author.uuid,
         'host':post.author.host,
         'displayname':post.author.displayname,
-        'url':post.author.host + "/author/" + post.author.user.username}
+        'url':"http://cs410.cs.ualberta.ca:41024/author/" + post.author.uuid}
         post_data['categories'] = []
         post_data['comments'] = []
 
