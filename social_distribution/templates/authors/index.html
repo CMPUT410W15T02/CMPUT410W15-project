@@ -43,7 +43,6 @@
     <div id ="myTabContent" class="tab-content">
         <div class="tab-pane fade active in" id="posts">
     {% for post in list_of_posts %}
-	<div class="well align">
         <div>
          Title: {{post.title}}
         </div>
@@ -92,27 +91,20 @@
 
         </div>
         {% endif %}
-	</div>
+
     {% endfor %}
         </div>
         <div class="tab-pane fade" id="github">
         {% if my_profile.github and list_of_github %}
-	<div class="well align">
         {% for event in list_of_github %}
             <div>
-                {{ event.title }}
+                <h4><p>{{ event.title|safe|escape }}</p></h4>
             </div>
             <div>
-                {{ event.description }}
-            </div>
-            <div>
-                {{ event.post_text }}
-            <div>
-                Created at: {{ event.date }}
+                <h5><p class="text-muted">{{ event.post_text }}</p></h5>
             </div>
             <br/>
         {% endfor %}
-	</div>
         {% elif not my_profile.github %}
             <div><h2>You haven't linked a <a href="http://www.github.com">Github</a>
                 account yet! Set one <a href="/manage">here</a>!</h2></div>

@@ -34,39 +34,43 @@ def index(request):
             data = json.loads(response)
             for event in data:
                 if event['type'] == 'PushEvent':
-                    github_post = Post(title='Push: ' + event['actor']['login'],
-                    description=event['repo']['name'], privacy='2',
-                    post_text=event['payload']['commits'][0]['message'], author=my_profile,
-                    date=event['created_at'])
+                    github_post = Post(title=event['actor']['login']+' pushed to '+event['repo']['name'],
+                    privacy='2', post_text=event['payload']['commits'][0]['message'],
+                    author=my_profile, date=event['created_at'])
                     list_of_github.append(github_post)
 
                 elif event['type'] == 'IssuesEvent':
-                    github_post = Post(title='Issue: ' + event['actor']['login'],
-                    description=event['payload']['action'], privacy='2',
-                    post_text=event['payload']['issue']['title'], author=my_profile,
-                    date=event['created_at'])
+                    github_post = Post(title=event['actor']['login']+' '+event['payload']['action']+
+                    ' issue at <a href='+event['payload']['issue']['html_url']+'>'+event['repo']['name']+'</a>',
+                    privacy='2', post_text=event['payload']['issue']['title'],
+                    author=my_profile, date=event['created_at'])
                     list_of_github.append(github_post)
 
                 elif event['type'] == 'GollumEvent':
-                    github_post = Post(title='Wiki: ' + event['actor']['login'],
-                    description=event['repo']['name'], privacy='2',
-                    post_text=event['payload']['pages'][0]['title'], author=my_profile,
-                    date=event['created_at'])
-                    list_of_github.append(github_post)
+                    wiki_count = 0
+                    for wiki_page in event['payload']['pages']:
+                        github_post = Post(title=event['actor']['login']+' '+
+                        event['payload']['pages'][wiki_count]['action']+' the '+
+                        event['repo']['name']+' wiki',
+                        privacy='2', post_text=event['payload']['pages'][wiki_count]['action']+' '+
+                        event['payload']['pages'][wiki_count]['title'],
+                        author=my_profile, date=event['created_at'])
+                        wiki_count += 1
+                        list_of_github.append(github_post)
 
-                elif event['type'] == 'CreateEvent':
-                    github_post = Post(title='Create: ' + event['actor']['login'],
-                    description=event['repo']['name'], privacy='2',
-                    post_text=event['payload']['ref'], author=my_profile,
-                    date=event['created_at'])
-                    list_of_github.append(github_post)
+                # elif event['type'] == 'CreateEvent':
+                #     github_post = Post(title='Create: ' + event['actor']['login'],
+                #     description=event['repo']['name'], privacy='2',
+                #     post_text=event['payload']['ref'], author=my_profile,
+                #     date=event['created_at'])
+                #     list_of_github.append(github_post)
 
-                elif event['type'] == 'DeleteEvent':
-                    github_post = Post(title='Delete: ' + event['actor']['login'],
-                    description=event['repo']['name'], privacy='2',
-                    post_text=event['payload']['ref'], author=my_profile,
-                    date=event['created_at'])
-                    list_of_github.append(github_post)
+                # elif event['type'] == 'DeleteEvent':
+                #     github_post = Post(title='Delete: ' + event['actor']['login'],
+                #     description=event['repo']['name'], privacy='2',
+                #     post_text=event['payload']['ref'], author=my_profile,
+                #     date=event['created_at'])
+                #     list_of_github.append(github_post)
 
                 else:
                     pass
