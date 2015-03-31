@@ -273,6 +273,14 @@ def friend_request(request):
         received_data = json.loads(request.body)
         try:
             from_profile = Profile.objects.get(uuid=received_data['author']['id'])
+        except:
+            # assumption made is that the user who is trying to friend the user on our server
+            # is the same user authenticated in HTTP Basic Auth
+            from_user = User.objects.get(username=request.user.username)
+            from_profile = Profile.objects.get(user=from_user)
+            from_profile.uuid = received_data['author']['id']
+
+        try:
             to_profile = Profile.objects.get(uuid=received_data['friend']['id'])
         except:
             return HttpResponse(status=404)
