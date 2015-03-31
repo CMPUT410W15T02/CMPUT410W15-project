@@ -2,7 +2,7 @@
 {% block block_body %}
     <div class="margins">
 		<h1> Expanded Post </h1>
-		<div class="well align">
+		<div class="well">
 	   	<h1>Title: {{post.title}}</h1>
 
 		<div>
@@ -25,7 +25,7 @@
 		<h3>Comments </h3>
 		<div>
 			{% for comment in comments %}
-				<div class="well align">
+				<div class="well">
 				<p>Body: {{comment.body}}</p>
 				<p> Date: {{comment.date}}</p>
 				<p> author_id: {{comment.author_id}}</p></br>

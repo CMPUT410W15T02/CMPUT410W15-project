@@ -2,14 +2,6 @@
 {% block block_body %}
     <div class="margins">
 
-        	<!-- Testing -->
-    {% if user.is_authenticated %}
-        <h1>Hello {{ user.username }}!</h1>
-    {% else %}
-        <p>Click <a href="/login/">here</a> to login</p>
-    {% endif %}
-
-    <br/>
     <h3>View Author Profile:
     <select id="selectbox" onchange="javascript:location.href = this.value;">
         <option disabled selected>Select User</option>
@@ -43,6 +35,7 @@
     <div id ="myTabContent" class="tab-content">
         <div class="tab-pane fade active in" id="posts">
     {% for post in list_of_posts %}
+		<div class="well align">
         <div>
          Title: {{post.title}}
         </div>
@@ -61,17 +54,17 @@
             Privacy: {{post.privacy}}
         </div>
 	<div class="button-container">
-	<form id="delete_post" method="post" action="/delete/post/{{post.id}}">
+		<form id="expand_post" method="get" action="/posts/{{post.id}}/">
             {% csrf_token %}
-            <input class="btn btn-danger btn-sm" type="submit" value="Delete" />
+			<input class="btn btn-success btn-sm" type="submit" value="Expand" />
         </form>
         <form id="edit_post" method="get" action="/edit/post/{{post.id}}">
             {% csrf_token %}
-           <input class="btn btn-warning btn-sm" type="submit" value="Edit" />
+			<input class="btn btn-warning btn-sm" type="submit" value="Edit" />
         </form>
-	<form id="expand_post" method="get" action="/posts/{{post.id}}/">
+		<form id="delete_post" method="post" action="/delete/post/{{post.id}}">
             {% csrf_token %}
-	<input class="btn btn-success btn-sm" type="submit" value="Expand" />
+            <input class="btn btn-danger btn-sm" type="submit" value="Delete" />
         </form>
 	<br/>
 	<br/>
@@ -91,12 +84,13 @@
 
         </div>
         {% endif %}
-
+	</div>
     {% endfor %}
         </div>
         <div class="tab-pane fade" id="github">
         {% if my_profile.github and list_of_github %}
         {% for event in list_of_github %}
+			<div class="well align">
             <div>
                 <h4><p>{{ event.title|safe|escape }}</p></h4>
             </div>
@@ -104,6 +98,7 @@
                 <h5><p class="text-muted">{{ event.post_text }}</p></h5>
             </div>
             <br/>
+			</div>
         {% endfor %}
         {% elif not my_profile.github %}
             <div><h2>You haven't linked a <a href="http://www.github.com">Github</a>
