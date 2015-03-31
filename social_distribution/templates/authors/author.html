@@ -38,11 +38,13 @@
 		                <input class="btn btn-info btn-sm" type="submit" name="submit" value="Unfollow Author" />
 		                </form>
 		            {% else %}
+						{% if profile.user.username != current.username %}
 		                <form method="POST" action="/follow_author/">
 		                {% csrf_token %}
 		                <input class="btn btn-primary btn-sm" type="hidden" value={{profile.id}} name="follow_profile_id">
 		                <input class="btn btn-info btn-sm" type="submit" name="submit" value="Follow Author" />
 		                </form>
+						{% endif %}
 		            {% endif %}
 		        {% endif %}
 		    {% endif %}

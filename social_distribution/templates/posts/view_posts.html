@@ -2,15 +2,6 @@
 {% block block_body %}
         <div class="margins">
 
-            {% if user.is_authenticated %}
-                <p>You are logged in as {{ user.username }}</p>
-
-            {% else %}
-    			<p>Not authenticated</p>
-    			<a href="/login/">Login</a>
-    		{% endif %}
-
-            <br/><br/>
             <h2>{{ title }}</h2>
 
             <br/>
@@ -30,17 +21,17 @@
                 </div>
 
                 <div class="button-container">
-		<form id="delete_post" method="post" action="/delete/post/{{post.id}}">
-		  {% csrf_token %}
-		<input class="btn btn-danger btn-sm" type="submit" value="Delete" />
+		<form id="expand_post" method="get" action="/posts/{{post.id}}/">
+		    {% csrf_token %}
+		<input class="btn btn-success btn-sm" type="submit" value="Expand" />
 		</form>
 		<form id="edit_post" method="get" action="/edit/post/{{post.id}}">
 		 {% csrf_token %}
 		<input class="btn btn-warning btn-sm" type="submit" value="Edit" />
 		</form>
-		<form id="expand_post" method="get" action="/posts/{{post.id}}/">
-		    {% csrf_token %}
-		<input class="btn btn-success btn-sm" type="submit" value="Expand" />
+		<form id="delete_post" method="post" action="/delete/post/{{post.id}}">
+		  {% csrf_token %}
+		<input class="btn btn-danger btn-sm" type="submit" value="Delete" />
 		</form>
 		<br/><br/>
 		</div>
