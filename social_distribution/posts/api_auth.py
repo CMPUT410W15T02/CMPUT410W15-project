@@ -12,7 +12,6 @@ import base64
 class APIAuthMiddleware(object):
 	def process_request(self, request):
 
-
 		if not request.path.startswith('/api/'):
 			return
 
@@ -22,33 +21,23 @@ class APIAuthMiddleware(object):
 			return make_response("Not Authenticated!")
 			
 		try:
-			#uname, host, passwd = base64.b64decode(auth[1]).split(':')
 			uname, passwd = base64.b64decode(auth[1]).split(':')
 		except:
 			return make_response("HTTP Auth Error!")
 
-		#if Host.objects.filter(host_url=host).exists():
-			#host_obj = Host.objects.get(host_url=host)
-		#else:
-			#return make_response("HTTP Auth Error!")
-
-		if passwd != "testpass":
+		if Host.objects.filter(name=passwd).exists():
+			host_obj = Host.objects.get(name=passwd)
+		else:
 			return make_response("HTTP Auth Error!")
 
 		try:
-			#request.user = User.objects.get(username = uname + host_obj.name)
-			request.user = User.objects.get(username = uname)
+			request.user = User.objects.get(username = uname+':'+host_obj.name)
 		except:
-			#user = User.objects.create_user(uname + host_obj.name, 
-			#							    uname+'@'+host_obj.host_url, 
-			#							    host_obj.name+'testpass')
-			user = User.objects.create_user(uname, 
-										    uname+'@', 
-										    'testpass')
+			user = User.objects.create_user(uname+':'+host_obj.name, uname+'@'+host_obj.host_url, host_obj.name)
 			user.is_active = False
 			user.save()
 			profile = Profile.create_profile(user)
-			#profile.host = host
+			profile.host = host_obj.host_url
 			profile.save()
 			request.user = user
 		
