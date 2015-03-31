@@ -15,6 +15,7 @@ import json
 import markdown2
 
 # Create your views here.
+@login_required
 def index(request):
     list_of_users = User.objects.filter( Q(username=request.user) | Q(username='admin'))
     list_of_profiles = Profile.objects.exclude(id__in=list_of_users)
@@ -83,28 +84,50 @@ def index(request):
         post_query = Post.objects.filter(Q(privacy=1) | Q(privacy=3) | Q(privacy=4) | Q(author=profile)).order_by('-date')
         post_query = list(post_query)
 
-        hosts = Host.objects.all()
+        hosts = Host.objects.all().exclude( Q(name='Our own') | Q(name='Test'))
         for host in hosts:
             try:
                 host_posts = host.get_public_posts()
-                for post in host_posts['posts']:
-                    title = post['title']
-                    description = post['description']
-                    content_type = post['content-type']
-                    post_text = post['content']
-                    author = post['author']
-                    new_user = User(username=author['id'],password='')
-                    new_profile = Profile(host=author['host'],displayname=author['displayname'],
-                    uuid=author['id'],user=new_user)
-                    date = timezone.now()
-                    #date = datetime.strptime(post['pubDate'], '%Y-%m-%dT%H:%M:%S.%fZ')
-                    privacy = '1'
+                for post in host_posts:
+                    if host.host_url == "http://127.0.0.1:41071": # Group 7
 
-                    new_post = Post(title=title,description=description,author=new_profile,
-                    date=date,content_type=content_type,post_text=post_text,privacy=privacy)
-                    post_query.append(new_post)
+                        author = post['post_author']
+                        
+                        #Create new remote user
+                        try:
+                            new_user = User.objects.get(username=author['author_details']['username'])
+                        except User.DoesNotExist:
+                            new_user = User(username=author['author_details']['username'], password='')
+                            new_user.save()
+
+                        #Create new remote profile
+                        try:
+                            new_profile = Profile.objects.get(user=new_user)
+                        except Profile.DoesNotExist:
+                            new_profile = Profile(host=host.host_url, uuid=author['user'], displayname="Testing", user=new_user)
+                            new_profile.save()
+
+                        #Get remote posts
+                        title = post['post_title']
+                        uuid = post['post_id']
+                        #description = post['description']
+                        #content_type = post['content-type']
+                        content_type = "text/plain"
+                        post_text = post['post_text']
+                        date = timezone.now()
+
+                        try:
+                            new_post = Post.objects.get(uuid=uuid)
+                        except Post.DoesNotExist:
+                            new_post = Post(title=title, description="", author=new_profile, date=date,content_type=content_type,post_text=post_text,privacy=1)
+                            new_post.save()
+
+                        list_of_posts.append(new_post)
+                        #post_query.append(new_post)
+                        #date = datetime.strptime(post['pubDate'], '%Y-%m-%dT%H:%M:%S.%fZ')
             except:
                 pass
+
 
         post_query.sort(key=lambda x: x.date,reverse=True)
 
@@ -129,7 +152,8 @@ def index(request):
             elif (post.author == profile):
                 list_of_posts.append(post)
 
-    return render(request, 'authors/index.html', {'list_of_profiles':list_of_profiles, 'list_of_posts':list_of_posts, 'list_of_github':list_of_github, 'my_profile':my_profile})
+    return render(request, 'authors/index.html', 
+        {'list_of_profiles':list_of_profiles, 'list_of_posts':list_of_posts, 'list_of_github':list_of_github, 'my_profile':my_profile})
 
 
 def register(request):
