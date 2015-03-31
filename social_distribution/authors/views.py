@@ -119,7 +119,7 @@ def index(request):
                         try:
                             new_post = Post.objects.get(uuid=uuid)
                         except Post.DoesNotExist:
-                            new_post = Post(title=title, description="", author=new_profile, date=date,content_type=content_type,post_text=post_text,privacy=1)
+                            new_post = Post(uuid=uuid, title=title, description="", author=new_profile, date=date,content_type=content_type,post_text=post_text,privacy=1)
                             new_post.save()
 
                         list_of_posts.append(new_post)
