@@ -1,28 +1,29 @@
 {% extends 'authors/base.html' %}
+{% load post_tags %}
 {% block block_body %}
     <div class="margins">
 
     <h3>View Author Profile:
-    <select id="selectbox" onchange="javascript:location.href = this.value;">
+        <select id="selectbox" onchange="javascript:location.href = this.value;">
         <option disabled selected>Select User</option>
         {% for profile in list_of_profiles %}
             <option value="author/{{ profile.uuid }}">
                 {{profile.user.username}}
             </option>
         {% endfor %}
-    </select>
+        </select>
     </h3>
 
     <br/>
     <h3>View Posts by Author:
-    <select id="selectbox" onchange="javascript:location.href = this.value;">
+        <select id="selectbox" onchange="javascript:location.href = this.value;">
         <option disabled selected>Select User</option>
         {% for profile in list_of_profiles %}
             <option value="author/{{ profile.uuid }}/posts">
                 {{profile.user.username}}
             </option>
         {% endfor %}
-    </select>
+        </select>
     </h3>
 	<!-- End Testing -->
     {% if user.is_authenticated %}
@@ -34,82 +35,49 @@
     </ul>
     <div id ="myTabContent" class="tab-content">
         <div class="tab-pane fade active in" id="posts">
-    {% for post in list_of_posts %}
-		<div class="well align">
-        <div>
-         Title: {{post.title}}
-        </div>
-        <div>
-            Body: {{post.post_text|safe|escape}}
-        </div>
-
-        {% if post.image %}
-            <div>
-                <img src="/static/{{post.image}}" alt="{{post.image}}" height="100" width="100"/>
-            </div>
-        {% endif %}
-
-        {% if post.author.user = user %}
-        <div>
-            Privacy: {{post.privacy}}
-        </div>
-	<div class="button-container">
-		<form id="expand_post" method="get" action="/posts/{{post.id}}/">
-            {% csrf_token %}
-			<input class="btn btn-success btn-sm" type="submit" value="Expand" />
-        </form>
-        <form id="edit_post" method="get" action="/edit/post/{{post.id}}">
-            {% csrf_token %}
-			<input class="btn btn-warning btn-sm" type="submit" value="Edit" />
-        </form>
-		<form id="delete_post" method="post" action="/delete/post/{{post.id}}">
-            {% csrf_token %}
-            <input class="btn btn-danger btn-sm" type="submit" value="Delete" />
-        </form>
-	<br/>
-	<br/>
-	</div>
-
-
-        {% else %}
-        <div>
-            Author: {{post.author.user.username}}
-        </div>
-	<div>
-        <form id="expand_post" method="get" action="/posts/{{post.id}}/">
-            {% csrf_token %}
-	<input class="btn btn-success btn-sm" type="submit" value="Expand" />
-        </form>
-        <br/><br/>
-
-        </div>
-        {% endif %}
-	</div>
-    {% endfor %}
+            {% for post in list_of_posts %}
+                {% render_post post %}
+            {% endfor %}
         </div>
         <div class="tab-pane fade" id="github">
-        {% if my_profile.github and list_of_github %}
-        {% for event in list_of_github %}
-			<div class="well align">
-            <div>
-                <h4><p>{{ event.title|safe|escape }}</p></h4>
-            </div>
-            <div>
-                <h5><p class="text-muted">{{ event.post_text }}</p></h5>
-            </div>
-            <br/>
-			</div>
-        {% endfor %}
-        {% elif not my_profile.github %}
-            <div><h2>You haven't linked a <a href="http://www.github.com">Github</a>
-                account yet! Set one <a href="/manage">here</a>!</h2></div>
-        {% elif not list_of_github %}
-            <div><h2>There is no activity to display for this Github account!<h2></div>
-
-
-        {% endif %}
+            {% if my_profile.github and list_of_github %}
+            {% for event in list_of_github %}
+                <div class="well align">
+                    <div>
+                        <h4>
+                            <p>
+                                {{ event.title|safe|escape }}
+                            </p>
+                        </h4>
+                    </div>
+                    <div>
+                        <h5>
+                            <p class="text-muted">
+                                {{ event.post_text }}
+                            </p>
+                        </h5>
+                    </div>
+                    <br/>
+                </div>
+            {% endfor %}
+            {% elif not my_profile.github %}
+                <div>
+                    <h2>
+                        You haven't linked a <a href="http://www.github.com">Github</a>
+                        account yet! Set one <a href="/manage">here</a>!
+                    </h2>
+                </div>
+            {% elif not list_of_github %}
+                <div>
+                    <h2>
+                        There is no activity to display for this Github account!
+                    </h2>
+                </div>
+            {% endif %}
         </div>
-    </div>
+
+    </div>    
     {% endif %}
+    
     </div>
 {% endblock %}
