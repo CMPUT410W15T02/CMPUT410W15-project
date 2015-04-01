@@ -13,7 +13,7 @@ from django.utils import timezone
 import urllib, urllib2
 import json
 import markdown2
-
+from urlparse import urlparse
 # Create your views here.
 @login_required
 def index(request):
@@ -21,9 +21,6 @@ def index(request):
     list_of_profiles = Profile.objects.exclude(id__in=list_of_users)
     list_of_posts = []
     list_of_github = []
-    # for post in post_query:
-    #     if post.author == profile:
-    #         list_of_posts.append(post)
 
     if request.user.is_authenticated():
         my_profile = Profile.objects.get(user=request.user)
@@ -77,7 +74,7 @@ def index(request):
                     else:
                         pass
             except:
-                pass    
+                pass
     else:
         my_profile = ''
 
@@ -92,7 +89,7 @@ def index(request):
             try:
                 host_posts = host.get_public_posts()
                 for post in host_posts:
-                    if host.host_url == "http://127.0.0.1:41071": # Group 7
+                    if host.host_url == "http://cs410.cs.ualberta.ca:41071": # Group 7
 
                         author = post['post_author']
 
@@ -117,6 +114,7 @@ def index(request):
                         #content_type = post['content-type']
                         content_type = "text/plain"
                         post_text = post['post_text']
+                        #date = datetime.strptime(post['pubDate'], '%Y-%m-%dT%H:%M:%S.%fZ')
                         date = timezone.now()
 
                         try:
@@ -125,9 +123,7 @@ def index(request):
                             new_post = Post(uuid=uuid, title=title, description="", author=new_profile, date=date,content_type=content_type,post_text=post_text,privacy=1)
                             new_post.save()
 
-                        list_of_posts.append(new_post)
-                        #post_query.append(new_post)
-                        #date = datetime.strptime(post['pubDate'], '%Y-%m-%dT%H:%M:%S.%fZ')
+                        post_query.append(new_post)
             except:
                 pass
 
@@ -299,6 +295,17 @@ def friend_request(request):
         current_profile = Profile.objects.get(user_id=request.user.id)
         to_profile = Profile.objects.get(id=to_profile_id)
 
+        host_port = to_profile.host.strip("http://").split(":")
+
+        port = host_port[1]
+
+        if port != "8000":
+            print("Not Local")
+            #host = Host.objects.get(name="Our own")
+            host = Host.objects.filter( Q(host_url__icontains=port) ).first()
+            host.post_friend_request([str(current_profile.uuid), str(to_profile.uuid)])
+            #print(host)
+
         checkFollow = Follow.objects.filter( Q(from_profile_id=current_profile) & Q(to_profile_id=to_profile) ).first()
         if checkFollow:
             checkFollow.status ="PENDING"
@@ -319,6 +326,10 @@ def add_friend(request):
         from_profile_id = request.POST.get('from_profile', '')
         from_profile = Profile.objects.get(id=from_profile_id)
 
+        host_port = from_profile.host.strip("http://").split(":")
+
+        port = host_port[1]
+
         if 'accept' in request.POST:
             current_profile.friends.add(from_profile)
             current_profile.save()
@@ -331,7 +342,7 @@ def add_friend(request):
             posts_qs = Post.objects.filter( Q(privacy=4) & Q(author=from_profile.id))
 
             for post in posts_qs:
-                post.allowed.add(User.objects.get(id=current_profile.user_id))
+                post.allowed.add(Profile.objects.get(id=current_profile.id))
 
         elif 'reject' in request.POST:
             #change status form PENDING to REJECT
@@ -350,6 +361,11 @@ def remove_friend(request):
     if request.method == 'POST':
         remove_profile_id = request.POST.get('remove_profile_id', '')
         remove_profile = Profile.objects.get(id=remove_profile_id)
+    
+        posts_qs = Post.objects.filter( Q(privacy=4) & Q(author=current_profile.id))
+
+        for post in posts_qs:
+            post.allowed.remove(Profile.objects.get(id=remove_profile.id))
 
         current_profile.friends.remove(remove_profile)
 
