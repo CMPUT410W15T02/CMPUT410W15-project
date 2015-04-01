@@ -111,8 +111,8 @@ class Host(models.Model):
         return data
 
     @classmethod
-    def create_host(cls, name, host):
-        host = cls(name=name, host_url=host)
+    def create_host(cls, name, host, username, password):
+        host = cls(name=name, host_url=host, username=username, password=password)
         host.save()
         return host
 

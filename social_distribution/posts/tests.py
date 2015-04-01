@@ -118,15 +118,15 @@ class PostTestCase(TestCase):
     def test_api(self):
         self.client.login(username="test_user1", password="password1")
         user = User.objects.get(username="test_user1")
-        Host.create_host("host","host")
-        test_auth = "Basic " + base64.b64encode("user:testpass")
+        Host.create_host("host","host","host","host")
+        test_auth = "Basic " + base64.b64encode("user:host")
 
         #Test authorization
         response = self.client.get('/api/posts/')
         self.assertEqual(response.status_code, 401)
         
 
-        auth = "Basic " + base64.b64encode("user:testpass")
+        auth = "Basic " + base64.b64encode("user:host")
         response = self.client.get('/api/posts/', HTTP_AUTHORIZATION=auth)
         self.assertEqual(response.status_code, 200)
 
