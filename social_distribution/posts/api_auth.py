@@ -19,7 +19,7 @@ class APIAuthMiddleware(object):
 			auth = request.META['HTTP_AUTHORIZATION'].split()
 		else:
 			return make_response("Not Authenticated!")
-			
+
 		try:
 			uname, passwd = base64.b64decode(auth[1]).split(':')
 		except:
@@ -40,7 +40,7 @@ class APIAuthMiddleware(object):
 			profile.host = host_obj.host_url
 			profile.save()
 			request.user = user
-		
+
 def make_response(message):
 	response = HttpResponse()
 	response.status_code = 401
@@ -51,5 +51,3 @@ def make_response(message):
 	response['WWW-Authenticate'] = 'Basic realm ="%s"' % realm
 	response['Message'] = message
 	return response
-
-
