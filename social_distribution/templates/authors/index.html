@@ -12,18 +12,6 @@
         {% endfor %}
     </select>
     </h3>
-
-    <br/>
-    <h3>View Posts by Author:
-    <select id="selectbox" onchange="javascript:location.href = this.value;">
-        <option disabled selected>Select User</option>
-        {% for profile in list_of_profiles %}
-            <option value="author/{{ profile.uuid }}/posts">
-                {{profile.user.username}}
-            </option>
-        {% endfor %}
-    </select>
-    </h3>
 	<!-- End Testing -->
     {% if user.is_authenticated %}
 
