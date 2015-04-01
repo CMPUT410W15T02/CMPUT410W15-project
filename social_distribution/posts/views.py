@@ -145,9 +145,6 @@ def public_posts(request):
         my_profile = ''
 
     list_of_posts = list(Post.objects.filter(Q(privacy=1)).order_by('-date'))
-    for post in list_of_posts:
-        if post.content_type == 'text/x-markdown':
-            post.post_text = markdown2.markdown(post.post_text)
 
     hosts = Host.objects.all()
     for host in hosts:
@@ -159,18 +156,23 @@ def public_posts(request):
                 content_type = post['content-type']
                 post_text = post['content']
                 author = post['author']
-                new_user = User(username=author['id'],password='')
+                new_user = User(username=author['displayname'],password='')
                 new_profile = Profile(host=author['host'],displayname=author['displayname'],
                 uuid=author['id'],user=new_user)
                 date = timezone.now()
                 #date = datetime.datetime.strptime(post['pubDate'], '%Y-%m-%dT%H:%M:%S.%fZ')
+                guid = post['guid']
                 privacy = '1'
 
-                new_post = Post(title=title,description=description,author=new_profile,
+                new_post = Post(uuid=guid,title=title,description=description,author=new_profile,
                 date=date,content_type=content_type,post_text=post_text,privacy=privacy)
                 list_of_posts.append(new_post)
         except:
             pass
+
+    for post in list_of_posts:
+        if post.content_type == 'text/x-markdown':
+            post.post_text = markdown2.markdown(post.post_text)
 
     list_of_posts.sort(key=lambda x: x.date,reverse=True)
 
@@ -178,12 +180,12 @@ def public_posts(request):
     return render(request, 'posts/view_posts.html', {'list_of_posts':list_of_posts, 'title':title, 'my_profile':my_profile})
 
 def delete_post(request, post_id):
-    Post.objects.filter(Q(id=post_id)).delete()
+    Post.objects.filter(Q(uuid=post_id)).delete()
     return HttpResponse("Your post has been deleted. <a href=\"/\">Home</a>")
 
 #Editing a post
 def edit_post(request, post_id):
-    post=Post.objects.get(id=post_id)
+    post=Post.objects.get(uuid=post_id)
 
     if request.user.is_authenticated():
         my_profile = Profile.objects.get(user=request.user)
@@ -223,10 +225,10 @@ def edit_post(request, post_id):
                 for user in allowed:
                     post.allowed.add(Profile.objects.get(user=User.objects.get(username=user)))
                 post.allowed.add(Profile.objects.get(user=Profile.objects.get(user=User.objects.get(username=author))))
-                
 
-           
-            elif privacy=="4":  
+
+
+            elif privacy=="4":
                 all_friends=Profile.objects.get(user=request.user)
                 for friend in all_friends.friends.all():
                     post.allowed.add(Profile.objects.get(user=User.objects.get(username=friend.user)))
@@ -288,7 +290,7 @@ def expand_post(request,post_id):
     if request.user.is_authenticated():
         my_profile = Profile.objects.get(user=request.user)
 
-    post = Post.objects.get(id=post_id)
+    post = Post.objects.get(uuid=post_id)
     if post.content_type == 'text/x-markdown':
         post.post_text = markdown2.markdown(post.post_text)
     current_profile = Profile.objects.get(user_id=request.user.id)
@@ -304,6 +306,6 @@ def expand_post(request,post_id):
             print comment_form.errors
         return redirect('/')
     else:
-        comments = Comment.objects.filter(post_id=post_id).order_by('date')
+        comments = Comment.objects.filter(post_id=post).order_by('date')
         comment_form = CommentForm()
     return render(request, 'posts/expand_post.html',{'comments':comments, 'comment_form':comment_form, 'post':post, 'my_profile':my_profile})

@@ -77,7 +77,7 @@ def index(request):
                     else:
                         pass
             except:
-                pass    
+                pass
     else:
         my_profile = ''
 
@@ -92,7 +92,7 @@ def index(request):
             try:
                 host_posts = host.get_public_posts()
                 for post in host_posts:
-                    if host.host_url == "http://127.0.0.1:41071": # Group 7
+                    if host.host_url == "http://cs410.cs.ualberta.ca:41074": # Group 7
 
                         author = post['post_author']
 

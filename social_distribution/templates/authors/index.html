@@ -54,15 +54,13 @@
             Privacy: {{post.privacy}}
         </div>
 	<div class="button-container">
-		<form id="expand_post" method="get" action="/posts/{{post.id}}/">
-            {% csrf_token %}
+		<form id="expand_post" method="get" action="/posts/{{post.uuid}}/">
 			<input class="btn btn-success btn-sm" type="submit" value="Expand" />
         </form>
-        <form id="edit_post" method="get" action="/edit/post/{{post.id}}">
-            {% csrf_token %}
+        <form id="edit_post" method="get" action="/edit/post/{{post.uuid}}">
 			<input class="btn btn-warning btn-sm" type="submit" value="Edit" />
         </form>
-		<form id="delete_post" method="post" action="/delete/post/{{post.id}}">
+		<form id="delete_post" method="post" action="/delete/post/{{post.uuid}}">
             {% csrf_token %}
             <input class="btn btn-danger btn-sm" type="submit" value="Delete" />
         </form>
@@ -76,8 +74,7 @@
             Author: {{post.author.user.username}}
         </div>
 	<div>
-        <form id="expand_post" method="get" action="/posts/{{post.id}}/">
-            {% csrf_token %}
+        <form id="expand_post" method="get" action="/posts/{{post.uuid}}/">
 	<input class="btn btn-success btn-sm" type="submit" value="Expand" />
         </form>
         <br/><br/>
