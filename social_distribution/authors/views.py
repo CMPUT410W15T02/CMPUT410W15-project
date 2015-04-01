@@ -21,9 +21,6 @@ def index(request):
     list_of_profiles = Profile.objects.exclude(id__in=list_of_users)
     list_of_posts = []
     list_of_github = []
-    # for post in post_query:
-    #     if post.author == profile:
-    #         list_of_posts.append(post)
 
     if request.user.is_authenticated():
         my_profile = Profile.objects.get(user=request.user)
@@ -318,6 +315,7 @@ def friend_request(request):
             newFollow.save()
 
     return redirect('/')
+
 #Accept or Reject Friend Reject
 @login_required
 def add_friend(request):
@@ -327,6 +325,10 @@ def add_friend(request):
     if request.method == 'POST':
         from_profile_id = request.POST.get('from_profile', '')
         from_profile = Profile.objects.get(id=from_profile_id)
+
+        host_port = from_profile.host.strip("http://").split(":")
+
+        port = host_port[1]
 
         if 'accept' in request.POST:
             current_profile.friends.add(from_profile)
@@ -340,7 +342,7 @@ def add_friend(request):
             posts_qs = Post.objects.filter( Q(privacy=4) & Q(author=from_profile.id))
 
             for post in posts_qs:
-                post.allowed.add(User.objects.get(id=current_profile.user_id))
+                post.allowed.add(Profile.objects.get(id=current_profile.id))
 
         elif 'reject' in request.POST:
             #change status form PENDING to REJECT
@@ -359,6 +361,11 @@ def remove_friend(request):
     if request.method == 'POST':
         remove_profile_id = request.POST.get('remove_profile_id', '')
         remove_profile = Profile.objects.get(id=remove_profile_id)
+    
+        posts_qs = Post.objects.filter( Q(privacy=4) & Q(author=current_profile.id))
+
+        for post in posts_qs:
+            post.allowed.remove(Profile.objects.get(id=remove_profile.id))
 
         current_profile.friends.remove(remove_profile)
 
