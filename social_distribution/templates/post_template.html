@@ -1,0 +1,50 @@
+<div class="well align">
+    <div>
+        Title: {{post.title}}
+    </div>
+    <div>
+        Body: {{post.post_text|safe|escape}}
+    </div>
+
+    {% if post.image %}
+        <div>
+            <img src="/static/{{post.image}}" alt="{{post.image}}" height="100" width="100"/>
+        </div>
+    {% endif %}
+
+    {% if post.author.user = user %}
+        <div>
+            Privacy: {{post.privacy}}
+        </div>
+        <div class="button-container">
+            <form id="expand_post" method="get" action="/posts/{{post.id}}/">
+                {% csrf_token %}
+                <input class="btn btn-success btn-sm" type="submit" value="Expand" />
+            </form>
+            <form id="edit_post" method="get" action="/edit/post/{{post.id}}">
+                {% csrf_token %}
+                <input class="btn btn-warning btn-sm" type="submit" value="Edit" />
+            </form>
+            <form id="delete_post" method="post" action="/delete/post/{{post.id}}">
+                {% csrf_token %}
+                <input class="btn btn-danger btn-sm" type="submit" value="Delete" />
+            </form>
+            <br/>
+            <br/>
+        </div>
+
+
+    {% else %}
+        <div>
+            Author: {{post.author.user.username}}
+        </div>
+        <div>
+            <form id="expand_post" method="get" action="/posts/{{post.id}}/">
+                {% csrf_token %}
+                <input class="btn btn-success btn-sm" type="submit" value="Expand" />
+            </form>
+            <br/>
+            <br/>
+        </div>
+    {% endif %}
+</div>

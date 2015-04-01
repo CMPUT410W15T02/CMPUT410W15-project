@@ -380,3 +380,7 @@ def unfollow_author(request):
         unfollow.delete()
 
     return redirect('/')
+
+#def ajax_retrieve_latest_post(request):
+    
+   # render_to_response('post_template.html')
