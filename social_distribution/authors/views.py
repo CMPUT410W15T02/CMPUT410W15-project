@@ -117,6 +117,7 @@ def index(request):
                         #content_type = post['content-type']
                         content_type = "text/plain"
                         post_text = post['post_text']
+                        #date = datetime.strptime(post['pubDate'], '%Y-%m-%dT%H:%M:%S.%fZ')
                         date = timezone.now()
 
                         try:
@@ -125,9 +126,7 @@ def index(request):
                             new_post = Post(uuid=uuid, title=title, description="", author=new_profile, date=date,content_type=content_type,post_text=post_text,privacy=1)
                             new_post.save()
 
-                        list_of_posts.append(new_post)
-                        #post_query.append(new_post)
-                        #date = datetime.strptime(post['pubDate'], '%Y-%m-%dT%H:%M:%S.%fZ')
+                        post_query.append(new_post)
             except:
                 pass
 
