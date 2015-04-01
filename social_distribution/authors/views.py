@@ -13,7 +13,7 @@ from django.utils import timezone
 import urllib, urllib2
 import json
 import markdown2
-
+from urlparse import urlparse
 # Create your views here.
 @login_required
 def index(request):
@@ -92,7 +92,7 @@ def index(request):
             try:
                 host_posts = host.get_public_posts()
                 for post in host_posts:
-                    if host.host_url == "http://cs410.cs.ualberta.ca:41074": # Group 7
+                    if host.host_url == "http://cs410.cs.ualberta.ca:41071": # Group 7
 
                         author = post['post_author']
 
@@ -298,6 +298,17 @@ def friend_request(request):
         current_profile = Profile.objects.get(user_id=request.user.id)
         to_profile = Profile.objects.get(id=to_profile_id)
 
+        host_port = to_profile.host.strip("http://").split(":")
+
+        port = host_port[1]
+
+        if port != "8000":
+            print("Not Local")
+            #host = Host.objects.get(name="Our own")
+            host = Host.objects.filter( Q(host_url__icontains=port) ).first()
+            host.post_friend_request([str(current_profile.uuid), str(to_profile.uuid)])
+            #print(host)
+
         checkFollow = Follow.objects.filter( Q(from_profile_id=current_profile) & Q(to_profile_id=to_profile) ).first()
         if checkFollow:
             checkFollow.status ="PENDING"
@@ -307,7 +318,6 @@ def friend_request(request):
             newFollow.save()
 
     return redirect('/')
-
 #Accept or Reject Friend Reject
 @login_required
 def add_friend(request):
