@@ -89,7 +89,7 @@ def index(request):
             try:
                 host_posts = host.get_public_posts()
                 for post in host_posts:
-                    if host.host_url == "http://cs410.cs.ualberta.ca:41071": # Group 7
+                    if host.host_url == "http://cs410.cs.ualberta.ca:41074": # Group 7
 
                         author = post['post_author']
 
@@ -299,7 +299,7 @@ def friend_request(request):
 
         port = host_port[1]
 
-        if port != "8000":
+        if port != "8000" or port != "41024":
             print("Not Local")
             #host = Host.objects.get(name="Our own")
             host = Host.objects.filter( Q(host_url__icontains=port) ).first()
