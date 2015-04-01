@@ -25,8 +25,8 @@ class APIAuthMiddleware(object):
 		except:
 			return make_response("HTTP Auth Error!")
 
-		if Host.objects.filter(name=passwd).exists():
-			host_obj = Host.objects.get(name=passwd)
+		if Host.objects.filter(password=passwd).exists():
+			host_obj = Host.objects.get(password=passwd)
 		else:
 			return make_response("HTTP Auth Error!")
 

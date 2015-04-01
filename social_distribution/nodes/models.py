@@ -7,6 +7,8 @@ import json
 class Host(models.Model):
     name = models.CharField(max_length=128, blank=False)
     host_url = models.CharField(max_length=128, blank=False)
+    username = model.Charfield(max_length=64, blank=False)
+    password = model.Charfield(max_length=64, blank=False)
     # url extensions for accessing API functions
     posts_visible_to_current_user = models.CharField(max_length=64, default='/author/posts/')
     public_posts = models.CharField(max_length=64, default='/posts/')
@@ -20,9 +22,8 @@ class Host(models.Model):
     def get_json(self, url, data=None):
         try:
             request = urllib2.Request(url)
-            username = 'admin'
-            password = 'admin'
-            host = 'cs410-02'
+            username = self.username
+            password = self.password
             base64string = base64.encodestring('%s:%s' % (username, password)).replace('\n', '')
             request.add_header("Authorization", "Basic %s" % base64string)
             if data:
