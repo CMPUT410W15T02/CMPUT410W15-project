@@ -14,6 +14,7 @@ import urllib, urllib2
 import json
 import markdown2
 from urlparse import urlparse
+from operator import attrgetter
 # Create your views here.
 @login_required
 def index(request):
@@ -79,10 +80,9 @@ def index(request):
         my_profile = ''
 
     if request.user.is_authenticated():
-        context = RequestContext(request)
         profile = Profile.objects.get(user_id = request.user.id)
-        post_query = Post.objects.filter(Q(privacy=1) | Q(privacy=3) | Q(privacy=4) | Q(author=profile)).order_by('-date')
-        post_query = list(post_query)
+        #post_query = Post.objects.filter(Q(privacy=1) | Q(privacy=3) | Q(privacy=4) | Q(author=profile)).order_by('-date')
+        #post_query = list(post_query)
 
         hosts = Host.objects.all().exclude( Q(name='Our own') | Q(name='Test'))
         for host in hosts:
@@ -123,33 +123,64 @@ def index(request):
                             new_post = Post(uuid=uuid, title=title, description="", author=new_profile, date=date,content_type=content_type,post_text=post_text,privacy=1)
                             new_post.save()
 
-                        post_query.append(new_post)
+                        #list_of_posts.append(new_post)
+                        #post_query.append(new_post)
             except:
                 pass
 
 
-        post_query.sort(key=lambda x: x.date,reverse=True)
+        # post_query.sort(key=lambda x: x.date,reverse=True)
 
-        for post in post_query:
+        # for post in post_query:
+        #     if (post.content_type == 'text/x-markdown'):
+        #         post.post_text = markdown2.markdown(post.post_text)
+
+        #     if (post.privacy == '1'):
+        #         if post.author == profile:
+        #             list_of_posts.append(post)
+        #             continue
+
+        #         friends_list = profile.friends.all()
+        #         for friend in friends_list:
+        #             if post.author == friend:
+        #                 list_of_posts.append(post)
+        #     elif ((post.privacy == '3') or (post.privacy == '4')):
+        #         allowed_users = post.allowed.all()
+        #         for user in allowed_users:
+        #             if user.id == request.user.id:
+        #                 list_of_posts.append(post)
+        #     elif (post.author == profile):
+        #         list_of_posts.append(post)
+
+        #Get posts from the people the current user follows.
+        following_profiles = Follow.objects.filter(from_profile_id=profile.id)
+
+        for profiles in following_profiles:
+            posts = Post.objects.filter( Q(author_id=profiles.to_profile_id) & Q(privacy=1) )
+            list_of_posts.append(posts)
+
+        #Get posts from local friends
+        #Friends means follow. So we also have to get the public posts of all friends
+        friends_list = profile.friends.all() #Gets all friends of current users
+
+        for friend_profile in friends_list:
+            posts = Post.objects.filter( Q(author_id=friend_profile.id) & ( Q(privacy=4) | Q(privacy=1) ) ).exclude( Q(author_id=profile.id) )
+            if posts: list_of_posts.append(posts)
+
+        #Get posts from current user
+        own_posts = Post.objects.filter( Q(author_id=profile.id) )
+        list_of_posts.append(own_posts)
+
+        #Flatten lists; removes nested lists
+        list_of_posts = [item for sublist in list_of_posts for item in sublist]
+
+        #Check for markdown
+        for post in list_of_posts:
             if (post.content_type == 'text/x-markdown'):
                 post.post_text = markdown2.markdown(post.post_text)
 
-            if (post.privacy == '1'):
-                if post.author == profile:
-                    list_of_posts.append(post)
-                    continue
-
-                friends_list = profile.friends.all()
-                for friend in friends_list:
-                    if post.author == friend:
-                        list_of_posts.append(post)
-            elif ((post.privacy == '3') or (post.privacy == '4')):
-                allowed_users = post.allowed.all()
-                for user in allowed_users:
-                    if user.id == request.user.id:
-                        list_of_posts.append(post)
-            elif (post.author == profile):
-                list_of_posts.append(post)
+        #Sort posts by most recent
+        list_of_posts = sorted(list_of_posts, key=attrgetter('date'), reverse=True)
 
     return render(request, 'authors/index.html',
         {'list_of_profiles':list_of_profiles, 'list_of_posts':list_of_posts, 'list_of_github':list_of_github, 'my_profile':my_profile})
@@ -296,10 +327,10 @@ def friend_request(request):
         to_profile = Profile.objects.get(id=to_profile_id)
 
         host_port = to_profile.host.strip("http://").split(":")
-
+        print(host_port)
         port = host_port[1]
 
-        if port != "8000" or port != "41024":
+        if str(port) != "8000" and str(port) != "41024":
             print("Not Local")
             #host = Host.objects.get(name="Our own")
             host = Host.objects.filter( Q(host_url__icontains=port) ).first()
