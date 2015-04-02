@@ -234,7 +234,7 @@ def edit_post(request, post_id):
 
             post.allowed.clear()
             if privacy=="3":
-		all_friends=Profile.objects.get(user=request.user)
+		all_friends=Profile.objects.get(user=currentUser)
                 for friend in all_friends.friends.all():
 		    foaf=Profile.objects.get(user=User.objects.get(username=friend.user))
 		    for second_friend in foaf.friends.all():
