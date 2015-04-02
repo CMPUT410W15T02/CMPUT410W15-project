@@ -1,9 +1,9 @@
 {% extends 'authors/base.html' %}
 {% block block_body %}
     <div class="margins">
-		<h1> {{user_object.username}}'s Profile</h1>
+	<h1> {{user_object.username}}'s Profile</h1>
 
-		{% if post.author.host = '127.0.0.1:8000' %}
+	{% if profile.host = '127.0.0.1:8000' %}
     	<div class="well align">
         {% else %}
         <div class="well align text-primary">
