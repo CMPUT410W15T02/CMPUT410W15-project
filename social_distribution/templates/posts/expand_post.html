@@ -2,7 +2,11 @@
 {% block block_body %}
     <div class="margins">
 		<h1> Expanded Post </h1>
-		<div class="well">
+		{% if post.author.host = '127.0.0.1:8000' %}
+    	<div class="well">
+        {% else %}
+        <div class="well text-primary">
+        {% endif %}
 	   	<h1>Title: {{post.title}}</h1>
 
 		<div>
@@ -37,7 +41,7 @@
 		<h3> Submit Comment</h3>
 		<div>
 			<span>
-				<form method="POST" action="/posts/{{post.id}}/">
+				<form method="POST" action="/posts/{{post.uuid}}/">
 					{{comment_form.as_p}}
 					<input type='hidden' name='csrfmiddlewaretoken' value='{{ csrf_token }}' />
 		        	<input class="btn btn-primary btn-sm" type="submit" name="submit_comment" value="Submit Comment" />

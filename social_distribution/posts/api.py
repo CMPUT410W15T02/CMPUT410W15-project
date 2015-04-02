@@ -82,6 +82,8 @@ def posts(request):
         return JsonResponse(data, safe=False)
     return HttpResponse(status=405)
 
+"""curl -u username:password http://cs410.cs.ualberta.ca:41024/api/posts/"""
+
 # all posts made by {AUTHOR_ID} visible to the currently authenticated user
 @login_required
 def authorid_posts(request, author_id):

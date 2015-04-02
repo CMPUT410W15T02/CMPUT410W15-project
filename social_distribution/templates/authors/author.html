@@ -1,9 +1,13 @@
 {% extends 'authors/base.html' %}
 {% block block_body %}
     <div class="margins">
-		<h1> {{user_object.username}}'s Profile</h1>
+	<h1> {{user_object.username}}'s Profile</h1>
 
-		<div class="well align">
+	{% if profile.host = '127.0.0.1:8000' %}
+    	<div class="well align">
+        {% else %}
+        <div class="well align text-primary">
+        {% endif %}
 	        <p>FIRST NAME: {{user_object.first_name}}</p>
 	        <p>LAST NAME: {{user_object.last_name}}</p>
 			<p>USER ID: {{profile.user_id}} </p>

@@ -55,15 +55,28 @@ def posts(request):
             # save the new post in the database
             newPost.save()
 
-            # special privacy settings: custom
+            # special privacy settings: friend of a friend
             if privacy=="3":
-                allowed=post_form.cleaned_data['allowed']
-                for user in allowed:
-                    newPost.allowed.add(Profile.objects.get(user=User.objects.get(username=user)))
+                all_friends=Profile.objects.get(user=currentUser)
+                for friend in all_friends.friends.all():
+		    foaf=Profile.objects.get(user=User.objects.get(username=friend.user))
+		    for second_friend in foaf.friends.all():
+			try:
+                    	    newPost.allowed.add(Profile.objects.get(user=User.objects.get(username=second_friend.user)))
+			except:
+			    continue
                 newPost.allowed.add(Profile.objects.get(user=User.objects.get(username=author)))
 
-            # special privacy settings: friends
+            # special privacy settings: friends on this server
             elif privacy=="4":
+                all_friends=Profile.objects.get(user=currentUser)
+                for friend in all_friends.friends.all():
+		    f=Profile.objects.get(user=User.objects.get(username=friend.user))
+		    if f.host == '127.0.0.1:8000':
+		    	newPost.allowed.add(f)
+                newPost.allowed.add(Profile.objects.get(user=User.objects.get(username=author)))
+	     # special privacy settings: friends
+	    elif privacy=="5":
                 all_friends=Profile.objects.get(user=currentUser)
                 for friend in all_friends.friends.all():
                     newPost.allowed.add(Profile.objects.get(user=User.objects.get(username=friend.user)))
@@ -181,7 +194,7 @@ def public_posts(request):
 
 def delete_post(request, post_id):
     Post.objects.filter(Q(uuid=post_id)).delete()
-    return HttpResponse("Your post has been deleted. <a href=\"/\">Home</a>")
+    return HttpResponse("<script>alert(\"Your post has been deleted\"); window.location = \'/\';</script>")
 
 #Editing a post
 def edit_post(request, post_id):
@@ -221,14 +234,23 @@ def edit_post(request, post_id):
 
             post.allowed.clear()
             if privacy=="3":
-		allowed=edit_form.cleaned_data['allowed']
-                for user in allowed:
-                    post.allowed.add(Profile.objects.get(user=User.objects.get(username=user)))
-                post.allowed.add(Profile.objects.get(user=Profile.objects.get(user=User.objects.get(username=author))))
-
-
-
-            elif privacy=="4":
+		all_friends=Profile.objects.get(user=request.user)
+                for friend in all_friends.friends.all():
+		    foaf=Profile.objects.get(user=User.objects.get(username=friend.user))
+		    for second_friend in foaf.friends.all():
+			try:
+                    	    post.allowed.add(Profile.objects.get(user=User.objects.get(username=second_friend.user)))
+			except:
+			    continue
+                post.allowed.add(Profile.objects.get(user=User.objects.get(username=author)))
+	    elif privacy=="4":
+		all_friends=Profile.objects.get(user=request.user)
+                for friend in all_friends.friends.all():
+		    f=Profile.objects.get(user=User.objects.get(username=friend.user))
+		    if f.host == '127.0.0.1:8000':
+		    	post.allowed.add(f)
+                post.allowed.add(Profile.objects.get(user=User.objects.get(username=author)))
+            elif privacy=="5":
                 all_friends=Profile.objects.get(user=request.user)
                 for friend in all_friends.friends.all():
                     post.allowed.add(Profile.objects.get(user=User.objects.get(username=friend.user)))
