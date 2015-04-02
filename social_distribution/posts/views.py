@@ -181,7 +181,7 @@ def public_posts(request):
 
 def delete_post(request, post_id):
     Post.objects.filter(Q(uuid=post_id)).delete()
-    return HttpResponse("Your post has been deleted. <a href=\"/\">Home</a>")
+    return HttpResponse("<script>alert(\"Your post has been deleted\"); window.location = \'/\';</script>")
 
 #Editing a post
 def edit_post(request, post_id):
