@@ -41,7 +41,7 @@
 		<h3> Submit Comment</h3>
 		<div>
 			<span>
-				<form method="POST" action="/posts/{{post.id}}/">
+				<form method="POST" action="/posts/{{post.uuid}}/">
 					{{comment_form.as_p}}
 					<input type='hidden' name='csrfmiddlewaretoken' value='{{ csrf_token }}' />
 		        	<input class="btn btn-primary btn-sm" type="submit" name="submit_comment" value="Submit Comment" />
