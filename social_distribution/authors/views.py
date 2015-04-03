@@ -496,7 +496,7 @@ def ajax_retrieve_latest_post(request):
             elif (post.author == profile):
                 list_of_posts.append(post)
     
-    return render_to_response('post_template.html', {'list_of_posts': list_of_posts})
+    return render(request, 'post_template.html', {'list_of_posts': list_of_posts})
 
 def ajax_retrieve_latest_github(request):
     list_of_github = []
@@ -557,4 +557,4 @@ def ajax_retrieve_latest_github(request):
     else:
         my_profile = ''
 
-    return render_to_response('github_template.html', {'list_of_github': list_of_github, 'my_profile': my_profile})
+    return render(request, 'github_template.html', {'list_of_github': list_of_github, 'my_profile': my_profile})
