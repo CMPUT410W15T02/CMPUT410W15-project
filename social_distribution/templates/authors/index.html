@@ -1,5 +1,6 @@
 {% extends 'authors/base.html' %}
 {% load post_tags %}
+{% load github_tags %}
 {% block block_body %}
     <div class="margins">
 
@@ -41,40 +42,22 @@
             </script>
         </div>
         <div class="tab-pane fade" id="github">
-            {% if my_profile.github and list_of_github %}
-            {% for event in list_of_github %}
-                <div class="well align">
-                    <div>
-                        <h4>
-                            <p>
-                                {{ event.title|safe|escape }}
-                            </p>
-                        </h4>
-                    </div>
-                    <div>
-                        <h5>
-                            <p class="text-muted">
-                                {{ event.post_text }}
-                            </p>
-                        </h5>
-                    </div>
-                    <br/>
-                </div>
-            {% endfor %}
-            {% elif not my_profile.github %}
-                <div>
-                    <h2>
-                        You haven't linked a <a href="http://www.github.com">Github</a>
-                        account yet! Set one <a href="/manage">here</a>!
-                    </h2>
-                </div>
-            {% elif not list_of_github %}
-                <div>
-                    <h2>
-                        There is no activity to display for this Github account!
-                    </h2>
-                </div>
-            {% endif %}
+            {% render_github %}
+            <script>
+                function refresh() {
+                    $.ajax({
+                        url: '{% url 'github_template' %}',
+                        success: function(data) {
+                            $('#posts').html(data);
+                        }
+                    });
+                    setInterval("refresh()", 15000);
+                }
+
+                $(function(){
+                    refresh();
+                });
+            </script>
         </div>
 
     </div>    
