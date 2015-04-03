@@ -502,7 +502,7 @@ def ajax_retrieve_latest_github(request):
     list_of_github = []
 
     if request.user.is_authenticated():
-        my_profile = Profile.objects.get(user=request.user)
+        my_profile = Profile.objects.get(user_id = request.user.id)
 
         if my_profile.github != '':
             try:
@@ -557,4 +557,4 @@ def ajax_retrieve_latest_github(request):
     else:
         my_profile = ''
 
-    return render_to_response('github_template.html', {'list_of_github': list_of_github})
+    return render_to_response('github_template.html', {'list_of_github': list_of_github, 'my_profile': my_profile})
