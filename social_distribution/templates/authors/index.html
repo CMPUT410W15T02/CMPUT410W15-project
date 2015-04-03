@@ -23,7 +23,7 @@
     <div id ="myTabContent" class="tab-content">
         <div class="tab-pane fade active in" id="posts">
     {% for post in list_of_posts %}
-        {% if post.author.host = '127.0.0.1:8000' %}
+        {% if post.author.host = 'http://cs410.cs.ualberta.ca:41024' %}
     	<div class="well align">
         {% else %}
         <div class="well align text-primary">
