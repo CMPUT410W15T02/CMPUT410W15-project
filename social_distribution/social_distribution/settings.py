@@ -91,6 +91,8 @@ STATICFILES_DIRS = (
     STATIC_PATH,
     ''
 )
+MEDIA_ROOT = ''
+MEDIA_URL = ''
 
 TEMPLATE_PATH = os.path.abspath(os.path.join(BASE_DIR,'templates'))
 TEMPLATE_DIRS = (
