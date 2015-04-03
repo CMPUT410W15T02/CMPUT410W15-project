@@ -16,6 +16,11 @@ import markdown2
 from urlparse import urlparse
 from operator import attrgetter
 # Create your views here.
+
+def get_photo(request, path):
+    image_data = open(path, 'rb').read()
+    return HttpResponse(image_data)
+    
 @login_required
 def index(request):
     list_of_users = User.objects.filter( Q(username=request.user) | Q(username='admin'))
