@@ -421,6 +421,79 @@ def unfollow_author(request):
 
     return redirect('/')
 
-#def ajax_retrieve_latest_post(request):
+def ajax_retrieve_latest_post(request):
+    list_of_posts = []
+
+    if request.user.is_authenticated():
+        profile = Profile.objects.get(user_id = request.user.id)
+        post_query = Post.objects.filter(Q(privacy=1) | Q(privacy=3) | Q(privacy=4) | Q(author=profile)).order_by('-date')
+        post_query = list(post_query)
+
+        hosts = Host.objects.all().exclude( Q(name='Our own') | Q(name='Test'))
+        for host in hosts:
+            try:
+                host_posts = host.get_public_posts()
+                for post in host_posts:
+                    author = post['post_author']
+
+                    #Create new remote user
+                    try:
+                        new_user = User.objects.get(username=author['author_details']['username'])
+                    except User.DoesNotExist:
+                        new_user = User(username=author['author_details']['username'], password='')
+                        new_user.save()
+
+                    #Create new remote profile
+                    try:
+                        new_profile = Profile.objects.get(user=new_user)
+                    except Profile.DoesNotExist:
+                        new_profile = Profile(host=host.host_url, uuid=author['user'], displayname="Testing", user=new_user)
+                        new_profile.save()
+
+                    #Get remote posts
+                    title = post['post_title']
+                    uuid = post['post_id']
+                    description = post['description']
+                    content_type = post['content-type']
+                    content_type = "text/plain"
+                    post_text = post['post_text']
+                    #date = datetime.strptime(post['pubDate'], '%Y-%m-%dT%H:%M:%S.%fZ')
+                    date = timezone.now()
+
+                    new_post = Post(uuid=uuid, title=title, description="", author=new_profile, date=date,content_type=content_type,post_text=post_text,privacy=1)
+                    post_query.append(new_post)
+            except:
+                pass
+
+
+        post_query.sort(key=lambda x: x.date,reverse=True)
+
+        following_profiles = Follow.objects.filter(from_profile_id=profile.id)
+        friends_list = profile.friends.all()
+
+        for post in post_query:
+            if (post.content_type == 'text/x-markdown'):
+                post.post_text = markdown2.markdown(post.post_text)
+
+            if (post.privacy == '1'):
+                # Get posts from local friends
+                # Friends means follow. So we also have to get the public posts of all friends
+                for friend in friends_list:
+                    if post.author == friend:
+                        list_of_posts.append(post)
+
+                # Get posts from the people the current user follows.
+                for follow in following_profiles:
+                    if post.author == follow.to_profile_id:
+                        list_of_posts.append(post)
+
+            elif ((post.privacy == '3') or (post.privacy == '4')):
+                allowed_users = post.allowed.all()
+                for user in allowed_users:
+                    if user.id == request.user.id:
+                        list_of_posts.append(post)
+            # Displays your own posts
+            elif (post.author == profile):
+                list_of_posts.append(post)
     
-   # render_to_response('post_template.html')
+    render_to_response('post_template.html', {'list_of_posts': list_of_posts})
