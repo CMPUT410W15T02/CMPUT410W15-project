@@ -2,6 +2,37 @@
 {% load post_tags %}
 {% load github_tags %}
 {% block block_body %}
+<script>
+    function refresh() {
+        $.ajax({
+            url: '{% url 'post_template' %}',
+            success: function(data) {
+                $('#posts').html(data);
+            }
+        });
+        setInterval("refresh()", 15000);
+    }
+
+    $(function(){
+        refresh();
+    });
+</script>
+
+<script>
+    function refresh2() {
+        $.ajax({
+            url: '{% url 'github_template' %}',
+            success: function(data) {
+                $('#github').html(data);
+            }
+        });
+        setInterval("refresh2()", 15000);
+    }
+
+    $(function(){
+        refresh2();
+    });
+</script>
     <div class="margins">
 
     <h3>View Author Profile:
@@ -25,39 +56,11 @@
     <div id ="myTabContent" class="tab-content">
         <div class="tab-pane fade active in" id="posts">
             {% render_post %}
-            <script>
-                function refresh() {
-                    $.ajax({
-                        url: '{% url 'post_template' %}',
-                        success: function(data) {
-                            $('#posts').html(data);
-                        }
-                    });
-                    setInterval("refresh()", 15000);
-                }
 
-                $(function(){
-                    refresh();
-                });
-            </script>
         </div>
         <div class="tab-pane fade" id="github">
             {% render_github %}
-            <script>
-                function refresh() {
-                    $.ajax({
-                        url: '{% url 'github_template' %}',
-                        success: function(data) {
-                            $('#posts').html(data);
-                        }
-                    });
-                    setInterval("refresh()", 15000);
-                }
 
-                $(function(){
-                    refresh();
-                });
-            </script>
         </div>
 
     </div>    
