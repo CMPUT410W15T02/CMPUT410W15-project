@@ -11,7 +11,7 @@ class NotClearableFileInput(FileInput):
 
     template_with_initial = '%(initial_text)s: %(initial)s <br />%(clear_text)s: %(clear)s<br />%(input_text)s: %(input)s<br />'
 
-    url_markup_template = '<br/><img src="/static/{0}" height="100" width="100"/>'
+    url_markup_template = '<br/><img src="{0}" height="100" width="100"/>'
 
     def render(self, name, value, attrs=None):
         substitutions = {

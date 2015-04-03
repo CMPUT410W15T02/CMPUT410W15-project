@@ -14,7 +14,9 @@
 
             <p>Image:
             {% if post.image %}
-                <br/> <img src="/static/{{post.image.url}}" alt="{{post.image.url}}" height="100" width="100"/></p>
+                <br/> 
+                <img src="{{MEDIA_URL}}{{post.image}}" alt="{{post.image}}" height="100" width="100"/>
+            </p>
             {% else %}
                 None</p>
             {% endif %}
