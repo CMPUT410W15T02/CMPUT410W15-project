@@ -552,7 +552,7 @@ def ajax_retrieve_latest_github(request):
 
                     else:
                         pass
-            except:
+            except Exception as e:
                 pass
     else:
         my_profile = ''
