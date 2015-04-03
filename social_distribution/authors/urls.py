@@ -4,6 +4,7 @@ from authors import views
 from django.conf import settings
 
 urlpatterns = patterns('',
+    url(r'^media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.MEDIA_ROOT}),
     url(r'^register/$', views.register, name='register'),
     url(r'^login/$', views.user_login, name='login'),
     url(r'^accounts/login/$', views.user_login),
@@ -18,4 +19,4 @@ urlpatterns = patterns('',
     url(r'^follow_author/$', views.follow_author, name='follow_author'),
     url(r'^unfollow_author/$', views.unfollow_author, name='unfollow_author'),
     url(r'^$', views.index, name='index')
-)
+) 

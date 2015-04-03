@@ -37,7 +37,7 @@
 
         {% if post.image %}
             <div>
-                <img src="/static/{{post.image}}" alt="{{post.image}}" height="100" width="100"/>
+                <img src="{{MEDIA_URL}}{{post.image}}" alt="{{post.image}}" height="100" width="100"/>
             </div>
         {% endif %}
 
