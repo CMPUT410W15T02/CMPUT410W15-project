@@ -24,6 +24,21 @@
     <div id ="myTabContent" class="tab-content">
         <div class="tab-pane fade active in" id="posts">
             {% render_post %}
+            <script>
+                function refresh() {
+                    $.ajax({
+                        url: '{% url 'post_template' %}',
+                        success: function(data) {
+                            $('#posts').html(data);
+                        }
+                    });
+                    setInterval("refresh()", 15000);
+                }
+
+                $(function(){
+                    refresh();
+                });
+            </script>
         </div>
         <div class="tab-pane fade" id="github">
             {% if my_profile.github and list_of_github %}
