@@ -23,6 +23,31 @@ def index(request):
     list_of_posts = []
     list_of_github = []
 
+        #Checks status of friend requests sent to remote servers
+    if request.user.is_authenticated():
+        current_profile = Profile.objects.get(user_id = request.user.id)
+        follow_qs = Follow.objects.filter(from_profile_id=current_profile.id).filter(status='PENDING')
+ 
+        for follow in follow_qs:
+            #check each follow to_profile to see if they are remote or local
+            to_profile_host = follow.to_profile_id.host
+ 
+            host_port = to_profile_host.strip("http://").split(":")
+ 
+            port = host_port[1]
+ 
+            if str(port) != "8000" and str(port) != "41024":
+            #if str(port) == '8000' or str(port) == '41024':
+                print("not local -- friend response")
+                host = Host.objects.filter( Q(host_url__icontains=port) ).first()
+                #host = Host.objects.filter( Q(host_url__icontains='41024') ).first()
+                friend_response = host.get_friend_response(str(current_profile.uuid), str(follow.to_profile_id.uuid))
+                print(friend_response['friends'])
+                if friend_response['friends'].upper() == "YES" or friend_response['friends'] == True:
+                    current_profile.friends.add(follow.to_profile_id)
+                    current_profile.save()
+                    follow.delete()
+
     if request.user.is_authenticated():
         my_profile = Profile.objects.get(user=request.user)
 
