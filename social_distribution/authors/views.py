@@ -17,8 +17,9 @@ from urlparse import urlparse
 from operator import attrgetter
 # Create your views here.
 
-def get_photo(request, path):
-    image_data = open(path, 'rb').read()
+def get_photo(request, post_uuid):
+    post = Post.objects.get(uuid=post_uuid)
+    image_data = open(post.get_image_path(), 'rb').read()
     return HttpResponse(image_data)
     
 @login_required
