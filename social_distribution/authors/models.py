@@ -10,7 +10,7 @@ class Profile(models.Model):
                       ('F', 'Female'))
 
     user = models.OneToOneField(User, editable=False)
-    host = models.CharField(max_length=32, blank=True)
+    host = models.CharField(max_length=64, blank=True)
     displayname = models.CharField(max_length=128, blank=True)
     body = models.TextField(max_length=2048, blank=True)
     birthdate = models.DateField('birthdate',null=True, blank=True)

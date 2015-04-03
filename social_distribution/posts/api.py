@@ -14,8 +14,8 @@ def get_posts(posts):
     for post in posts:
         post_data = {}
         post_data['title'] = post.title
-        post_data['source'] = 'http://cs410.cs.ualberta.ca:41024/'
-        post_data['origin'] = 'http://cs410.cs.ualberta.ca:41024/'
+        post_data['source'] = 'http://cs410.cs.ualberta.ca:41024'
+        post_data['origin'] = 'http://cs410.cs.ualberta.ca:41024'
         post_data['description'] = post.description
         post_data['content-type'] = post.content_type
         post_data['content'] = post.post_text
@@ -276,11 +276,10 @@ def friend_request(request):
         try:
             from_profile = Profile.objects.get(uuid=received_data['author']['id'])
         except:
-            # assumption made is that the user who is trying to friend the user on our server
-            # is the same user authenticated in HTTP Basic Auth
-            from_user = User.objects.get(username=request.user.username)
-            from_profile = Profile.objects.get(user=from_user)
-            from_profile.uuid = received_data['author']['id']
+            from_user = User(username=received_data['author']['displayname']+"@"+received_data['author']['host'],
+                            password="")
+            from_profile = Profile.objects.create(user=from_user,uuid=received_data['author']['id'],
+            displayname=received_data['author']['displayname'])
 
         try:
             to_profile = Profile.objects.get(uuid=received_data['friend']['id'])
@@ -289,10 +288,7 @@ def friend_request(request):
 
         try:
             checkFollow = Follow.objects.filter( Q(from_profile_id=from_profile) & Q(to_profile_id=to_profile) ).first()
-            if checkFollow:
-                checkFollow.status = 'PENDING'
-                checkFollow.save()
-            else:
+            if not checkFollow:
                 newFollow = Follow(from_profile_id=from_profile, to_profile_id=to_profile, status='PENDING')
                 newFollow.save()
         except:

@@ -23,9 +23,7 @@
     </ul>
     <div id ="myTabContent" class="tab-content">
         <div class="tab-pane fade active in" id="posts">
-            {% for post in list_of_posts %}
-                {% render_post %}
-            {% endfor %}
+            {% render_post %}
         </div>
         <div class="tab-pane fade" id="github">
             {% if my_profile.github and list_of_github %}

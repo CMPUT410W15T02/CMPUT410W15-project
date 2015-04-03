@@ -2,7 +2,7 @@
 {% block block_body %}
     <div class="margins">
 		<h1> Expanded Post </h1>
-		{% if post.author.host = '127.0.0.1:8000' %}
+		{% if post.author.host = 'http://cs410.cs.ualberta.ca:41024' %}
     	<div class="well">
         {% else %}
         <div class="well text-primary">
@@ -37,6 +37,7 @@
 			{% endfor %}
 		</div>
 
+        {% if post.author.host = 'http://cs410.cs.ualberta.ca:41024' %}
 		</hr>
 		<h3> Submit Comment</h3>
 		<div>
@@ -49,4 +50,5 @@
 		    </span>
 		</div>
 	</div>
+    {% endif %}
 {% endblock %}

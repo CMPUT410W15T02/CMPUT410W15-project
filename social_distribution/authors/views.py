@@ -14,6 +14,7 @@ import urllib, urllib2
 import json
 import markdown2
 from urlparse import urlparse
+from operator import attrgetter
 # Create your views here.
 @login_required
 def index(request):
@@ -21,6 +22,31 @@ def index(request):
     list_of_profiles = Profile.objects.exclude(id__in=list_of_users)
     list_of_posts = []
     list_of_github = []
+
+        #Checks status of friend requests sent to remote servers
+    if request.user.is_authenticated():
+        current_profile = Profile.objects.get(user_id = request.user.id)
+        follow_qs = Follow.objects.filter(from_profile_id=current_profile.id).filter(status='PENDING')
+ 
+        for follow in follow_qs:
+            #check each follow to_profile to see if they are remote or local
+            to_profile_host = follow.to_profile_id.host
+ 
+            host_port = to_profile_host.strip("http://").split(":")
+ 
+            port = host_port[1]
+ 
+            if str(port) != "8000" and str(port) != "41024":
+            #if str(port) == '8000' or str(port) == '41024':
+                print("not local -- friend response")
+                host = Host.objects.filter( Q(host_url__icontains=port) ).first()
+                #host = Host.objects.filter( Q(host_url__icontains='41024') ).first()
+                friend_response = host.get_friend_response(str(current_profile.uuid), str(follow.to_profile_id.uuid))
+                print(friend_response['friends'])
+                if friend_response['friends'].upper() == "YES" or friend_response['friends'] == True:
+                    current_profile.friends.add(follow.to_profile_id)
+                    current_profile.save()
+                    follow.delete()
 
     if request.user.is_authenticated():
         my_profile = Profile.objects.get(user=request.user)
@@ -79,7 +105,6 @@ def index(request):
         my_profile = ''
 
     if request.user.is_authenticated():
-        context = RequestContext(request)
         profile = Profile.objects.get(user_id = request.user.id)
         post_query = Post.objects.filter(Q(privacy=1) | Q(privacy=3) | Q(privacy=4) | Q(author=profile)).order_by('-date')
         post_query = list(post_query)
@@ -89,65 +114,65 @@ def index(request):
             try:
                 host_posts = host.get_public_posts()
                 for post in host_posts:
-                    if host.host_url == "http://cs410.cs.ualberta.ca:41074": # Group 7
+                    author = post['post_author']
 
-                        author = post['post_author']
+                    #Create new remote user
+                    try:
+                        new_user = User.objects.get(username=author['author_details']['username'])
+                    except User.DoesNotExist:
+                        new_user = User(username=author['author_details']['username'], password='')
+                        new_user.save()
 
-                        #Create new remote user
-                        try:
-                            new_user = User.objects.get(username=author['author_details']['username'])
-                        except User.DoesNotExist:
-                            new_user = User(username=author['author_details']['username'], password='')
-                            new_user.save()
+                    #Create new remote profile
+                    try:
+                        new_profile = Profile.objects.get(user=new_user)
+                    except Profile.DoesNotExist:
+                        new_profile = Profile(host=host.host_url, uuid=author['user'], displayname="Testing", user=new_user)
+                        new_profile.save()
 
-                        #Create new remote profile
-                        try:
-                            new_profile = Profile.objects.get(user=new_user)
-                        except Profile.DoesNotExist:
-                            new_profile = Profile(host=host.host_url, uuid=author['user'], displayname="Testing", user=new_user)
-                            new_profile.save()
+                    #Get remote posts
+                    title = post['post_title']
+                    uuid = post['post_id']
+                    description = post['description']
+                    content_type = post['content-type']
+                    content_type = "text/plain"
+                    post_text = post['post_text']
+                    #date = datetime.strptime(post['pubDate'], '%Y-%m-%dT%H:%M:%S.%fZ')
+                    date = timezone.now()
 
-                        #Get remote posts
-                        title = post['post_title']
-                        uuid = post['post_id']
-                        #description = post['description']
-                        #content_type = post['content-type']
-                        content_type = "text/plain"
-                        post_text = post['post_text']
-                        #date = datetime.strptime(post['pubDate'], '%Y-%m-%dT%H:%M:%S.%fZ')
-                        date = timezone.now()
-
-                        try:
-                            new_post = Post.objects.get(uuid=uuid)
-                        except Post.DoesNotExist:
-                            new_post = Post(uuid=uuid, title=title, description="", author=new_profile, date=date,content_type=content_type,post_text=post_text,privacy=1)
-                            new_post.save()
-
-                        post_query.append(new_post)
+                    new_post = Post(uuid=uuid, title=title, description="", author=new_profile, date=date,content_type=content_type,post_text=post_text,privacy=1)
+                    post_query.append(new_post)
             except:
                 pass
 
 
         post_query.sort(key=lambda x: x.date,reverse=True)
 
+        following_profiles = Follow.objects.filter(from_profile_id=profile.id)
+        friends_list = profile.friends.all()
+
         for post in post_query:
             if (post.content_type == 'text/x-markdown'):
                 post.post_text = markdown2.markdown(post.post_text)
 
             if (post.privacy == '1'):
-                if post.author == profile:
-                    list_of_posts.append(post)
-                    continue
-
-                friends_list = profile.friends.all()
+                # Get posts from local friends
+                # Friends means follow. So we also have to get the public posts of all friends
                 for friend in friends_list:
                     if post.author == friend:
                         list_of_posts.append(post)
+
+                # Get posts from the people the current user follows.
+                for follow in following_profiles:
+                    if post.author == follow.to_profile_id:
+                        list_of_posts.append(post)
+
             elif ((post.privacy == '3') or (post.privacy == '4')):
                 allowed_users = post.allowed.all()
                 for user in allowed_users:
                     if user.id == request.user.id:
                         list_of_posts.append(post)
+            # Displays your own posts
             elif (post.author == profile):
                 list_of_posts.append(post)
 
@@ -163,7 +188,6 @@ def register(request):
     if request.method == 'POST':
         user_form = UserForm(data=request.POST)
 
-
         if user_form.is_valid():
             user = user_form.save()
             user.set_password(user.password)
@@ -171,7 +195,7 @@ def register(request):
             user.save()
 
             profile = Profile.create_profile(user)
-            profile.host = request.get_host()
+            profile.host = "http://cs410.cs.ualberta.ca:41024"
             profile.save()
 
             registered = True
@@ -296,10 +320,10 @@ def friend_request(request):
         to_profile = Profile.objects.get(id=to_profile_id)
 
         host_port = to_profile.host.strip("http://").split(":")
-
+        print(host_port)
         port = host_port[1]
 
-        if port != "8000" or port != "41024":
+        if str(port) != "8000" and str(port) != "41024":
             print("Not Local")
             #host = Host.objects.get(name="Our own")
             host = Host.objects.filter( Q(host_url__icontains=port) ).first()
@@ -361,7 +385,7 @@ def remove_friend(request):
     if request.method == 'POST':
         remove_profile_id = request.POST.get('remove_profile_id', '')
         remove_profile = Profile.objects.get(id=remove_profile_id)
-    
+
         posts_qs = Post.objects.filter( Q(privacy=4) & Q(author=current_profile.id))
 
         for post in posts_qs:

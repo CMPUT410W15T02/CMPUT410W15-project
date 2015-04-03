@@ -72,7 +72,7 @@ def posts(request):
                 all_friends=Profile.objects.get(user=currentUser)
                 for friend in all_friends.friends.all():
 		    f=Profile.objects.get(user=User.objects.get(username=friend.user))
-		    if f.host == '127.0.0.1:8000':
+		    if f.host == 'http://cs410.cs.ualberta.ca:41024':
 		    	newPost.allowed.add(f)
                 newPost.allowed.add(Profile.objects.get(user=User.objects.get(username=author)))
 	     # special privacy settings: friends
@@ -161,27 +161,29 @@ def public_posts(request):
 
     hosts = Host.objects.all()
     for host in hosts:
-        try:
-            host_posts = host.get_public_posts()
-            for post in host_posts['posts']:
-                title = post['title']
-                description = post['description']
-                content_type = post['content-type']
-                post_text = post['content']
-                author = post['author']
-                new_user = User(username=author['displayname'],password='')
-                new_profile = Profile(host=author['host'],displayname=author['displayname'],
-                uuid=author['id'],user=new_user)
-                date = timezone.now()
-                #date = datetime.datetime.strptime(post['pubDate'], '%Y-%m-%dT%H:%M:%S.%fZ')
-                guid = post['guid']
-                privacy = '1'
+        if host.name != "Our own":
+            try:
+                host_posts = host.get_public_posts()
+                for post in host_posts['posts']:
+                    title = post['title']
+                    description = post['description']
+                    content_type = post['content-type']
+                    post_text = post['content']
+                    author = post['author']
+                    new_user = User(username=author['displayname'],password='')
+                    new_profile = Profile(host=author['host'],displayname=author['displayname'],
+                    uuid=author['id'],user=new_user)
+                    #date = datetime.datetime.strptime(post['pubDate'], '%Y-%m-%dT%H:%M:%S.%fZ')
+                    #XXX: Fix this date
+                    date = timezone.now()
+                    guid = post['guid']
+                    privacy = '1'
 
-                new_post = Post(uuid=guid,title=title,description=description,author=new_profile,
-                date=date,content_type=content_type,post_text=post_text,privacy=privacy)
-                list_of_posts.append(new_post)
-        except:
-            pass
+                    new_post = Post(uuid=guid,title=title,description=description,author=new_profile,
+                    date=date,content_type=content_type,post_text=post_text,privacy=privacy)
+                    list_of_posts.append(new_post)
+            except:
+                pass
 
     for post in list_of_posts:
         if post.content_type == 'text/x-markdown':
@@ -311,8 +313,40 @@ def custom_posts(request):
 def expand_post(request,post_id):
     if request.user.is_authenticated():
         my_profile = Profile.objects.get(user=request.user)
+    try:
+        post = Post.objects.get(uuid=post_id)
+    except:
+        hosts = Host.objects.all()
+        for host in hosts:
+            if host.name != "Our own" and host.name != "Group7":
+                    post_json = host.get_postid(post_id)['posts'][0]
+                    print(post_json)
+                    visibility = post_json['visibility']
+                    description = post_json['description']
+                    pubdate = post_json['pubdate']
+                    title = post_json['title']
+                    content = post_json['content']
+                    content_type = post_json['content-type']
 
-    post = Post.objects.get(uuid=post_id)
+                    author_id = post_json['author']['id']
+                    author_host = post_json['author']['host']
+                    author_displayname = post_json['author']['displayname']
+                    try:
+                        author_user = User(username=author_displayname+"@"+author_host,
+                                            password="")
+                        author_user.save()
+                        author_profile = Profile(user=author_user,uuid=author_id,
+                        displayname=author_displayname,host=author_host)
+                        author_profile.save()
+                    except:
+                        author_profile = Profile.objects.get(uuid=author_id)
+
+                    post = Post(title=title,post_text=content,author=author_profile,privacy=1)
+                    comments = []
+                    comment_form = []
+                    return render(request, 'posts/expand_post.html',{'comments':comments, 'comment_form':comment_form, 'post':post, 'my_profile':my_profile})
+
+
     if post.content_type == 'text/x-markdown':
         post.post_text = markdown2.markdown(post.post_text)
     current_profile = Profile.objects.get(user_id=request.user.id)
@@ -326,7 +360,7 @@ def expand_post(request,post_id):
             newComment.save()
         else:
             print comment_form.errors
-        return redirect('/')
+        return redirect('/posts/'+post_id)
     else:
         comments = Comment.objects.filter(post_id=post).order_by('date')
         comment_form = CommentForm()
