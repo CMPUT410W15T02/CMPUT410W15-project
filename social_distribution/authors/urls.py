@@ -20,5 +20,7 @@ urlpatterns = patterns('',
     url(r'^unfollow_author/$', views.unfollow_author, name='unfollow_author'),
     url(r'^$', views.index, name='index'),
     url(r'^post_template/$', views.ajax_retrieve_latest_post, name='post_template'),
-    url(r'^github_template/$', views.ajax_retrieve_latest_github, name='github_template')
+    url(r'^github_template/$', views.ajax_retrieve_latest_github, name='github_template'),
+    url(r'^my_friends/$', views.my_friends, name='my_friends'),
+    url(r'^$', views.index, name='index')
 )

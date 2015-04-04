@@ -586,3 +586,12 @@ def ajax_retrieve_latest_github(request):
         my_profile = ''
 
     return render(request, 'github_template.html', {'list_of_github': list_of_github, 'my_profile': my_profile})
+
+#Gets all friends of current profile
+def my_friends(request):
+    current_profile = Profile.objects.get(user_id=request.user.id)
+    friends = current_profile.friends.all()
+    print(friends)
+
+    return render(request, 'authors/my_friends.html', {'friends':friends})
+

@@ -5,6 +5,7 @@ import json
 # Create your models here.
 
 class Host(models.Model):
+    share = models.BooleanField()
     name = models.CharField(max_length=128, blank=False)
     host_url = models.CharField(max_length=128, blank=False)
     username = models.CharField(max_length=64, blank=False)
