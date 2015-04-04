@@ -98,6 +98,7 @@ def posts(request):
     return render(request, 'posts/posts.html', {'post_form':post_form, 'my_profile':my_profile})
 
 # view all posts of an author specified by author_id
+@login_required
 def posts_by_author(request, author_id):
 
     list_of_posts = []
@@ -154,6 +155,7 @@ def posts_by_author(request, author_id):
     return render(request, 'posts/view_posts.html', {'list_of_posts':list_of_posts, 'title':title, 'my_profile':my_profile, 'url_from':url_from})
 
 # view all public posts
+@login_required
 def public_posts(request):
     if request.user.is_authenticated():
         my_profile = Profile.objects.get(user=request.user)
@@ -203,6 +205,7 @@ def delete_post(request, post_id):
     return HttpResponse("<script>alert(\"Your post has been deleted\"); window.location = \'/\';</script>")
 
 #Editing a post
+@login_required
 def edit_post(request, post_id):
     post=Post.objects.get(uuid=post_id)
 
@@ -253,7 +256,7 @@ def edit_post(request, post_id):
 		all_friends=Profile.objects.get(user=request.user)
                 for friend in all_friends.friends.all():
 		    f=Profile.objects.get(user=User.objects.get(username=friend.user))
-		    if f.host == '127.0.0.1:8000':
+		    if f.host == 'http://cs410.cs.ualberta.ca:41024':
 		    	post.allowed.add(f)
                 post.allowed.add(Profile.objects.get(user=User.objects.get(username=author)))
             elif privacy=="5":
@@ -276,11 +279,12 @@ def edit_post(request, post_id):
 
 
 #view posts by friends of current logged in user
+@login_required
 def friends_posts(request):
     if request.user.is_authenticated():
         my_profile = Profile.objects.get(user=request.user)
 
-    friend_qs = Post.objects.filter(privacy=4).exclude(allowed=None).order_by('-date') #removes posts with empty allowed list
+    friend_qs = Post.objects.filter(Q(privacy=4) | Q(privacy=5)).exclude(allowed=None).order_by('-date') #removes posts with empty allowed list
 
     list_of_posts = []
 
@@ -288,9 +292,8 @@ def friends_posts(request):
         if post.content_type == 'text/x-markdown':
             post.post_text = markdown2.markdown(post.post_text)
         allowed_users = post.allowed.all()
-        for user in allowed_users:
-            if user.id == request.user.id:
-                list_of_posts.append(post)
+        if my_profile in allowed_users:
+            list_of_posts.append(post)
     url_from = '/friends_posts/'
 
     list_of_posts.sort(key=lambda x: x.date,reverse=True)
@@ -373,11 +376,12 @@ def expand_post(request,post_id):
         comment_form = CommentForm()
     return render(request, 'posts/expand_post.html',{'comments':comments, 'comment_form':comment_form, 'post':post, 'my_profile':my_profile})
 
+@login_required
 def ajax_friends_post(request):
     if request.user.is_authenticated():
         my_profile = Profile.objects.get(user=request.user)
 
-    friend_qs = Post.objects.filter(privacy=4).exclude(allowed=None).order_by('-date') #removes posts with empty allowed list
+    friend_qs = Post.objects.filter(Q(privacy=4) | Q(privacy=5)).exclude(allowed=None).order_by('-date') #removes posts with empty allowed list
 
     list_of_posts = []
 
@@ -385,14 +389,15 @@ def ajax_friends_post(request):
         if post.content_type == 'text/x-markdown':
             post.post_text = markdown2.markdown(post.post_text)
         allowed_users = post.allowed.all()
-        for user in allowed_users:
-            if user.id == request.user.id:
-                list_of_posts.append(post)
+        if my_profile in allowed_users:
+            list_of_posts.append(post)
+    url_from = '/friends_posts/'
 
     list_of_posts.sort(key=lambda x: x.date,reverse=True)
 
     return render(request, 'post_template.html', {'list_of_posts':list_of_posts, 'title':"Friends' Posts", 'my_profile':my_profile})
 
+@login_required
 def ajax_public_posts(request):
     if request.user.is_authenticated():
         my_profile = Profile.objects.get(user=request.user)
@@ -436,6 +441,7 @@ def ajax_public_posts(request):
     title = "Viewing All Public Posts"
     return render(request, 'post_template.html', {'list_of_posts':list_of_posts, 'title':title, 'my_profile':my_profile})
 
+@login_required
 def ajax_posts_by_author(request, author_id):
 
     list_of_posts = []

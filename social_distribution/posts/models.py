@@ -27,8 +27,8 @@ class Post(models.Model):
     privacy = models.CharField(max_length=1, choices=PRIVACY_CHOICES)
     allowed=models.ManyToManyField(Profile,null=True,blank=True, related_name="allowed")
 
-    def get_image_name(image):
-        return image.url
+    def get_image_path(self):
+        return self.image.path
     def __unicode__(self):
         return str(self.author)
 

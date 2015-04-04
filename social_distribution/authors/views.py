@@ -15,7 +15,34 @@ import json
 import markdown2
 from urlparse import urlparse
 from operator import attrgetter
+
 # Create your views here.
+
+# recieves post uuid 
+# returns the image data for the image associated with that post
+@login_required
+def get_photo(request, post_uuid):
+    
+    # get the post
+    post = Post.objects.get(uuid=post_uuid)
+    
+    # find profiles that
+    profile = Profile.objects.get(user=request.user)
+    allowed_profiles = post.allowed.all()
+    
+    # conditions where the current user is authorized to see the photo
+    auth_conditions = [post.privacy == '1', profile in allowed_profiles]
+
+    if any(auth_conditions):
+        image_data = open(post.get_image_path(), 'rb').read()
+    
+    # if the user is not authorized return a placeholder image
+    else:
+        image_data = open("message_images/not_authorized.png", 'rb').read()
+    
+    # return the raw image data
+    return HttpResponse(image_data)
+    
 @login_required
 def index(request):
     list_of_users = User.objects.filter( Q(username=request.user) | Q(username='admin'))
@@ -306,8 +333,7 @@ def author_manage(request):
         profile_form = UserProfileForm(instance=profile)
 
     if updated == True:
-        return HttpResponse("Profile Successfully edited! Click "
-        "<a href=/author/"+my_profile.uuid+">here</a> to return to your profile.")
+        return HttpResponse("<script>alert(\"Profile Successfully edited!\"); window.location = \'/author/%s\';</script>" %profile.uuid)
     else:
         return render_to_response('authors/manage.html',
             {'profile_form': profile_form, 'my_profile':my_profile}, context)
@@ -359,8 +385,10 @@ def add_friend(request):
             current_profile.save()
 
             #Remove from follow
-            qs = Follow.objects.filter(from_profile_id=from_profile.id).filter(to_profile_id=current_profile.id)
+            qs = Follow.objects.filter( Q(from_profile_id=from_profile.id) & Q(to_profile_id=current_profile.id) |
+                                        Q(from_profile_id=current_profile.id) & Q(to_profile_id=from_profile.id) )
             qs.delete()
+
 
             #Add new friend to all friend's post
             posts_qs = Post.objects.filter( Q(privacy=4) & Q(author=from_profile.id))

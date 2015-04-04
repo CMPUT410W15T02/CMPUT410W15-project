@@ -4,7 +4,7 @@ from authors import views
 from django.conf import settings
 
 urlpatterns = patterns('',
-    url(r'^media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.MEDIA_ROOT}),
+    url(r'^media/(?P<post_uuid>.*)$', views.get_photo, name='get_photo'),
     url(r'^register/$', views.register, name='register'),
     url(r'^login/$', views.user_login, name='login'),
     url(r'^accounts/login/$', views.user_login),
