@@ -147,7 +147,7 @@ def posts_by_author(request, author_id):
         profile = Profile.objects.get(uuid=author_id)
         user = profile.user
         title = "There are no posts by " + user.username
-    url_from = 'posts_by_author/'
+    url_from = '/posts_by_author/'
 
     return render(request, 'posts/view_posts.html', {'list_of_posts':list_of_posts, 'title':title, 'my_profile':my_profile, 'url_from':url_from})
 
@@ -193,7 +193,7 @@ def public_posts(request):
     list_of_posts.sort(key=lambda x: x.date,reverse=True)
 
     title = "Viewing All Public Posts"
-    url_from = "public_posts/"
+    url_from = "/public_posts/"
     return render(request, 'posts/view_posts.html', {'list_of_posts':list_of_posts, 'title':title, 'my_profile':my_profile, 'url_from':url_from})
 
 def delete_post(request, post_id):
@@ -289,7 +289,7 @@ def friends_posts(request):
         for user in allowed_users:
             if user.id == request.user.id:
                 list_of_posts.append(post)
-    url_from = 'friends_posts/'
+    url_from = '/friends_posts/'
 
     return render(request, 'posts/view_posts.html', {'list_of_posts':list_of_posts, 'title':"Friends' Posts", 'my_profile':my_profile, 'url_from':url_from})
 
