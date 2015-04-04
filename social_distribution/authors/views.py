@@ -15,17 +15,28 @@ import json
 import markdown2
 from urlparse import urlparse
 from operator import attrgetter
+
 # Create your views here.
 
+# recieves post uuid 
+# returns the image data for the image associated with that post
+@login_required
 def get_photo(request, post_uuid):
+    
+    # get the post
     post = Post.objects.get(uuid=post_uuid)
+    
+    # conditions where the current user is authorized to see the photo
     auth_conditions = [post.author == Profile.objects.get(user=request.user),
         post.privacy == '1']
     if any(auth_conditions):
         image_data = open(post.get_image_path(), 'rb').read()
+    
+    # if the user is not authorized return a placeholder image
     else:
         image_data = open("message_images/not_authorized.png", 'rb').read()
     
+    # return the raw image data
     return HttpResponse(image_data)
     
 @login_required

@@ -8,12 +8,14 @@
         {% else %}
         <div class="well align text-primary">
         {% endif %}
-	        <p>FIRST NAME: {{user_object.first_name}}</p>
-	        <p>LAST NAME: {{user_object.last_name}}</p>
-			<p>USER ID: {{profile.user_id}} </p>
+            <p>HOST: {{profile.host}} </p>
+			<p>DISPLAY NAME: {{profile.displayname}} </p>
 			<p>BODY: {{profile.body}} </p>
-			<p>DOB: {{profile.birthdate}} </p>
-			<p>GENDER: {{profile.gender}}</p>
+			<p>BIRTHDATE: {{profile.birthdate}}</p>
+            <p>GENDER: {{profile.gender}}</p>
+            <p>GITHUB: {{profile.github}}</p>
+            <p>WORKSPACE: {{profile.workspace}}</p>
+            <p>SCHOOL: {{profile.school}}</p>
  		</div>
 
 		<div class="button-container">
