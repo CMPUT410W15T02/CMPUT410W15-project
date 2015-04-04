@@ -272,6 +272,7 @@ def edit_post(request, post_id):
 
 
 #view posts by friends of current logged in user
+@login_required
 def friends_posts(request):
     if request.user.is_authenticated():
         my_profile = Profile.objects.get(user=request.user)
