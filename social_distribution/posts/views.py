@@ -144,7 +144,7 @@ def posts_by_author(request, author_id):
         title = "Viewing Posts by " + user.username
 
     except:
-	profile = Profile.objects.get(uuid=author_id)
+        profile = Profile.objects.get(uuid=author_id)
         user = profile.user
         title = "There are no posts by " + user.username
     url_from = 'posts_by_author/'
@@ -193,7 +193,7 @@ def public_posts(request):
     list_of_posts.sort(key=lambda x: x.date,reverse=True)
 
     title = "Viewing All Public Posts"
-    url_from = "all_posts/"
+    url_from = "public_posts/"
     return render(request, 'posts/view_posts.html', {'list_of_posts':list_of_posts, 'title':title, 'my_profile':my_profile, 'url_from':url_from})
 
 def delete_post(request, post_id):
@@ -369,7 +369,7 @@ def expand_post(request,post_id):
         comment_form = CommentForm()
     return render(request, 'posts/expand_post.html',{'comments':comments, 'comment_form':comment_form, 'post':post, 'my_profile':my_profile})
 
-def ajax_friends_post(context):
+def ajax_friends_post(request):
     if request.user.is_authenticated():
         my_profile = Profile.objects.get(user=request.user)
 
@@ -387,7 +387,7 @@ def ajax_friends_post(context):
 
     return render(request, 'post_template.html', {'list_of_posts':list_of_posts, 'title':"Friends' Posts", 'my_profile':my_profile})
 
-def ajax_public_post(context):
+def ajax_public_posts(request):
     if request.user.is_authenticated():
         my_profile = Profile.objects.get(user=request.user)
     else:
@@ -430,7 +430,7 @@ def ajax_public_post(context):
     title = "Viewing All Public Posts"
     return render(request, 'post_template.html', {'list_of_posts':list_of_posts, 'title':title, 'my_profile':my_profile})
 
-def ajax_posts_by_author(context):
+def ajax_posts_by_author(request):
 
     list_of_posts = []
 
@@ -476,7 +476,7 @@ def ajax_posts_by_author(context):
         title = "Viewing Posts by " + user.username
 
     except:
-    profile = Profile.objects.get(uuid=author_id)
+        profile = Profile.objects.get(uuid=author_id)
         user = profile.user
         title = "There are no posts by " + user.username
 

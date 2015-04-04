@@ -12,7 +12,7 @@ urlpatterns = patterns('',
     url(r'^posts/custom/$', views.custom_posts, name='posts/custom'),
     url(r'^posts/(?P<post_id>.+)/$',views.expand_post,name='expand_post'),
     url(r'^friends_posts/$',views.ajax_friends_post,name='friends_post'),
-    url(r'^all_posts/$',views.ajax_all_posts,name='all_posts'),
+    url(r'^public_posts/$',views.ajax_public_posts,name='public_posts'),
     url(r'^posts_by_author/$',views.ajax_posts_by_author,name='posts_by_author'),
 
 

@@ -4,7 +4,7 @@
 <script>
     function refresh() {
         $.ajax({
-            url: '{% url_from %}',
+            url: '{{ url_from }}',
             success: function(data) {
                 $('#posts').html(data);
             }
