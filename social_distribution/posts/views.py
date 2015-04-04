@@ -141,7 +141,7 @@ def posts_by_author(request, author_id):
                 elif (post.author == profile):
                     list_of_posts.append(post)
 
-        title = "View Posts by " + user.username
+        title = "Viewing Posts by " + user.username
 
     except:
 	profile = Profile.objects.get(uuid=author_id)
@@ -191,7 +191,7 @@ def public_posts(request):
 
     list_of_posts.sort(key=lambda x: x.date,reverse=True)
 
-    title = "View All Public Posts"
+    title = "Viewing All Public Posts"
     return render(request, 'posts/view_posts.html', {'list_of_posts':list_of_posts, 'title':title, 'my_profile':my_profile})
 
 def delete_post(request, post_id):
@@ -288,7 +288,7 @@ def friends_posts(request):
             if user.id == request.user.id:
                 list_of_posts.append(post)
 
-    return render(request, 'posts/view_posts.html', {'list_of_posts':list_of_posts, 'title':"Friend's Posts", 'my_profile':my_profile})
+    return render(request, 'posts/view_posts.html', {'list_of_posts':list_of_posts, 'title':"Friends' Posts", 'my_profile':my_profile})
 
 #view posts from custom privacy
 def custom_posts(request):

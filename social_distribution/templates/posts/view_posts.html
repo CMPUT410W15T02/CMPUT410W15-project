@@ -1,59 +1,28 @@
 {% extends 'authors/base.html' %}
+{% load post_tags %}
 {% block block_body %}
+<script>
+    function refresh() {
+        $.ajax({
+            url: '{% url_from %}',
+            success: function(data) {
+                $('#posts').html(data);
+            }
+        });
+    }
+
+    $(function(){
+        refresh();
+        setInterval("refresh()", 15000);
+    });
+</script>
         <div class="margins">
 
             <h2>{{ title }}</h2>
-
             <br/>
-            {% for post in list_of_posts %}
-            {% if post.author.host = 'http://cs410.cs.ualberta.ca:41024' %}
-    	    <div class="well align">
-            {% else %}
-            <div class="well align text-primary">
-            {% endif %}
-        		<div>
-    		        Title: {{post.title}}
-        		</div>
-                <div>
-                    Body: {{post.post_text|safe|escape}}
-                </div>
-
-
-                {% if post.author.user = user %}
-                <div>
-                    Privacy: {{post.privacy}}
-                </div>
-
-                <div class="button-container">
-		<form id="expand_post" method="get" action="/posts/{{post.uuid}}/">
-		<input class="btn btn-success btn-sm" type="submit" value="Expand" />
-		</form>
-		<form id="edit_post" method="get" action="/edit/post/{{post.uuid}}">
-		<input class="btn btn-warning btn-sm" type="submit" value="Edit" />
-		</form>
-		<form id="delete_post" method="post" action="/delete/post/{{post.uuid}}">
-		  {% csrf_token %}
-		<input class="btn btn-danger btn-sm" type="submit" value="Delete" />
-		</form>
-		<br/><br/>
-		</div>
-
-
-		{% else %}
-		<div>
-		    Author: {{post.author.user.username}}
-		</div>
-		<div>
-		    <form id="expand_post" method="get" action="/posts/{{post.uuid}}/">
-		    <input class="btn btn-success btn-sm" type="submit" value="Expand" />
-		</form>
-		<br/><br/>
-
-        </div>
-        {% endif %}
-		</div>
-
-        	{% endfor %}
+            <div id="posts">
+            	{% render_post %}
+            </div>
 	    </div>
 
 {% endblock %}

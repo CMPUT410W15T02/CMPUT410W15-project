@@ -52,7 +52,7 @@ def index(request):
         my_profile = Profile.objects.get(user=request.user)
 
         if my_profile.github != '':
-            try:
+            '''try:
                 github_url = 'https://api.github.com/users/' + my_profile.github + '/received_events'
 
                 response = urllib2.urlopen(github_url).read()
@@ -100,7 +100,7 @@ def index(request):
                     else:
                         pass
             except:
-                pass
+                pass'''
     else:
         my_profile = ''
 
