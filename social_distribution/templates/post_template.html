@@ -19,7 +19,7 @@
 
             {% if post.author.user = user %}
                 <div>
-                    Privacy: {{post.privacy}}
+                    Privacy: {{post.get_privacy_display}}
                 </div>
                 <div class="button-container">
                     <form id="expand_post" method="get" action="/posts/{{post.uuid}}/">

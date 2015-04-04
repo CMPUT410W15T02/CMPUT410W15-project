@@ -149,6 +149,8 @@ def posts_by_author(request, author_id):
         title = "There are no posts by " + user.username
     url_from = '/posts_by_author/' + author_id
 
+    list_of_posts.sort(key=lambda x: x.date,reverse=True)
+
     return render(request, 'posts/view_posts.html', {'list_of_posts':list_of_posts, 'title':title, 'my_profile':my_profile, 'url_from':url_from})
 
 # view all public posts
@@ -291,6 +293,8 @@ def friends_posts(request):
                 list_of_posts.append(post)
     url_from = '/friends_posts/'
 
+    list_of_posts.sort(key=lambda x: x.date,reverse=True)
+
     return render(request, 'posts/view_posts.html', {'list_of_posts':list_of_posts, 'title':"Friends' Posts", 'my_profile':my_profile, 'url_from':url_from})
 
 #view posts from custom privacy
@@ -384,6 +388,8 @@ def ajax_friends_post(request):
         for user in allowed_users:
             if user.id == request.user.id:
                 list_of_posts.append(post)
+
+    list_of_posts.sort(key=lambda x: x.date,reverse=True)
 
     return render(request, 'post_template.html', {'list_of_posts':list_of_posts, 'title':"Friends' Posts", 'my_profile':my_profile})
 
@@ -479,5 +485,7 @@ def ajax_posts_by_author(request, author_id):
         profile = Profile.objects.get(uuid=author_id)
         user = profile.user
         title = "There are no posts by " + user.username
+
+    list_of_posts.sort(key=lambda x: x.date,reverse=True)
 
     return render(request, 'post_template.html', {'list_of_posts':list_of_posts, 'title':title, 'my_profile':my_profile})
