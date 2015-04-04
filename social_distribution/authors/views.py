@@ -185,7 +185,7 @@ def index(request):
                     if user.id == request.user.id:
                         list_of_posts.append(post)
             # Displays your own posts
-            elif (post.author == profile):
+            if (post.author == profile):
                 list_of_posts.append(post)
 
     return render(request, 'authors/index.html',
@@ -371,8 +371,10 @@ def add_friend(request):
             current_profile.save()
 
             #Remove from follow
-            qs = Follow.objects.filter(from_profile_id=from_profile.id).filter(to_profile_id=current_profile.id)
+            qs = Follow.objects.filter( Q(from_profile_id=from_profile.id) & Q(to_profile_id=current_profile.id) |
+                                        Q(from_profile_id=current_profile.id) & Q(to_profile_id=from_profile.id) )
             qs.delete()
+
 
             #Add new friend to all friend's post
             posts_qs = Post.objects.filter( Q(privacy=4) & Q(author=from_profile.id))
