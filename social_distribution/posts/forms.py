@@ -9,15 +9,15 @@ from django.utils.encoding import force_text
 # source: http://stackoverflow.com/questions/17293627/hide-django-clearablefileinput-checkbox
 class NotClearableFileInput(FileInput):
 
-    template_with_initial = '%(initial_text)s: %(initial)s <br />%(clear_text)s: %(clear)s<br />%(input_text)s: %(input)s<br />'
+    template_with_initial = '%(clear_text)s: %(clear)s<br /><br />%(input_text)s: %(input)s<br />'
 
-    url_markup_template = '<br/><img src="{0}" height="100" width="100"/>'
+    url_markup_template = '<br/>'
+    #<img src="{0}" height="100" width="100"/>'
 
     def render(self, name, value, attrs=None):
         substitutions = {
-            'initial_text': "Current File",
             'clear_text': "Remove Current Image",
-            'input_text': "Change",
+            'input_text': "Change Image",
 
         }
         template = '%(input)s'

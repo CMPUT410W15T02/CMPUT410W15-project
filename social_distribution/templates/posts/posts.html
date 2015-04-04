@@ -54,9 +54,14 @@
 					</br>
 				</div>
 
-
                 <div>
-                    Upload Image: </br>
+                    Upload Image: <br/><br/>
+                    {% if post.image %}
+                        Current Image:
+                        <div>
+                            <img src="{{MEDIA_URL}}{{post.uuid}}" alt="{{post.image}}" height="100" width="100"/>
+                        </div>
+                    {% endif %}
                     {{post_form.image}}
 		    <br/>
 		</div>
