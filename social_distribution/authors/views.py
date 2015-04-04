@@ -448,3 +448,11 @@ def unfollow_author(request):
         unfollow.delete()
 
     return redirect('/')
+
+#Gets all friends of current profile
+def my_friends(request):
+    current_profile = Profile.objects.get(user_id=request.user.id)
+    friends = current_profile.friends.all()
+    print(friends)
+
+    return render(request, 'authors/my_friends.html', {'friends':friends})

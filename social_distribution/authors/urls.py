@@ -18,5 +18,6 @@ urlpatterns = patterns('',
     'document_root': settings.MEDIA_ROOT}),
     url(r'^follow_author/$', views.follow_author, name='follow_author'),
     url(r'^unfollow_author/$', views.unfollow_author, name='unfollow_author'),
+    url(r'^my_friends/$', views.my_friends, name='my_friends'),
     url(r'^$', views.index, name='index')
 ) 
