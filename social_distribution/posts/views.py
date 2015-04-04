@@ -365,3 +365,15 @@ def expand_post(request,post_id):
         comments = Comment.objects.filter(post_id=post).order_by('date')
         comment_form = CommentForm()
     return render(request, 'posts/expand_post.html',{'comments':comments, 'comment_form':comment_form, 'post':post, 'my_profile':my_profile})
+
+def ajax_friends_post(context):
+
+    return render()
+
+def ajax_public_post(context):
+
+    return render()
+
+def ajax_posts_by_author(context):
+
+    return render()
