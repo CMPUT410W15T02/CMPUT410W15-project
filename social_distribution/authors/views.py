@@ -26,9 +26,13 @@ def get_photo(request, post_uuid):
     # get the post
     post = Post.objects.get(uuid=post_uuid)
     
+    # find profiles that
+    profile = Profile.objects.get(user=request.user)
+    allowed_profiles = post.allowed.all()
+    
     # conditions where the current user is authorized to see the photo
-    auth_conditions = [post.author == Profile.objects.get(user=request.user),
-        post.privacy == '1']
+    auth_conditions = [post.privacy == '1', profile in allowed_profiles]
+
     if any(auth_conditions):
         image_data = open(post.get_image_path(), 'rb').read()
     

@@ -276,7 +276,7 @@ def friends_posts(request):
     if request.user.is_authenticated():
         my_profile = Profile.objects.get(user=request.user)
 
-    friend_qs = Post.objects.filter(privacy=4).exclude(allowed=None).order_by('-date') #removes posts with empty allowed list
+    friend_qs = Post.objects.filter(Q(privacy=4) | Q(privacy=5)).exclude(allowed=None).order_by('-date') #removes posts with empty allowed list
 
     list_of_posts = []
 
@@ -284,9 +284,8 @@ def friends_posts(request):
         if post.content_type == 'text/x-markdown':
             post.post_text = markdown2.markdown(post.post_text)
         allowed_users = post.allowed.all()
-        for user in allowed_users:
-            if user.id == request.user.id:
-                list_of_posts.append(post)
+        if my_profile in allowed_users:
+            list_of_posts.append(post)
 
     return render(request, 'posts/view_posts.html', {'list_of_posts':list_of_posts, 'title':"Friend's Posts", 'my_profile':my_profile})
 
