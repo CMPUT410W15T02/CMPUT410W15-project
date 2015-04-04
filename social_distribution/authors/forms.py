@@ -17,7 +17,10 @@ class UserForm(forms.ModelForm):
 class UserProfileForm(forms.ModelForm):
     class Meta:
         model = Profile
-        fields = ('displayname', 'body', 'birthdate', 'gender', 'image', 'github', 'workspace', 'school')
+        fields = ('displayname', 'body', 'birthdate', 'gender', 'github', 'workspace', 'school')
+        widgets = {
+            'birthdate': forms.TextInput(attrs={'placeholder':'yyyy-mm-dd'})
+        }
         
     def __init__(self, *args, **kwargs):
         super(UserProfileForm, self).__init__(*args, **kwargs) 

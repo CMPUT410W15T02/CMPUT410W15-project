@@ -329,8 +329,7 @@ def author_manage(request):
         profile_form = UserProfileForm(instance=profile)
 
     if updated == True:
-        return HttpResponse("Profile Successfully edited! Click "
-        "<a href=/author/"+my_profile.uuid+">here</a> to return to your profile.")
+        return HttpResponse("<script>alert(\"Profile Successfully edited!\"); window.location = \'/author/%s\';</script>" %profile.uuid)
     else:
         return render_to_response('authors/manage.html',
             {'profile_form': profile_form, 'my_profile':my_profile}, context)
