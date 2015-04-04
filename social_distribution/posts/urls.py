@@ -11,9 +11,9 @@ urlpatterns = patterns('',
     url(r'^posts/friends/$', views.friends_posts, name='posts/friends'),
     url(r'^posts/custom/$', views.custom_posts, name='posts/custom'),
     url(r'^posts/(?P<post_id>.+)/$',views.expand_post,name='expand_post'),
-    url(r'^friends_posts/(?P<post_id>.+)/$',views.ajax_friends_post,name='friends_post'),
-    url(r'^all_posts/(?P<post_id>.+)/$',views.ajax_all_posts,name='all_posts'),
-    url(r'^posts_by_author/(?P<post_id>.+)/$',views.ajax_posts_by_author,name='posts_by_author'),
+    url(r'^friends_posts/$',views.ajax_friends_post,name='friends_post'),
+    url(r'^all_posts/$',views.ajax_all_posts,name='all_posts'),
+    url(r'^posts_by_author/$',views.ajax_posts_by_author,name='posts_by_author'),
 
 
     url(r'^api/author/posts/$', api.author_posts, name="api/author/posts"),

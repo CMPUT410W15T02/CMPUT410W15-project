@@ -147,8 +147,9 @@ def posts_by_author(request, author_id):
 	profile = Profile.objects.get(uuid=author_id)
         user = profile.user
         title = "There are no posts by " + user.username
+    url_from = 'posts_by_author/'
 
-    return render(request, 'posts/view_posts.html', {'list_of_posts':list_of_posts, 'title':title, 'my_profile':my_profile})
+    return render(request, 'posts/view_posts.html', {'list_of_posts':list_of_posts, 'title':title, 'my_profile':my_profile, 'url_from':url_from})
 
 # view all public posts
 def public_posts(request):
@@ -192,7 +193,8 @@ def public_posts(request):
     list_of_posts.sort(key=lambda x: x.date,reverse=True)
 
     title = "Viewing All Public Posts"
-    return render(request, 'posts/view_posts.html', {'list_of_posts':list_of_posts, 'title':title, 'my_profile':my_profile})
+    url_from = "all_posts/"
+    return render(request, 'posts/view_posts.html', {'list_of_posts':list_of_posts, 'title':title, 'my_profile':my_profile, 'url_from':url_from})
 
 def delete_post(request, post_id):
     Post.objects.filter(Q(uuid=post_id)).delete()
@@ -287,8 +289,9 @@ def friends_posts(request):
         for user in allowed_users:
             if user.id == request.user.id:
                 list_of_posts.append(post)
+    url_from = 'friends_posts/'
 
-    return render(request, 'posts/view_posts.html', {'list_of_posts':list_of_posts, 'title':"Friends' Posts", 'my_profile':my_profile})
+    return render(request, 'posts/view_posts.html', {'list_of_posts':list_of_posts, 'title':"Friends' Posts", 'my_profile':my_profile, 'url_from':url_from})
 
 #view posts from custom privacy
 def custom_posts(request):
@@ -367,13 +370,114 @@ def expand_post(request,post_id):
     return render(request, 'posts/expand_post.html',{'comments':comments, 'comment_form':comment_form, 'post':post, 'my_profile':my_profile})
 
 def ajax_friends_post(context):
+    if request.user.is_authenticated():
+        my_profile = Profile.objects.get(user=request.user)
 
-    return render()
+    friend_qs = Post.objects.filter(privacy=4).exclude(allowed=None).order_by('-date') #removes posts with empty allowed list
+
+    list_of_posts = []
+
+    for post in friend_qs:
+        if post.content_type == 'text/x-markdown':
+            post.post_text = markdown2.markdown(post.post_text)
+        allowed_users = post.allowed.all()
+        for user in allowed_users:
+            if user.id == request.user.id:
+                list_of_posts.append(post)
+
+    return render(request, 'post_template.html', {'list_of_posts':list_of_posts, 'title':"Friends' Posts", 'my_profile':my_profile})
 
 def ajax_public_post(context):
+    if request.user.is_authenticated():
+        my_profile = Profile.objects.get(user=request.user)
+    else:
+        my_profile = ''
 
-    return render()
+    list_of_posts = list(Post.objects.filter(Q(privacy=1)).order_by('-date'))
+
+    hosts = Host.objects.all()
+    for host in hosts:
+        if host.name != "Our own":
+            try:
+                host_posts = host.get_public_posts()
+                for post in host_posts['posts']:
+                    title = post['title']
+                    description = post['description']
+                    content_type = post['content-type']
+                    post_text = post['content']
+                    author = post['author']
+                    new_user = User(username=author['displayname'],password='')
+                    new_profile = Profile(host=author['host'],displayname=author['displayname'],
+                    uuid=author['id'],user=new_user)
+                    #date = datetime.datetime.strptime(post['pubDate'], '%Y-%m-%dT%H:%M:%S.%fZ')
+                    #XXX: Fix this date
+                    date = timezone.now()
+                    guid = post['guid']
+                    privacy = '1'
+
+                    new_post = Post(uuid=guid,title=title,description=description,author=new_profile,
+                    date=date,content_type=content_type,post_text=post_text,privacy=privacy)
+                    list_of_posts.append(new_post)
+            except:
+                pass
+
+    for post in list_of_posts:
+        if post.content_type == 'text/x-markdown':
+            post.post_text = markdown2.markdown(post.post_text)
+
+    list_of_posts.sort(key=lambda x: x.date,reverse=True)
+
+    title = "Viewing All Public Posts"
+    return render(request, 'post_template.html', {'list_of_posts':list_of_posts, 'title':title, 'my_profile':my_profile})
 
 def ajax_posts_by_author(context):
 
-    return render()
+    list_of_posts = []
+
+
+    try:
+        if request.user.is_authenticated():
+            my_profile = Profile.objects.get(user=request.user)
+            context = RequestContext(request)
+
+            # get profile from author id
+            #userObject = User.objects.get(username=author_id)
+            profile = Profile.objects.get(uuid=author_id)
+            user = profile.user
+
+            # if the requested user is the current user show private posts too
+            if(profile == request.user.profile):
+                post_query = Post.objects.filter(Q(author=profile))
+
+            # the requested user is not the current user
+            else:
+                post_query = Post.objects.filter(Q(author=profile) & (Q(privacy=1) | Q(privacy=3) | Q(privacy=4)) ).order_by('-date')
+
+            for post in post_query:
+                if post.content_type == 'text/x-markdown':
+                    post.post_text = markdown2.markdown(post.post_text)
+
+                # public posts by the author
+                if (post.privacy == '1'):
+                    if post.author == profile:
+                        list_of_posts.append(post)
+
+                # check if current user is allowed to see remaining posts
+                elif ((post.privacy == '3') or (post.privacy == '4')):
+                    allowed_users = post.allowed.all()
+                    for user in allowed_users:
+                        if user.id == request.user.id:
+                            list_of_posts.append(post)
+
+                # for when the requested user is the current user
+                elif (post.author == profile):
+                    list_of_posts.append(post)
+
+        title = "Viewing Posts by " + user.username
+
+    except:
+    profile = Profile.objects.get(uuid=author_id)
+        user = profile.user
+        title = "There are no posts by " + user.username
+
+    return render(request, 'post_template.html', {'list_of_posts':list_of_posts, 'title':title, 'my_profile':my_profile})
