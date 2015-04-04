@@ -13,7 +13,7 @@ urlpatterns = patterns('',
     url(r'^posts/(?P<post_id>.+)/$',views.expand_post,name='expand_post'),
     url(r'^friends_posts/$',views.ajax_friends_post,name='friends_post'),
     url(r'^public_posts/$',views.ajax_public_posts,name='public_posts'),
-    url(r'^posts_by_author/$',views.ajax_posts_by_author,name='posts_by_author'),
+    url(r'^posts_by_author/(?P<author_id>.+)$',views.ajax_posts_by_author,name='posts_by_author'),
 
 
     url(r'^api/author/posts/$', api.author_posts, name="api/author/posts"),

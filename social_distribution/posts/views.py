@@ -147,7 +147,7 @@ def posts_by_author(request, author_id):
         profile = Profile.objects.get(uuid=author_id)
         user = profile.user
         title = "There are no posts by " + user.username
-    url_from = '/posts_by_author/'
+    url_from = '/posts_by_author/' + author_id
 
     return render(request, 'posts/view_posts.html', {'list_of_posts':list_of_posts, 'title':title, 'my_profile':my_profile, 'url_from':url_from})
 
@@ -430,7 +430,7 @@ def ajax_public_posts(request):
     title = "Viewing All Public Posts"
     return render(request, 'post_template.html', {'list_of_posts':list_of_posts, 'title':title, 'my_profile':my_profile})
 
-def ajax_posts_by_author(request):
+def ajax_posts_by_author(request, author_id):
 
     list_of_posts = []
 
