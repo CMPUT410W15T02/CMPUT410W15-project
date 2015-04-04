@@ -23,6 +23,12 @@
                 <div>
                     Privacy: {{post.privacy}}
                 </div>
+                {% if post.image %}
+                    <div>
+                        <img src="{{MEDIA_URL}}{{post.uuid}}" alt="{{post.image}}" height="100" width="100"/>
+                        <br/><br/>
+                    </div>
+                {% endif %}
 
                 <div class="button-container">
 		<form id="expand_post" method="get" action="/posts/{{post.uuid}}/">

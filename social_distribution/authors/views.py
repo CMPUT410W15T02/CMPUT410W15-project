@@ -19,7 +19,13 @@ from operator import attrgetter
 
 def get_photo(request, post_uuid):
     post = Post.objects.get(uuid=post_uuid)
-    image_data = open(post.get_image_path(), 'rb').read()
+    auth_conditions = [post.author == Profile.objects.get(user=request.user),
+        post.privacy == '1']
+    if any(auth_conditions):
+        image_data = open(post.get_image_path(), 'rb').read()
+    else:
+        image_data = open("message_images/not_authorized.png", 'rb').read()
+    
     return HttpResponse(image_data)
     
 @login_required

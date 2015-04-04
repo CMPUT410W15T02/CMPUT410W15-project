@@ -15,7 +15,7 @@
             <p>Image:
             {% if post.image %}
                 <br/> 
-                <img src="{{MEDIA_URL}}{{post.image}}" alt="{{post.image}}" height="100" width="100"/>
+                <img src="{{MEDIA_URL}}{{post.uuid}}" alt="{{post.image}}" height="100" width="100"/>
             </p>
             {% else %}
                 None</p>
