@@ -54,7 +54,7 @@ def author_posts(request):
             all_posts = Post.objects.all()
             for post in all_posts:
                 # Custom and public
-                if author_user in post.allowed.all()\
+                if author_profile in post.allowed.all()\
                  or post.get_privacy_display() == 'Public':
                     post_list.append(post)
 
@@ -101,7 +101,7 @@ def authorid_posts(request, author_id):
 
         for post in author_posts:
             # Custom and public
-            if current_user in post.allowed.all()\
+            if current_profile in post.allowed.all()\
              or post.get_privacy_display() == 'Public':
                 post_list.append(post)
 

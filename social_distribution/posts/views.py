@@ -178,9 +178,12 @@ def public_posts(request):
                     new_user = User(username=author['displayname'],password='')
                     new_profile = Profile(host=author['host'],displayname=author['displayname'],
                     uuid=author['id'],user=new_user)
-                    #date = datetime.datetime.strptime(post['pubDate'], '%Y-%m-%dT%H:%M:%S.%fZ')
-                    #XXX: Fix this date
-                    date = timezone.now()
+                    if host.name == "Group3":
+                        date = timezone.make_aware(datetime.datetime.strptime(post['pubdate'], '%Y-%m-%d'), timezone.get_default_timezone())
+                    elif host.name == "Group7":
+                        date = timezone.now()
+                    else:
+                        date = timezone.make_aware(datetime.datetime.strptime(post['pubDate'], '%Y-%m-%dT%H:%M:%S.%fZ'), timezone.get_default_timezone())
                     guid = post['guid']
                     privacy = '1'
 
@@ -420,9 +423,12 @@ def ajax_public_posts(request):
                     new_user = User(username=author['displayname'],password='')
                     new_profile = Profile(host=author['host'],displayname=author['displayname'],
                     uuid=author['id'],user=new_user)
-                    #date = datetime.datetime.strptime(post['pubDate'], '%Y-%m-%dT%H:%M:%S.%fZ')
-                    #XXX: Fix this date
-                    date = timezone.now()
+                    if host.name == "Group3":
+                        date = timezone.make_aware(datetime.datetime.strptime(post['pubdate'], '%Y-%m-%d'), timezone.get_default_timezone())
+                    elif host.name == "Group7":
+                        date = timezone.now()
+                    else:
+                        date = timezone.make_aware(datetime.datetime.strptime(post['pubDate'], '%Y-%m-%dT%H:%M:%S.%fZ'), timezone.get_default_timezone())
                     guid = post['guid']
                     privacy = '1'
 
