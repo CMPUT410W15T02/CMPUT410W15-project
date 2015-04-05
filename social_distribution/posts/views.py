@@ -59,21 +59,21 @@ def posts(request):
             if privacy=="3":
                 all_friends=Profile.objects.get(user=currentUser)
                 for friend in all_friends.friends.all():
-		    foaf=Profile.objects.get(user=User.objects.get(username=friend.user))
-		    for second_friend in foaf.friends.all():
-			try:
-                    	    newPost.allowed.add(Profile.objects.get(user=User.objects.get(username=second_friend.user)))
-			except:
-			    continue
+                    foaf=Profile.objects.get(user=User.objects.get(username=friend.user))
+                    for second_friend in foaf.friends.all():
+                        try:
+                            newPost.allowed.add(Profile.objects.get(user=User.objects.get(username=second_friend.user)))
+                        except:
+                            continue
                 newPost.allowed.add(Profile.objects.get(user=User.objects.get(username=author)))
 
             # special privacy settings: friends on this server
             elif privacy=="4":
                 all_friends=Profile.objects.get(user=currentUser)
                 for friend in all_friends.friends.all():
-		    f=Profile.objects.get(user=User.objects.get(username=friend.user))
-		    if f.host == 'http://cs410.cs.ualberta.ca:41024':
-		    	newPost.allowed.add(f)
+                    f=Profile.objects.get(user=User.objects.get(username=friend.user))
+                    if f.host == 'http://cs410.cs.ualberta.ca:41024':
+                        newPost.allowed.add(f)
                 newPost.allowed.add(Profile.objects.get(user=User.objects.get(username=author)))
 	     # special privacy settings: friends
 	    elif privacy=="5":

@@ -278,6 +278,7 @@ def friend_request(request):
         except:
             from_user = User(username=received_data['author']['displayname']+"@"+received_data['author']['host'],
                             password="")
+            from_user.save()
             from_profile = Profile.objects.create(user=from_user,uuid=received_data['author']['id'],
             displayname=received_data['author']['displayname'])
 

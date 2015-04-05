@@ -32,6 +32,9 @@ class PostTestCase(TestCase):
         Post.objects.create(title="test6",description="d6",post_text="p6",author=profile, privacy="2",date=date, image="post_images/image2.png")
         Post.objects.create(title="test7",description="d7",post_text="p7",author=profile, privacy="3",date=date, image="post_images/image3.png")
         Post.objects.create(title="test8",description="d8",post_text="p8",author=profile, privacy="4",date=date, image="post_images/image4.png")
+
+        Host.objects.create(name="TestHost",share=True,host_url="http://127.0.0.1:8000",username="user",password="pass")
+
         self.client = Client()
 
     def test_posts(self):
@@ -118,44 +121,41 @@ class PostTestCase(TestCase):
     def test_api(self):
         self.client.login(username="test_user1", password="password1")
         user = User.objects.get(username="test_user1")
-        Host.create_host("host","host","host","host")
-        test_auth = "Basic " + base64.b64encode("user:host")
 
         #Test authorization
         response = self.client.get('/api/posts/')
         self.assertEqual(response.status_code, 401)
-        
 
-        auth = "Basic " + base64.b64encode("user:host")
+        auth = "Basic " + base64.b64encode("user:pass")
         response = self.client.get('/api/posts/', HTTP_AUTHORIZATION=auth)
         self.assertEqual(response.status_code, 200)
 
         #Test /api/author/posts/
-        response = self.client.get('/api/author/posts/', HTTP_AUTHORIZATION=test_auth)
+        response = self.client.get('/api/author/posts/', HTTP_AUTHORIZATION=auth)
         response_json = json.loads(response.content)
-        self.assertEqual(response_json[0]['title'], 'test1')
+        self.assertEqual(response_json['posts'][0]['title'], 'test1')
 
         #Test /api/posts/
-        response = self.client.get('/api/posts/', HTTP_AUTHORIZATION=test_auth)
+        response = self.client.get('/api/posts/', HTTP_AUTHORIZATION=auth)
         response_json = json.loads(response.content)
-        self.assertEqual(response_json[0]['title'], 'test1')
+        self.assertEqual(response_json['posts'][0]['title'], 'test1')
 
         #Test /api/author/{AUTHOR ID}/posts
         author_id = Profile.objects.get(displayname="John").uuid
-        response = self.client.get('/api/author/'+author_id+'/posts/', HTTP_AUTHORIZATION=test_auth)
+        response = self.client.get('/api/author/'+author_id+'/posts/', HTTP_AUTHORIZATION=auth)
         response_json = json.loads(response.content)
-        self.assertEqual(response_json[0]['title'], 'test1')
+        self.assertEqual(response_json['posts'][0]['title'], 'test1')
         #Test invalid author id
-        response = self.client.get('/api/author/SHOULD_NOT_WORK/posts/', HTTP_AUTHORIZATION=test_auth)
+        response = self.client.get('/api/author/SHOULD_NOT_WORK/posts/', HTTP_AUTHORIZATION=auth)
         self.assertEqual(response.status_code, 404)
 
         #Test /api/posts/{POST_ID}
         post_id = Post.objects.get(title="test1").uuid
-        response = self.client.get('/api/posts/'+post_id+'/', HTTP_AUTHORIZATION=test_auth)
+        response = self.client.get('/api/posts/'+post_id+'/', HTTP_AUTHORIZATION=auth)
         response_json = json.loads(response.content)
-        self.assertEqual(response_json[0]['title'], 'test1')
+        self.assertEqual(response_json['posts'][0]['title'], 'test1')
         #Test invalid post
-        response = self.client.get('/api/posts/NOT_VALID_POST_ID/', HTTP_AUTHORIZATION=test_auth)
+        response = self.client.get('/api/posts/NOT_VALID_POST_ID/', HTTP_AUTHORIZATION=auth)
         self.assertEqual(response.status_code, 404)
 
         #Test /api/post
@@ -164,7 +164,7 @@ class PostTestCase(TestCase):
         'content':'This is the content', 'content-type':'plaintext'}
         post_string = json.dumps(post_data)
         response = self.client.post('/api/post/', \
-        content_type='application/json', data=post_string, HTTP_AUTHORIZATION=test_auth)
+        content_type='application/json', data=post_string, HTTP_AUTHORIZATION=auth)
         self.assertEqual(Post.objects.count(), 9)
 
 
