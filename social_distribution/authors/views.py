@@ -19,31 +19,31 @@ from operator import attrgetter
 
 # Create your views here.
 
-# recieves post uuid 
+# recieves post uuid
 # returns the image data for the image associated with that post
 @login_required
 def get_photo(request, post_uuid):
-    
+
     # get the post
     post = Post.objects.get(uuid=post_uuid)
-    
+
     # find profiles that
     profile = Profile.objects.get(user=request.user)
     allowed_profiles = post.allowed.all()
-    
+
     # conditions where the current user is authorized to see the photo
     auth_conditions = [post.privacy == '1', profile in allowed_profiles]
 
     if any(auth_conditions):
         image_data = open(post.get_image_path(), 'rb').read()
-    
+
     # if the user is not authorized return a placeholder image
     else:
         image_data = open("message_images/not_authorized.png", 'rb').read()
-    
+
     # return the raw image data
     return HttpResponse(image_data)
-    
+
 @login_required
 def index(request):
     list_of_users = User.objects.filter( Q(username=request.user) | Q(username='admin'))
@@ -55,15 +55,15 @@ def index(request):
     if request.user.is_authenticated():
         current_profile = Profile.objects.get(user_id = request.user.id)
         follow_qs = Follow.objects.filter(from_profile_id=current_profile.id).filter(status='PENDING')
- 
+
         for follow in follow_qs:
             #check each follow to_profile to see if they are remote or local
             to_profile_host = follow.to_profile_id.host
- 
+
             host_port = to_profile_host.strip("http://").split(":")
- 
+
             port = host_port[1]
- 
+
             if str(port) != "8000" and str(port) != "41024":
             #if str(port) == '8000' or str(port) == '41024':
                 print("not local -- friend response")
@@ -141,36 +141,61 @@ def index(request):
         for host in hosts:
             try:
                 host_posts = host.get_public_posts()
-                for post in host_posts['posts']:
-                    author = post['author']
-                    #Create new remote user
-                    try:
-                        new_user = User.objects.get(username=author['displayname']+'@'+author['host'])
-                    except User.DoesNotExist:
-                        new_user = User(username=author['displayname']+'@'+author['host'], password='')
-                        new_user.save()
+                if host.name == "Group3":
+                    for post in host_posts['posts']:
+                        author = post['author']
+                        #Create new remote user
+                        try:
+                            new_user = User.objects.get(username=author['displayname']+'@'+author['host'])
+                        except User.DoesNotExist:
+                            new_user = User(username=author['displayname']+'@'+author['host'], password='')
+                            new_user.save()
 
-                    #Create new remote profile
-                    try:
-                        new_profile = Profile.objects.get(user=new_user)
-                    except Profile.DoesNotExist:
-                        new_profile = Profile(host=author['host'], uuid=author['id'], displayname=author['displayname'], user=new_user)
-                        new_profile.save()
+                        #Create new remote profile
+                        try:
+                            new_profile = Profile.objects.get(user=new_user)
+                        except Profile.DoesNotExist:
+                            new_profile = Profile(host=author['host'], uuid=author['id'], displayname=author['displayname'], user=new_user)
+                            new_profile.save()
 
-                    #Get remote posts
-                    title = post['title']
-                    uuid = post['guid']
-                    description = post['description']
-                    content_type = post['content-type']
-                    post_text = post['content']
-
-                    if host.name == "Group3":
+                        #Get remote posts
+                        title = post['title']
+                        uuid = post['guid']
+                        description = post['description']
+                        content_type = post['content-type']
+                        post_text = post['content']
                         date = timezone.make_aware(datetime.datetime.strptime(post['pubdate'], '%Y-%m-%d'), timezone.get_default_timezone())
-                    else:
-                        date = timezone.now()
 
-                    new_post = Post(uuid=uuid, title=title, description="", author=new_profile, date=date,content_type=content_type,post_text=post_text,privacy=1)
-                    post_query.append(new_post)
+                        new_post = Post(uuid=uuid, title=title, description="", author=new_profile, date=date,content_type=content_type,post_text=post_text,privacy=1)
+                        post_query.append(new_post)
+                elif host.name == "Group7":
+                    for post in host_posts['posts']:
+                        author = post['author']
+                        #Create new remote user
+                        try:
+                            new_user = User.objects.get(username=author['displayname']+'@'+author['host'])
+                        except User.DoesNotExist:
+                            new_user = User(username=author['displayname']+'@'+author['host'], password='')
+                            new_user.save()
+
+                        #Create new remote profile
+                        try:
+                            new_profile = Profile.objects.get(user=new_user)
+                        except Profile.DoesNotExist:
+                            new_profile = Profile(host=author['host'], uuid=author['id'], displayname=author['displayname'], user=new_user)
+                            new_profile.save()
+
+                        #Get remote posts
+                        title = post['title']
+                        #uuid = post['guid']
+                        description = post['description']
+                        content_type = post['content-type']
+                        post_text = post['content']
+                        #Date is set to April 1 because its not given
+                        date = timezone.make_aware(datetime.datetime.strptime('2015-04-01', '%Y-%m-%d'), timezone.get_default_timezone())
+
+                        new_post = Post(title=title, description="", author=new_profile, date=date,content_type=content_type,post_text=post_text,privacy=1)
+                        post_query.append(new_post)
             except:
                 pass
 
@@ -462,38 +487,64 @@ def ajax_retrieve_latest_post(request):
         for host in hosts:
             try:
                 host_posts = host.get_public_posts()
-                for post in host_posts['posts']:
-                    author = post['author']
-                    #Create new remote user
-                    try:
-                        new_user = User.objects.get(username=author['displayname']+'@'+author['host'])
-                    except User.DoesNotExist:
-                        new_user = User(username=author['displayname']+'@'+author['host'], password='')
-                        new_user.save()
+                if host.name == "Group3":
+                    for post in host_posts['posts']:
+                        author = post['author']
+                        #Create new remote user
+                        try:
+                            new_user = User.objects.get(username=author['displayname']+'@'+author['host'])
+                        except User.DoesNotExist:
+                            new_user = User(username=author['displayname']+'@'+author['host'], password='')
+                            new_user.save()
 
-                    #Create new remote profile
-                    try:
-                        new_profile = Profile.objects.get(user=new_user)
-                    except Profile.DoesNotExist:
-                        new_profile = Profile(host=author['host'], uuid=author['id'], displayname=author['displayname'], user=new_user)
-                        new_profile.save()
+                        #Create new remote profile
+                        try:
+                            new_profile = Profile.objects.get(user=new_user)
+                        except Profile.DoesNotExist:
+                            new_profile = Profile(host=author['host'], uuid=author['id'], displayname=author['displayname'], user=new_user)
+                            new_profile.save()
 
-                    #Get remote posts
-                    title = post['title']
-                    uuid = post['guid']
-                    description = post['description']
-                    content_type = post['content-type']
-                    post_text = post['content']
-
-                    if host.name == "Group3":
+                        #Get remote posts
+                        title = post['title']
+                        uuid = post['guid']
+                        description = post['description']
+                        content_type = post['content-type']
+                        post_text = post['content']
                         date = timezone.make_aware(datetime.datetime.strptime(post['pubdate'], '%Y-%m-%d'), timezone.get_default_timezone())
-                    else:
-                        date = timezone.now()
 
-                    new_post = Post(uuid=uuid, title=title, description="", author=new_profile, date=date,content_type=content_type,post_text=post_text,privacy=1)
-                    post_query.append(new_post)
+                        new_post = Post(uuid=uuid, title=title, description="", author=new_profile, date=date,content_type=content_type,post_text=post_text,privacy=1)
+                        post_query.append(new_post)
+                elif host.name == "Group7":
+                    for post in host_posts['posts']:
+                        author = post['author']
+                        #Create new remote user
+                        try:
+                            new_user = User.objects.get(username=author['displayname']+'@'+author['host'])
+                        except User.DoesNotExist:
+                            new_user = User(username=author['displayname']+'@'+author['host'], password='')
+                            new_user.save()
+
+                        #Create new remote profile
+                        try:
+                            new_profile = Profile.objects.get(user=new_user)
+                        except Profile.DoesNotExist:
+                            new_profile = Profile(host=author['host'], uuid=author['id'], displayname=author['displayname'], user=new_user)
+                            new_profile.save()
+
+                        #Get remote posts
+                        title = post['title']
+                        #uuid = post['guid']
+                        description = post['description']
+                        content_type = post['content-type']
+                        post_text = post['content']
+                        #Date is set to April 1 because its not given
+                        date = timezone.make_aware(datetime.datetime.strptime('2015-04-01', '%Y-%m-%d'), timezone.get_default_timezone())
+
+                        new_post = Post(title=title, description="", author=new_profile, date=date,content_type=content_type,post_text=post_text,privacy=1)
+                        post_query.append(new_post)
             except:
                 pass
+
 
         post_query.sort(key=lambda x: x.date,reverse=True)
 
@@ -525,7 +576,7 @@ def ajax_retrieve_latest_post(request):
             # Displays your own posts
             if (post.author == profile):
                 list_of_posts.append(post)
-    
+
     return render(request, 'post_template.html', {'list_of_posts': list_of_posts})
 
 def ajax_retrieve_latest_github(request):
@@ -596,4 +647,3 @@ def my_friends(request):
     print(friends)
 
     return render(request, 'authors/my_friends.html', {'friends':friends})
-
