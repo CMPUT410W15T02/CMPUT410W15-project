@@ -248,24 +248,40 @@ def friends_post(request, uuid):
 
     return HttpResponse(status=405)
 
-    """
-    curl -H "Content-Type:application/json" -d '{"query":"friends",
-    "author":"72de3f1c-6645-46e8-b75e-48c4306c",
-    "authors":[
-    "ae254c4a-9888-4b48-9021-2e159d71886a",
-    "9d61ed1d-7e14-4bbf-ba12-749b14c9fa94",
-    "1d7e95e1-cd4d-4fb8-97b0-b42a0375b3c5",
-    "e81e0cb8-c097-11e4-b10f-080027df60ad",
-    "db0c413d-316f-443b-a696-8e3c4972112b",
-    "72de3f1c-6645-46e8-b75e-48c4306c",
-    "8485e927-8b76-45c7-b54c-51ee070d",
-    "e81e0cb8-c097-11e4-b10f-080027df60ad"
-    ]}' http://127.0.0.1:8000/api/friends/72de3f1c-6645-46e8-b75e-48c4306c/
-    """
+"""
+curl -H "Content-Type:application/json" -u user:pass http://127.0.0.1:8000/api/friends/eaec831d-9556-4a7f-b2c6-91e53cb6b437/ -d '{"query":"friends","author":"eaec831d-9556-4a7f-b2c6-91e53cb6b437","authors":["f859bdcd-f77c-41af-92e9-c769d04bb449","fe9ba287-de4a-48b3-b8e9-0bf216a7df81"]}'
+"""
 
-#XXX:TODO FOAF call
+@csrf_exempt
 def foaf(request):
-    return HttpResponse('TODO')
+    if request.method == "POST":
+        received_data = json.loads(request.body)
+        try:
+            requested_author = received_data['id']
+            requesting_author = received_data['author']['id']
+            friends_list = received_data['friends']
+        except:
+            return HttpResponse(status=400)
+
+        post_list = []
+        requester = Profile.objects.get(uuid=requesting_author)
+        requestee = Profile.objects.get(uuid=requested_author)
+        requester_friends = requester.friends.all()
+        for friend in friends_list:
+            friend_profile = Profile.objects.get(uuid=friend)
+            if friend_profile in requester_friends:
+                author_posts = Post.objects.filter(author=requestee)
+                for post in author_posts:
+                    post_list.append(post)
+                response = get_posts(post_list)
+
+                return JsonResponse(response)
+
+    return HttpResponse(status=405)
+
+"""
+curl -H "Content-Type:application/json" -u user:pass 127.0.0.1:8000/api/foaf/ -d '{"query":"getpost","id":"fe9ba287-de4a-48b3-b8e9-0bf216a7df81","author":{"id":"eaec831d-9556-4a7f-b2c6-91e53cb6b437","host":"http://127.0.0.1:8000","displayname":"User1"},"friends":["f859bdcd-f77c-41af-92e9-c769d04bb449"]}'
+"""
 
 
 # to make a friend request POST to

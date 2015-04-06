@@ -364,7 +364,9 @@ def expand_post(request,post_id):
         hosts = Host.objects.all()
         for host in hosts:
             if host.name == "Group3":
+                try:
                     post_json = host.get_postid(post_id)['posts'][0]
+                    print(post_json)
                     visibility = post_json['visibility']
                     description = post_json['description']
                     pubdate = post_json['pubdate']
@@ -389,26 +391,30 @@ def expand_post(request,post_id):
                     comments = []
                     comment_form = []
                     return render(request, 'posts/expand_post.html',{'comments':comments, 'comment_form':comment_form, 'post':post, 'my_profile':my_profile})
+                except:
+                    pass
 
+    try:
+        if post.content_type == 'text/x-markdown':
+            post.post_text = markdown2.markdown(post.post_text)
+        current_profile = Profile.objects.get(user_id=request.user.id)
+        comments = None
+        if request.method == 'POST':
+            comment_form = CommentForm(data=request.POST)
 
-    if post.content_type == 'text/x-markdown':
-        post.post_text = markdown2.markdown(post.post_text)
-    current_profile = Profile.objects.get(user_id=request.user.id)
-    comments = None
-    if request.method == 'POST':
-        comment_form = CommentForm(data=request.POST)
-
-        if comment_form.is_valid():
-            body = comment_form.cleaned_data['body']
-            newComment = Comment(body=body, date=timezone.now(), author=current_profile, post_id=post)
-            newComment.save()
+            if comment_form.is_valid():
+                body = comment_form.cleaned_data['body']
+                newComment = Comment(body=body, date=timezone.now(), author=current_profile, post_id=post)
+                newComment.save()
+            else:
+                print comment_form.errors
+            return redirect('/posts/'+post_id)
         else:
-            print comment_form.errors
-        return redirect('/posts/'+post_id)
-    else:
-        comments = Comment.objects.filter(post_id=post).order_by('date')
-        comment_form = CommentForm()
-    return render(request, 'posts/expand_post.html',{'comments':comments, 'comment_form':comment_form, 'post':post, 'my_profile':my_profile})
+            comments = Comment.objects.filter(post_id=post).order_by('date')
+            comment_form = CommentForm()
+        return render(request, 'posts/expand_post.html',{'comments':comments, 'comment_form':comment_form, 'post':post, 'my_profile':my_profile})
+    except:
+        return HttpResponse("Post not found", status=404)
 
 @login_required
 def ajax_friends_post(request):

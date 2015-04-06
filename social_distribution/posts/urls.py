@@ -25,4 +25,5 @@ urlpatterns = patterns('',
     url(r'^api/friendrequest/$', api.friend_request, name="api/friendrequest"),
     url(r'^api/authors/$', api.authors, name="api/authors"),
     url(r'^api/post/$', api.post, name="api/post"),
+    url(r'^api/foaf/$', api.foaf, name="api/foaf"),
 )
