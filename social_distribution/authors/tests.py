@@ -109,6 +109,40 @@ class AuthorTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(Profile.objects.all().count(), 5)
 
+
+	#Test HTML responses
+	#Test index
+	response=self.client.get('/')
+	self.assertTrue(response.status_code==200 or response.status_code==302 or response.status_code==301)
+
+	#Test login
+	response=self.client.get('/login')
+	self.assertTrue(response.status_code==200 or response.status_code==302 or response.status_code==301)
+	
+	#Test register
+	response=self.client.get('/register')
+	self.assertTrue(response.status_code==200 or response.status_code==302 or response.status_code==301)
+
+	#Test manage profile page
+	response=self.client.get('/manage')
+	self.assertTrue(response.status_code==200 or response.status_code==302 or response.status_code==301)
+
+	#Test view profile page
+	response=self.client.get('/author/{{ uuid1.uuid }}')
+	self.assertTrue(response.status_code==200 or response.status_code==302 or response.status_code==301)
+
+	#Test add friend page
+	response=self.client.get('/add_friend')
+	self.assertTrue(response.status_code==200 or response.status_code==302 or response.status_code==301)
+
+	#Test my friends page
+	response=self.client.get('/my_friends')
+	self.assertTrue(response.status_code==200 or response.status_code==302 or response.status_code==301)
+
+	#Test something that doesn't exist
+	response=self.client.get('/does_not_exist')
+	self.assertTrue(response.status_code==404)
+
 class FriendsTestCase(TestCase):
     def setUp(self):
         user1 = User.objects.create(username="user1")
