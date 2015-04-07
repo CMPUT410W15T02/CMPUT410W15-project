@@ -32,6 +32,7 @@ class PostTestCase(TestCase):
         Post.objects.create(title="test6",description="d6",post_text="p6",author=profile, privacy="2",date=date, image="post_images/image2.png")
         Post.objects.create(title="test7",description="d7",post_text="p7",author=profile, privacy="3",date=date, image="post_images/image3.png")
         Post.objects.create(title="test8",description="d8",post_text="p8",author=profile, privacy="4",date=date, image="post_images/image4.png")
+        Post.objects.create(title="test9",description="d9",post_text="p9",author=profile, privacy="5",date=date, image="post_images/image5.png")
 
         Host.objects.create(name="TestHost",share=True,host_url="http://127.0.0.1:8000",username="user",password="pass")
 
@@ -51,16 +52,36 @@ class PostTestCase(TestCase):
         post6 = Post.objects.get(title="test6")
         post7 = Post.objects.get(title="test7")
         post8 = Post.objects.get(title="test8")
+        post9 = Post.objects.get(title="test9")
 	
+        # check that the default number in allowed is 0
+        self.assertEqual(post5.allowed.all().count(), 0)
+        self.assertEqual(post6.allowed.all().count(), 0)
+        self.assertEqual(post7.allowed.all().count(), 0)
+        self.assertEqual(post8.allowed.all().count(), 0)
+        self.assertEqual(post9.allowed.all().count(), 0)
+        
         # set 3 users allowed for post3
-        post3.allowed.add(Profile.objects.get(user=user1))
-        post3.allowed.add(Profile.objects.get(user=user2))
-        post3.allowed.add(Profile.objects.get(user=user3))
+        post7.allowed.add(Profile.objects.get(user=user1))
+        post7.allowed.add(Profile.objects.get(user=user2))
+        post7.allowed.add(Profile.objects.get(user=user3))
 
         # set 1 user allowed for post7
-        post7.allowed.add(Profile.objects.get(user=user1))
+        post8.allowed.add(Profile.objects.get(user=user1))
 
         #Privacy tests
+        # check that there is a correct number of allowed users
+        self.assertEqual(post8.allowed.all().count(), 1)
+        self.assertEqual(post7.allowed.all().count(), 3)
+        
+        # make sure the allowed users are the correct ones
+        self.assertTrue(Profile.objects.get(user = user1) in post8.allowed.all())
+        self.assertFalse(Profile.objects.get(user = user2) in post8.allowed.all())
+        self.assertFalse(Profile.objects.get(user = user3) in post8.allowed.all())
+        
+        self.assertTrue(Profile.objects.get(user = user1) in post7.allowed.all())
+        self.assertTrue(Profile.objects.get(user = user2) in post7.allowed.all())
+        self.assertTrue(Profile.objects.get(user = user3) in post7.allowed.all())
 	'''
         self.assertEqual(post1.privacy, "1")
         self.assertEqual(post2.privacy, "2")
@@ -72,9 +93,6 @@ class PostTestCase(TestCase):
         self.assertEqual(post8.privacy, "4")
 	'''
 
-        self.assertEqual(post1.allowed.all().count(), 0)
-        self.assertEqual(post3.allowed.all().count(), 3)
-        self.assertEqual(post7.allowed.all().count(), 1)
 
         #Editing tests
         #Test edit title
@@ -168,7 +186,7 @@ class PostTestCase(TestCase):
         post_string = json.dumps(post_data)
         response = self.client.post('/api/post/', \
         content_type='application/json', data=post_string, HTTP_AUTHORIZATION=auth)
-        self.assertEqual(Post.objects.count(), 9)
+        self.assertEqual(Post.objects.count(), 10)
 
 
 #Testing EditForm and PostForm
