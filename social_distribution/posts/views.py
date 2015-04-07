@@ -368,7 +368,7 @@ def expand_post(request,post_id):
                     post_json = host.get_postid(post_id)['posts'][0]
                     visibility = post_json['visibility']
                     description = post_json['description']
-                    pubdate = post_json['pubdate']
+                    date = timezone.make_aware(datetime.datetime.strptime(post_json['pubdate'], '%Y-%m-%d'), timezone.get_default_timezone())
                     title = post_json['title']
                     content = post_json['content']
                     content_type = post_json['content-type']
@@ -386,7 +386,7 @@ def expand_post(request,post_id):
                     except:
                         author_profile = Profile.objects.get(uuid=author_id)
 
-                    post = Post(title=title,post_text=content,author=author_profile,privacy='1')
+                    post = Post(title=title,post_text=content,author=author_profile,date=date,privacy='1')
                     comments = []
                     comment_form = []
                     return render(request, 'posts/expand_post.html',{'comments':comments, 'comment_form':comment_form, 'post':post, 'my_profile':my_profile})
@@ -398,7 +398,7 @@ def expand_post(request,post_id):
                     print(post_json)
                     #visibility = post_json['visibility']
                     description = post_json['description']
-                    #pubdate = post_json['pubdate']
+                    date = date = timezone.make_aware(datetime.datetime.strptime('2015-04-01', '%Y-%m-%d'), timezone.get_default_timezone())
                     title = post_json['title']
                     content = post_json['content']
                     content_type = post_json['content-type']
@@ -416,7 +416,7 @@ def expand_post(request,post_id):
                     except:
                         author_profile = Profile.objects.get(uuid=author_id)
 
-                    post = Post(title=title,post_text=content,author=author_profile,privacy='1')
+                    post = Post(title=title,post_text=content,author=author_profile,date=date,privacy='1')
                     comments = []
                     comment_form = []
                     return render(request, 'posts/expand_post.html',{'comments':comments, 'comment_form':comment_form, 'post':post, 'my_profile':my_profile})

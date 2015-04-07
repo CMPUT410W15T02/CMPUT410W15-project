@@ -12,8 +12,6 @@
         {% endif %}
 
 		<div>
-			<p>Post ID: {{post.id}}</p>
-
             <p>Image:
             {% if post.image %}
                 <br/> 
@@ -24,9 +22,9 @@
             {% endif %}
 
 			<p>Post Text: {{post.post_text|safe|escape}}</p>
-			<p>Privacy: {{post.privacy}} </p>
+			<p>Privacy: {{post.get_privacy_display}} </p>
 			<p>Description: {{post.description}} </p>
-			<p>Author_id: {{post.author_id}} </p>
+			<p>Author: {{post.author}} </p>
 			<p>Date: {{post.date}} </p>
 		</div>
 		</div>

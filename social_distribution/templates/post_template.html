@@ -39,7 +39,7 @@
 
             {% else %}
                 <div>
-                    Author: {{post.author.user.username}}
+                    Author: {{post.author}}
                 </div>
                 <div>
                     <form id="expand_post" method="get" action="/posts/{{post.uuid}}/">
