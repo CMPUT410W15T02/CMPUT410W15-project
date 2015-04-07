@@ -1,13 +1,15 @@
 {% extends 'authors/base.html' %}
 {% block block_body %}
     <div class="margins">
-		<h1> Expanded Post </h1>
+	    <div class="panel panel-info">
+	    	<div class="panel-heading">
+	    		<h1 class="panel-title"> {{post.title}}</h1>
+	    	</div>
 		{% if post.author.host = 'http://cs410.cs.ualberta.ca:41024' %}
     	<div class="well">
         {% else %}
         <div class="well text-primary">
         {% endif %}
-	   	<h1>Title: {{post.title}}</h1>
 
 		<div>
 			<p>Post ID: {{post.id}}</p>
@@ -26,6 +28,7 @@
 			<p>Description: {{post.description}} </p>
 			<p>Author_id: {{post.author_id}} </p>
 			<p>Date: {{post.date}} </p>
+		</div>
 		</div>
 		</div>
 		<h3>Comments </h3>
