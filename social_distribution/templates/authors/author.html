@@ -49,6 +49,7 @@
 		    					</tbody>
 		    				</table>
 		 				</div>
+		 			</div>
 
 				<div class="button-container">
 				    {% if sentFR %}
@@ -68,8 +69,7 @@
 					            <input  class="btn btn-info btn-sm" type="submit" name="submit" value="Send Friend Request" />
 					    	    </form>
 						    {% endif %}
-						    <br/>
-						    <br/>
+
 				            {% if isFollowing %}
 				                <form method="POST" action="/unfollow_author/">
 				                {% csrf_token %}
@@ -87,10 +87,9 @@
 				            {% endif %}
 				        {% endif %}
 				    {% endif %}
-				    <br/>
-				    <br/>
+
 				    <a href="/author/{{profile.uuid}}/posts" class="btn btn-primary btn-sm"> Posts by Author</a>
-			  	</div>
+			  	
 			  	</div>
 			  	</div>
 		</div>
