@@ -76,7 +76,7 @@ def posts(request):
                         newPost.allowed.add(f)
                 newPost.allowed.add(Profile.objects.get(user=User.objects.get(username=author)))
 	     # special privacy settings: friends
-	    elif privacy=="5":
+            elif privacy=="5":
                 all_friends=Profile.objects.get(user=currentUser)
                 for friend in all_friends.friends.all():
                     newPost.allowed.add(Profile.objects.get(user=User.objects.get(username=friend.user)))
@@ -124,8 +124,12 @@ def posts_by_author(request, author_id):
                 if post.content_type == 'text/x-markdown':
                     post.post_text = markdown2.markdown(post.post_text)
 
+                # for when the requested user is the current user
+                if (post.author == profile):
+                    list_of_posts.append(post)
+
                 # public posts by the author
-                if (post.privacy == '1'):
+                elif (post.privacy == '1'):
                     if post.author == profile:
                         list_of_posts.append(post)
 
@@ -135,10 +139,6 @@ def posts_by_author(request, author_id):
                     for allowed_user in allowed_users:
                         if allowed_user.id == request.user.id:
                             list_of_posts.append(post)
-
-                # for when the requested user is the current user
-                if (post.author == profile):
-                    list_of_posts.append(post)
 
         title = "Viewing Posts by " + user.username
 
@@ -277,19 +277,19 @@ def edit_post(request, post_id):
 
             post.allowed.clear()
             if privacy=="3":
-		all_friends=Profile.objects.get(user=request.user)
+                all_friends=Profile.objects.get(user=request.user)
                 for friend in all_friends.friends.all():
-		    foaf=Profile.objects.get(user=User.objects.get(username=friend.user))
-		    for second_friend in foaf.friends.all():
-			try:
+                    foaf=Profile.objects.get(user=User.objects.get(username=friend.user))
+                    for second_friend in foaf.friends.all():
+                        try:
                     	    post.allowed.add(Profile.objects.get(user=User.objects.get(username=second_friend.user)))
-			except:
-			    continue
+                        except:
+                            continue
                 post.allowed.add(Profile.objects.get(user=User.objects.get(username=author)))
-	    elif privacy=="4":
-		all_friends=Profile.objects.get(user=request.user)
+            elif privacy=="4":
+                all_friends=Profile.objects.get(user=request.user)
                 for friend in all_friends.friends.all():
-		    f=Profile.objects.get(user=User.objects.get(username=friend.user))
+                    f=Profile.objects.get(user=User.objects.get(username=friend.user))
 		    if f.host == 'http://cs410.cs.ualberta.ca:41024':
 		    	post.allowed.add(f)
                 post.allowed.add(Profile.objects.get(user=User.objects.get(username=author)))
@@ -570,8 +570,12 @@ def ajax_posts_by_author(request, author_id):
                 if post.content_type == 'text/x-markdown':
                     post.post_text = markdown2.markdown(post.post_text)
 
+                # for when the requested user is the current user
+                if (post.author == profile):
+                    list_of_posts.append(post)
+
                 # public posts by the author
-                if (post.privacy == '1'):
+                elif (post.privacy == '1'):
                     if post.author == profile:
                         list_of_posts.append(post)
 
@@ -581,10 +585,6 @@ def ajax_posts_by_author(request, author_id):
                     for allowed_user in allowed_users:
                         if allowed_user.id == request.user.id:
                             list_of_posts.append(post)
-
-                # for when the requested user is the current user
-                if (post.author == profile):
-                    list_of_posts.append(post)
 
         title = "Viewing Posts by " + user.username
 

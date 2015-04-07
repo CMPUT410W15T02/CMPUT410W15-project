@@ -158,7 +158,11 @@ def index(request):
             if (post.content_type == 'text/x-markdown'):
                 post.post_text = markdown2.markdown(post.post_text)
 
-            if (post.privacy == '1'):
+            # Displays your own posts
+            if (post.author == profile):
+                list_of_posts.append(post)
+
+            elif (post.privacy == '1'):
                 # Get posts from local friends
                 # Friends means follow. So we also have to get the public posts of all friends
                 for friend in friends_list:
@@ -177,9 +181,6 @@ def index(request):
                     if allowed_user.uuid == request_profile.uuid:
                         list_of_posts.append(post)
 
-            # Displays your own posts
-            elif (post.author == profile):
-                list_of_posts.append(post)
 
     return render(request, 'authors/index.html',
         {'list_of_profiles':list_of_profiles, 'list_of_posts':list_of_posts, 'list_of_github':list_of_github, 'my_profile':my_profile})
@@ -507,7 +508,11 @@ def ajax_retrieve_latest_post(request):
             if (post.content_type == 'text/x-markdown'):
                 post.post_text = markdown2.markdown(post.post_text)
 
-            if (post.privacy == '1'):
+            # Displays your own posts
+            if (post.author == profile):
+                list_of_posts.append(post)
+
+            elif (post.privacy == '1'):
                 # Get posts from local friends
                 # Friends means follow. So we also have to get the public posts of all friends
                 for friend in friends_list:
@@ -527,9 +532,6 @@ def ajax_retrieve_latest_post(request):
                     if allowed_user.uuid == request_profile.uuid:
                         list_of_posts.append(post)
 
-            # Displays your own posts
-            elif (post.author == profile):
-                list_of_posts.append(post)
     return render(request, 'post_template.html', {'list_of_posts': list_of_posts})
 
 def ajax_retrieve_latest_github(request):
