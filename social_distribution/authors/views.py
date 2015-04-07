@@ -146,9 +146,9 @@ def index(request):
                         author = post['author']
                         #Create new remote user
                         try:
-                            new_user = User.objects.get(username=author['displayname']+'@'+author['host'])
+                            new_user = User.objects.get(username=author['displayname']+'@Group3')
                         except User.DoesNotExist:
-                            new_user = User(username=author['displayname']+'@'+author['host'], password='')
+                            new_user = User(username=author['displayname']+'@Group3', password='')
                             new_user.save()
 
                         #Create new remote profile
@@ -173,9 +173,9 @@ def index(request):
                         author = post['author']
                         #Create new remote user
                         try:
-                            new_user = User.objects.get(username=author['displayname']+'@'+author['host'])
+                            new_user = User.objects.get(username=author['displayname']+'@Group7')
                         except User.DoesNotExist:
-                            new_user = User(username=author['displayname']+'@'+author['host'], password='')
+                            new_user = User(username=author['displayname']+'@Group7', password='')
                             new_user.save()
 
                         #Create new remote profile
@@ -491,9 +491,9 @@ def ajax_retrieve_latest_post(request):
                         author = post['author']
                         #Create new remote user
                         try:
-                            new_user = User.objects.get(username=author['displayname']+'@'+author['host'])
+                            new_user = User.objects.get(username=author['displayname']+'@Group3')
                         except User.DoesNotExist:
-                            new_user = User(username=author['displayname']+'@'+author['host'], password='')
+                            new_user = User(username=author['displayname']+'@Group3', password='')
                             new_user.save()
 
                         #Create new remote profile
@@ -518,9 +518,9 @@ def ajax_retrieve_latest_post(request):
                         author = post['author']
                         #Create new remote user
                         try:
-                            new_user = User.objects.get(username=author['displayname']+'@'+author['host'])
+                            new_user = User.objects.get(username=author['displayname']+'@Group7')
                         except User.DoesNotExist:
-                            new_user = User(username=author['displayname']+'@'+author['host'], password='')
+                            new_user = User(username=author['displayname']+'@Group7', password='')
                             new_user.save()
 
                         #Create new remote profile

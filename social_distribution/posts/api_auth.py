@@ -29,14 +29,14 @@ class APIAuthMiddleware(object):
 			host_obj = Host.objects.get(password=passwd)
 		else:
 			return make_response("HTTP Auth Error!")
-        
+
 		if host_obj.share == False:
-			return make_response("Connection Refused")    
+			return make_response("Connection Refused")
 
 		try:
-			request.user = User.objects.get(username = uname+':'+host_obj.name)
+			request.user = User.objects.get(username = uname+'@'+host_obj.name)
 		except:
-			user = User.objects.create_user(uname+':'+host_obj.name, uname+'@'+host_obj.host_url, host_obj.name)
+			user = User.objects.create_user(uname+'@'+host_obj.name, uname+'@'+host_obj.name, host_obj.name)
 			user.is_active = False
 			user.save()
 			profile = Profile.create_profile(user)
