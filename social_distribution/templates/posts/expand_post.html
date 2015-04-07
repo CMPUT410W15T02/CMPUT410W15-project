@@ -31,6 +31,7 @@
 		</div>
 		</div>
 		</div>
+		{% if post.author.host = 'http://cs410.cs.ualberta.ca:41024' %}
 		<h3>Comments </h3>
 		<div>
 			{% for comment in comments %}
@@ -40,8 +41,6 @@
 				</div>
 			{% endfor %}
 		</div>
-
-        {% if post.author.host = 'http://cs410.cs.ualberta.ca:41024' %}
 		</hr>
 		<h3> Submit Comment</h3>
 		<div>
