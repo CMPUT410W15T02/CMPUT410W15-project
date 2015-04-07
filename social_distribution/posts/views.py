@@ -118,7 +118,7 @@ def posts_by_author(request, author_id):
 
             # the requested user is not the current user
             else:
-                post_query = Post.objects.filter(Q(author=profile) & (Q(privacy=1) | Q(privacy=3) | Q(privacy=4)) ).order_by('-date')
+                post_query = Post.objects.filter(Q(author=profile) & (Q(privacy=1) | Q(privacy=3) | Q(privacy=4) | Q(privacy=5)) ).order_by('-date')
 
             for post in post_query:
                 if post.content_type == 'text/x-markdown':
@@ -130,14 +130,14 @@ def posts_by_author(request, author_id):
                         list_of_posts.append(post)
 
                 # check if current user is allowed to see remaining posts
-                elif ((post.privacy == '3') or (post.privacy == '4')):
+                elif ((post.privacy == '3') or (post.privacy == '4') or (post.privacy == '5')):
                     allowed_users = post.allowed.all()
                     for allowed_user in allowed_users:
                         if allowed_user.id == request.user.id:
                             list_of_posts.append(post)
 
                 # for when the requested user is the current user
-                elif (post.author == profile):
+                if (post.author == profile):
                     list_of_posts.append(post)
 
         title = "Viewing Posts by " + user.username
@@ -564,7 +564,7 @@ def ajax_posts_by_author(request, author_id):
 
             # the requested user is not the current user
             else:
-                post_query = Post.objects.filter(Q(author=profile) & (Q(privacy=1) | Q(privacy=3) | Q(privacy=4)) ).order_by('-date')
+                post_query = Post.objects.filter(Q(author=profile) & (Q(privacy=1) | Q(privacy=3) | Q(privacy=4) | Q(privacy=5)) ).order_by('-date')
 
             for post in post_query:
                 if post.content_type == 'text/x-markdown':
@@ -576,14 +576,14 @@ def ajax_posts_by_author(request, author_id):
                         list_of_posts.append(post)
 
                 # check if current user is allowed to see remaining posts
-                elif ((post.privacy == '3') or (post.privacy == '4')):
+                elif ((post.privacy == '3') or (post.privacy == '4') or (post.privacy == '5')):
                     allowed_users = post.allowed.all()
                     for allowed_user in allowed_users:
                         if allowed_user.id == request.user.id:
                             list_of_posts.append(post)
 
                 # for when the requested user is the current user
-                elif (post.author == profile):
+                if (post.author == profile):
                     list_of_posts.append(post)
 
         title = "Viewing Posts by " + user.username
