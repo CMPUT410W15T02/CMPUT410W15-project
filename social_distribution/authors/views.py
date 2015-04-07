@@ -260,8 +260,7 @@ def register(request):
         user_form = UserForm()
 
     if registered == True:
-        return HttpResponse("User successfully created! Login "
-        "<a href=/login/>here</a> after the admin has activated your account.")
+        return HttpResponse("<script>alert(\"Account Successfully Created!!\"); window.location = \'/login\';</script>")
     else:
         return render_to_response('authors/register.html',
             {'user_form': user_form, 'registered': registered}, context)
