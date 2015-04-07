@@ -25,6 +25,7 @@ class Profile(models.Model):
     @classmethod
     def create_profile(cls, username):
         profile = cls(user=username)
+        profile.displayname = username.username
         profile.save()
         return profile
 
