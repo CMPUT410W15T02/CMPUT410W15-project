@@ -6,12 +6,14 @@
 	    		<h1 class="panel-title"> {{post.title}}</h1>
 	    	</div>
 		{% if post.author.host = 'http://cs410.cs.ualberta.ca:41024' %}
-    	<div class="well">
+    	<div class="panel-body">
         {% else %}
-        <div class="well text-primary">
+        <div class="panel-body text-primary">
         {% endif %}
 
 		<div>
+			<p>Post by {{post.author}} on {{post.date}}</p>
+			<p>Description: {{post.description}} </p>
             <p>Image:
             {% if post.image %}
                 <br/> 
@@ -21,11 +23,9 @@
                 None</p>
             {% endif %}
 
-			<p>Post Text: {{post.post_text|safe|escape}}</p>
-			<p>Privacy: {{post.get_privacy_display}} </p>
-			<p>Description: {{post.description}} </p>
-			<p>Author: {{post.author}} </p>
-			<p>Date: {{post.date}} </p>
+			<p>{{post.post_text|safe|escape}}</p>
+			<p>This post's privacy is {{post.get_privacy_display}}.</p>
+			<a href="/author/{{profile.uuid}}" class="btn btn-primary btn-sm"> View Author's Profile</a>
 		</div>
 		</div>
 		</div>
@@ -33,9 +33,8 @@
 		<div>
 			{% for comment in comments %}
 				<div class="well">
-				<p>Body: {{comment.body}}</p>
-				<p> Date: {{comment.date}}</p>
-				<p> author_id: {{comment.author_id}}</p></br>
+				<h6>Comment by {{comment.author}} on {{comment.date}}</h6>
+				<p>{{comment.body}}</p></br>
 				</div>
 			{% endfor %}
 		</div>
