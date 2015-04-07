@@ -172,9 +172,9 @@ def public_posts(request):
                     author = post['author']
                     #Create new remote user
                     try:
-                        new_user = User.objects.get(username=author['displayname']+'@'+author['host'])
+                        new_user = User.objects.get(username=author['displayname']+'@Group3')
                     except User.DoesNotExist:
-                        new_user = User(username=author['displayname']+'@'+author['host'], password='')
+                        new_user = User(username=author['displayname']+'@Group3', password='')
                         new_user.save()
 
                     #Create new remote profile
@@ -199,9 +199,9 @@ def public_posts(request):
                     author = post['author']
                     #Create new remote user
                     try:
-                        new_user = User.objects.get(username=author['displayname']+'@'+author['host'])
+                        new_user = User.objects.get(username=author['displayname']+'@Group7')
                     except User.DoesNotExist:
-                        new_user = User(username=author['displayname']+'@'+author['host'], password='')
+                        new_user = User(username=author['displayname']+'@Group7', password='')
                         new_user.save()
 
                     #Create new remote profile
@@ -366,7 +366,6 @@ def expand_post(request,post_id):
             if host.name == "Group3":
                 try:
                     post_json = host.get_postid(post_id)['posts'][0]
-                    print(post_json)
                     visibility = post_json['visibility']
                     description = post_json['description']
                     pubdate = post_json['pubdate']
@@ -378,7 +377,7 @@ def expand_post(request,post_id):
                     author_host = post_json['author']['host']
                     author_displayname = post_json['author']['displayname']
                     try:
-                        author_user = User(username=author_displayname+"@"+author_host,
+                        author_user = User(username=author_displayname+'@Group3',
                                             password="")
                         author_user.save()
                         author_profile = Profile(user=author_user,uuid=author_id,
@@ -455,9 +454,9 @@ def ajax_public_posts(request):
                     author = post['author']
                     #Create new remote user
                     try:
-                        new_user = User.objects.get(username=author['displayname']+'@'+author['host'])
+                        new_user = User.objects.get(username=author['displayname']+'@Group3')
                     except User.DoesNotExist:
-                        new_user = User(username=author['displayname']+'@'+author['host'], password='')
+                        new_user = User(username=author['displayname']+'@Group3', password='')
                         new_user.save()
 
                     #Create new remote profile
@@ -482,9 +481,9 @@ def ajax_public_posts(request):
                     author = post['author']
                     #Create new remote user
                     try:
-                        new_user = User.objects.get(username=author['displayname']+'@'+author['host'])
+                        new_user = User.objects.get(username=author['displayname']+'@Group7')
                     except User.DoesNotExist:
-                        new_user = User(username=author['displayname']+'@'+author['host'], password='')
+                        new_user = User(username=author['displayname']+'@Group7', password='')
                         new_user.save()
 
                     #Create new remote profile
