@@ -366,7 +366,6 @@ def expand_post(request,post_id):
             if host.name == "Group3":
                 try:
                     post_json = host.get_postid(post_id)['posts'][0]
-                    print(post_json)
                     visibility = post_json['visibility']
                     description = post_json['description']
                     pubdate = post_json['pubdate']
