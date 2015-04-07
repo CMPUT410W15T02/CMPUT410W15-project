@@ -213,14 +213,14 @@ def public_posts(request):
 
                     #Get remote posts
                     title = post['title']
-                    #uuid = post['guid']
+                    uuid = post['guid']
                     description = post['description']
                     content_type = post['content-type']
                     post_text = post['content']
                     #Date is set to April 1 because its not given
                     date = timezone.make_aware(datetime.datetime.strptime('2015-04-01', '%Y-%m-%d'), timezone.get_default_timezone())
 
-                    new_post = Post(title=title, description="", author=new_profile, date=date,content_type=content_type,post_text=post_text,privacy=1)
+                    new_post = Post(uuid=uuid, title=title, description="", author=new_profile, date=date,content_type=content_type,post_text=post_text,privacy=1)
                     list_of_posts.append(new_post)
         except:
             pass
@@ -392,6 +392,36 @@ def expand_post(request,post_id):
                     return render(request, 'posts/expand_post.html',{'comments':comments, 'comment_form':comment_form, 'post':post, 'my_profile':my_profile})
                 except:
                     pass
+            elif host.name == "Group7":
+                try:
+                    post_json = host.get_postid(post_id)['posts'][0]
+                    print(post_json)
+                    #visibility = post_json['visibility']
+                    description = post_json['description']
+                    #pubdate = post_json['pubdate']
+                    title = post_json['title']
+                    content = post_json['content']
+                    content_type = post_json['content-type']
+
+                    author_id = post_json['author']['id']
+                    author_host = post_json['author']['host']
+                    author_displayname = post_json['author']['displayname']
+                    try:
+                        author_user = User(username=author_displayname+'@Group3',
+                                            password="")
+                        author_user.save()
+                        author_profile = Profile(user=author_user,uuid=author_id,
+                        displayname=author_displayname,host=author_host)
+                        author_profile.save()
+                    except:
+                        author_profile = Profile.objects.get(uuid=author_id)
+
+                    post = Post(title=title,post_text=content,author=author_profile,privacy=1)
+                    comments = []
+                    comment_form = []
+                    return render(request, 'posts/expand_post.html',{'comments':comments, 'comment_form':comment_form, 'post':post, 'my_profile':my_profile})
+                except:
+                    pass
 
     try:
         if post.content_type == 'text/x-markdown':
@@ -495,14 +525,14 @@ def ajax_public_posts(request):
 
                     #Get remote posts
                     title = post['title']
-                    #uuid = post['guid']
+                    uuid = post['guid']
                     description = post['description']
                     content_type = post['content-type']
                     post_text = post['content']
                     #Date is set to April 1 because its not given
                     date = timezone.make_aware(datetime.datetime.strptime('2015-04-01', '%Y-%m-%d'), timezone.get_default_timezone())
 
-                    new_post = Post(title=title, description="", author=new_profile, date=date,content_type=content_type,post_text=post_text,privacy=1)
+                    new_post = Post(uuid=uuid, title=title, description="", author=new_profile, date=date,content_type=content_type,post_text=post_text,privacy=1)
                     list_of_posts.append(new_post)
         except:
             pass
