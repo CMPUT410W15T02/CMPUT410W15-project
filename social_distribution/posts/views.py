@@ -191,7 +191,7 @@ def public_posts(request):
                     post_text = post['content']
                     date = timezone.make_aware(datetime.datetime.strptime(post['pubdate'], '%Y-%m-%d'), timezone.get_default_timezone())
 
-                    new_post = Post(uuid=uuid, title=title, description="", author=new_profile, date=date,content_type=content_type,post_text=post_text,privacy=1)
+                    new_post = Post(uuid=uuid, title=title, description="", author=new_profile, date=date,content_type=content_type,post_text=post_text,privacy='1')
                     list_of_posts.append(new_post)
             elif host.name == "Group7":
                 for post in host_posts['posts']:
@@ -219,7 +219,7 @@ def public_posts(request):
                     #Date is set to April 1 because its not given
                     date = timezone.make_aware(datetime.datetime.strptime('2015-04-01', '%Y-%m-%d'), timezone.get_default_timezone())
 
-                    new_post = Post(uuid=uuid, title=title, description="", author=new_profile, date=date,content_type=content_type,post_text=post_text,privacy=1)
+                    new_post = Post(uuid=uuid, title=title, description="", author=new_profile, date=date,content_type=content_type,post_text=post_text,privacy='1')
                     list_of_posts.append(new_post)
         except:
             pass
@@ -503,7 +503,7 @@ def ajax_public_posts(request):
                     post_text = post['content']
                     date = timezone.make_aware(datetime.datetime.strptime(post['pubdate'], '%Y-%m-%d'), timezone.get_default_timezone())
 
-                    new_post = Post(uuid=uuid, title=title, description="", author=new_profile, date=date,content_type=content_type,post_text=post_text,privacy=1)
+                    new_post = Post(uuid=uuid, title=title, description="", author=new_profile, date=date,content_type=content_type,post_text=post_text,privacy='1')
                     list_of_posts.append(new_post)
             elif host.name == "Group7":
                 for post in host_posts['posts']:
@@ -531,7 +531,7 @@ def ajax_public_posts(request):
                     #Date is set to April 1 because its not given
                     date = timezone.make_aware(datetime.datetime.strptime('2015-04-01', '%Y-%m-%d'), timezone.get_default_timezone())
 
-                    new_post = Post(uuid=uuid, title=title, description="", author=new_profile, date=date,content_type=content_type,post_text=post_text,privacy=1)
+                    new_post = Post(uuid=uuid, title=title, description="", author=new_profile, date=date,content_type=content_type,post_text=post_text,privacy='1')
                     list_of_posts.append(new_post)
         except:
             pass
