@@ -84,7 +84,7 @@ def index(request):
 
     if request.user.is_authenticated():
         profile = Profile.objects.get(user_id = request.user.id)
-        post_query = Post.objects.filter(Q(privacy=1) | Q(privacy=3) | Q(privacy=4) | Q(author=profile)).order_by('-date')
+        post_query = Post.objects.filter(Q(privacy=1) | Q(privacy=3) | Q(privacy=4) | Q(privacy=5) | Q(author=profile)).order_by('-date')
         post_query = list(post_query)
 
         hosts = Host.objects.all().exclude( Q(name='Our own') | Q(name='Test'))
@@ -170,11 +170,13 @@ def index(request):
                     if post.author == follow.to_profile_id:
                         list_of_posts.append(post)
 
-            elif ((post.privacy == '3') or (post.privacy == '4')):
+            elif ((post.privacy == '3') or (post.privacy == '4') or (post.privacy == '5')):
                 allowed_users = post.allowed.all()
-                for user in allowed_users:
-                    if user.id == request.user.id:
+                request_profile = Profile.objects.get(user=request.user.id)
+                for allowed_user in allowed_users:
+                    if allowed_user.uuid == request_profile.uuid:
                         list_of_posts.append(post)
+
             # Displays your own posts
             if (post.author == profile):
                 list_of_posts.append(post)
@@ -429,7 +431,7 @@ def ajax_retrieve_latest_post(request):
 
     if request.user.is_authenticated():
         profile = Profile.objects.get(user_id = request.user.id)
-        post_query = Post.objects.filter(Q(privacy=1) | Q(privacy=3) | Q(privacy=4) | Q(author=profile)).order_by('-date')
+        post_query = Post.objects.filter(Q(privacy=1) | Q(privacy=3) | Q(privacy=4) | Q(privacy=5) | Q(author=profile)).order_by('-date')
         post_query = list(post_query)
 
         hosts = Host.objects.all().exclude( Q(name='Our own') | Q(name='Test'))
@@ -517,15 +519,16 @@ def ajax_retrieve_latest_post(request):
                     if post.author == follow.to_profile_id:
                         list_of_posts.append(post)
 
-            elif ((post.privacy == '3') or (post.privacy == '4')):
+            elif ((post.privacy == '3') or (post.privacy == '4') or (post.privacy == '5')):
                 allowed_users = post.allowed.all()
-                for user in allowed_users:
-                    if user.id == request.user.id:
+                request_profile = Profile.objects.get(user=request.user.id)
+                for allowed_user in allowed_users:
+                    if allowed_user.uuid == request_profile.uuid:
                         list_of_posts.append(post)
+
             # Displays your own posts
             if (post.author == profile):
                 list_of_posts.append(post)
-
     return render(request, 'post_template.html', {'list_of_posts': list_of_posts})
 
 def ajax_retrieve_latest_github(request):
