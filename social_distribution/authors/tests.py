@@ -160,13 +160,18 @@ class FriendsTestCase(TestCase):
         profile2 = Profile.objects.get(displayname="user2")
         profile3 = Profile.objects.get(displayname="user3")
 
-
         testFollow1 = Follow(from_profile_id=profile1, to_profile_id=profile2, status='PENDING')
         testFollow1.save()
-        testFollow2 = Follow(from_profile_id=profile2, to_profile_id=profile3, status='REJECTED')
+        testFollow2 = Follow(from_profile_id=profile2, to_profile_id=profile3, status='FOLLOWING')
         testFollow2.save()
 
+        #See if the two Follow objects are created
         self.assertTrue(Follow.objects.all(),2)
+
+        #A follows B but does not mean B follows A
+        self.assertTrue(Follow.objects.get(from_profile_id=profile1, to_profile_id=profile2))
+
+        self.assertFalse(Follow.objects.filter(from_profile_id=profile2, to_profile_id=profile1))
 
     def test_friendship(self):
         profile1 = Profile.objects.get(displayname="user1")
@@ -176,8 +181,10 @@ class FriendsTestCase(TestCase):
         profile1.friends.add(profile2)
         profile1.save()
 
-
+        #If A and B are friends, then B and A are friends as well.
         self.assertIn(profile2, profile1.friends.all())
         self.assertIn(profile1, profile2.friends.all())
 
+        #C should not be friends with A or B
         self.assertNotIn(profile3, profile1.friends.all())
+        self.assertNotIn(profile3, profile2.friends.all())
