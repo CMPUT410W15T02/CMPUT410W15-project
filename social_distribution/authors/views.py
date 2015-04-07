@@ -521,6 +521,7 @@ def ajax_retrieve_latest_post(request):
 
             elif ((post.privacy == '3') or (post.privacy == '4') or (post.privacy == '5')):
                 allowed_users = post.allowed.all()
+                print(allowed_users)
                 request_profile = Profile.objects.get(user=request.user.id)
                 for allowed_user in allowed_users:
                     if allowed_user.uuid == request_profile.uuid:

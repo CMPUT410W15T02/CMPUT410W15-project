@@ -25,9 +25,7 @@
 
 			<p>{{post.post_text|safe|escape}}</p>
 			<p>This post's privacy is {{post.get_privacy_display}}.</p>
-			{% if post.author.host = 'http://cs410.cs.ualberta.ca:41024' %}
-			<a href="/author/{{profile.uuid}}" class="btn btn-primary btn-sm"> View Author's Profile</a>
-			{% endif %}
+			<a href="/author/{{post.author.uuid}}" class="btn btn-primary btn-sm"> View Author's Profile</a>
 		</div>
 		</div>
 		</div>

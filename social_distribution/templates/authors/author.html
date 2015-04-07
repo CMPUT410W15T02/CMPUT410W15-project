@@ -1,15 +1,15 @@
 {% extends 'authors/base.html' %}
 {% block block_body %}
     <div class="margins">
-	    <div class="panel panel-info">
+    {% if profile.host = 'http://cs410.cs.ualberta.ca:41024' %}
+        <div class="panel panel-info">
+    {% else %}
+        <div class="panel panel-warning">
+    {% endif %}
 	    	<div class="panel-heading">
 				<h1 class="panel-title"> {{user_object.username}}'s Profile</h1>
 			</div>
-			{% if profile.host = 'http://cs410.cs.ualberta.ca:41024' %}
 		    	<div class="panel-body">
-		        {% else %}
-		        <div class="panel-body text-primary">
-		        {% endif %}
 		        	<div class="row">
 		        		<div class=" col-md-9 col-lg-9 ">
 		            		<table class="table table-user-information">
