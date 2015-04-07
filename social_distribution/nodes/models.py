@@ -5,6 +5,7 @@ import json
 # Create your models here.
 
 class Host(models.Model):
+    # share allows the server admin to turn sharing on or off with a given node
     share = models.BooleanField(default=False)
     name = models.CharField(max_length=128, blank=False)
     host_url = models.CharField(max_length=128, blank=False)

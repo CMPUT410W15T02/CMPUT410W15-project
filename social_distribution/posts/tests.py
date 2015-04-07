@@ -75,7 +75,10 @@ class PostTestCase(TestCase):
         self.assertEqual(post1.allowed.all().count(), 0)
         self.assertEqual(post3.allowed.all().count(), 3)
         self.assertEqual(post7.allowed.all().count(), 1)
-
+        
+        self.assertTrue(Profile.objects.get(user = user1) in post7.allowed.all())
+        self.assertFalse(Profile.objects.get(user = user2) in post7.allowed.all())
+        self.assertFalse(Profile.objects.get(user = user3) in post7.allowed.all())
         #Editing tests
         #Test edit title
 	'''

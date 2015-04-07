@@ -27,7 +27,7 @@ def get_photo(request, post_uuid):
     # get the post
     post = Post.objects.get(uuid=post_uuid)
 
-    # find profiles that
+    # find profiles that are authorized to see the image
     profile = Profile.objects.get(user=request.user)
     allowed_profiles = post.allowed.all()
 
