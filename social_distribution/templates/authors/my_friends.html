@@ -2,10 +2,12 @@
 {% block block_body %}
     <div class="margins">
 		{% for friend in friends %}	       
-		<div class="well align"> 	    		
-                    <h4>USER NAME: {{friend.user}}</h4>
-                    <h4>DISPLAY NAME: {{friend.displayname}} </h4>
-					<h4>UUID: {{friend.uuid}} </h4>
+		<div class="panel panel-info">
+			<div class="panel-heading"> 	    		
+                <h1 class="panel-title">{{friend.user}}</h1>
+            </div>
+            <div class="panel-body">
+                    <h4>Display Name: {{friend.displayname}} </h4>
 		    	<div class="button-container">
 		    		<a class="btn btn-sm btn-info" href="/author/{{friend.uuid}}">View Profile</a>
 		    		

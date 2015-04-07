@@ -1,23 +1,29 @@
 {% extends 'authors/base.html' %}
 {% block block_body %}
     <div class="margins">
+    <div class="panel panel-info">
+		<div class="panel-heading">
+			<h1 class="panel-title">Friend Requests</h1>
+		</div>
+		<div class="panel-body">
     {% if friends %}
 		{% for friend in friends%}
-			<div class="well align">
+
 		        <form method="POST" action="/add_friend/">
 		        {% csrf_token %}
-		        <h3>{{friend.from_profile_id}}  wants to be friends</h3>
+		        <h4>{{friend.from_profile_id}}  wants to be friends</h4>
 				<span>
 					<input type="hidden" value={{friend.from_profile_id.id}} name="from_profile">
 					<input class="btn btn-success btn-sm" type="submit" name="accept" value="Accept" />
 			        <input class="btn btn-danger btn-sm" type="submit" name="reject" value="Reject" />
 				</span>
 		        </form>
-	        </div>
 		{% endfor %}
 
 	{% else %}
-		<h1> No Friend Requests </h1>
+		<h4> No Friend Requests </h4>
 	{% endif %}
+	</div>
+	</div>
 	</div>
 {% endblock %}

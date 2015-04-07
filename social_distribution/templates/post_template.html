@@ -1,26 +1,25 @@
 {% for post in list_of_posts %}
     {% if post.author.host = 'http://cs410.cs.ualberta.ca:41024' %}
-        <div class="well align">
+        <div class="panel panel-info">
     {% else %}
-        <div class="well align text-primary">
+        <div class="panel panel-warning">
     {% endif %}
-            <div>
-                Title: {{post.title}}
-            </div>
-            <div>
-                Body: {{post.post_text|safe|escape}}
-            </div>
+        <div class="panel-heading">
+            <h1 class="panel-title"> {{post.title}}</h1>
+        </div>
+        <div class="panel-body align">
+            <p>Post by {{post.author}} on {{post.date}}</p>
+            <p>{{post.post_text|safe|escape}}</p>
+            <br/>
 
             {% if post.image %}
                 <div>
                     <img src="{{MEDIA_URL}}{{post.uuid}}" alt="{{post.image}}" height="100" width="100"/>
                 </div>
             {% endif %}
-
+                <p>This post's privacy is {{post.get_privacy_display}}</p>
             {% if post.author.user = user %}
-                <div>
-                    Privacy: {{post.get_privacy_display}}
-                </div>
+                <br/>
                 <div class="button-container">
                     <form id="expand_post" method="get" action="/posts/{{post.uuid}}/">
                         <input class="btn btn-success btn-sm" type="submit" value="Expand" />
@@ -32,24 +31,17 @@
                         {% csrf_token %}
                         <input class="btn btn-danger btn-sm" type="submit" value="Delete" />
                     </form>
-                    <br/>
-                    <br/>
                 </div>
 
 
             {% else %}
-                <div>
-                    Author: {{post.author}}
-                </div>
+                <br/>
                 <div>
                     <form id="expand_post" method="get" action="/posts/{{post.uuid}}/">
                         <input class="btn btn-success btn-sm" type="submit" value="Expand" />
                     </form>
-                    <br/>
-                    <br/>
                 </div>
             {% endif %}
-	    <br/>
-	    {{ post.author.host }}
         </div>
+    </div>
 {% endfor %}

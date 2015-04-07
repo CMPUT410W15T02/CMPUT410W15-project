@@ -146,7 +146,7 @@ def posts_by_author(request, author_id):
     except:
         profile = Profile.objects.get(uuid=author_id)
         user = profile.user
-        title = "There are no posts by " + user.username
+        title = "Viewing Posts by " + user.username
     url_from = '/posts_by_author/' + author_id
 
     list_of_posts.sort(key=lambda x: x.date,reverse=True)
@@ -595,7 +595,7 @@ def ajax_posts_by_author(request, author_id):
     except:
         profile = Profile.objects.get(uuid=author_id)
         user = profile.user
-        title = "There are no posts by " + user.username
+        title = "Viewing Posts by " + user.username
 
     list_of_posts.sort(key=lambda x: x.date,reverse=True)
 
