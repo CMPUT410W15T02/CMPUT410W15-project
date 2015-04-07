@@ -178,7 +178,7 @@ def index(request):
                         list_of_posts.append(post)
 
             # Displays your own posts
-            if (post.author == profile):
+            elif (post.author == profile):
                 list_of_posts.append(post)
 
     return render(request, 'authors/index.html',
@@ -527,7 +527,7 @@ def ajax_retrieve_latest_post(request):
                         list_of_posts.append(post)
 
             # Displays your own posts
-            if (post.author == profile):
+            elif (post.author == profile):
                 list_of_posts.append(post)
     return render(request, 'post_template.html', {'list_of_posts': list_of_posts})
 
