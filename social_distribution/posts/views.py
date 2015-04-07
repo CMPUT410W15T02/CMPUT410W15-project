@@ -100,7 +100,6 @@ def posts(request):
 # view all posts of an author specified by author_id
 @login_required
 def posts_by_author(request, author_id):
-
     list_of_posts = []
 
     try:
@@ -115,7 +114,7 @@ def posts_by_author(request, author_id):
 
             # if the requested user is the current user show private posts too
             if(profile == request.user.profile):
-                post_query = Post.objects.filter(Q(author=profile))
+                post_query = Post.objects.filter(Q(author=profile)).order_by('-date')
 
             # the requested user is not the current user
             else:
@@ -133,8 +132,8 @@ def posts_by_author(request, author_id):
                 # check if current user is allowed to see remaining posts
                 elif ((post.privacy == '3') or (post.privacy == '4')):
                     allowed_users = post.allowed.all()
-                    for user in allowed_users:
-                        if user.id == request.user.id:
+                    for allowed_user in allowed_users:
+                        if allowed_user.id == request.user.id:
                             list_of_posts.append(post)
 
                 # for when the requested user is the current user
@@ -192,7 +191,7 @@ def public_posts(request):
                     post_text = post['content']
                     date = timezone.make_aware(datetime.datetime.strptime(post['pubdate'], '%Y-%m-%d'), timezone.get_default_timezone())
 
-                    new_post = Post(uuid=uuid, title=title, description="", author=new_profile, date=date,content_type=content_type,post_text=post_text,privacy='1')
+                    new_post = Post(uuid=uuid, title=title, description="", author=new_profile, date=date,content_type=content_type,post_text=post_text,privacy=1)
                     list_of_posts.append(new_post)
             elif host.name == "Group7":
                 for post in host_posts['posts']:
@@ -220,7 +219,7 @@ def public_posts(request):
                     #Date is set to April 1 because its not given
                     date = timezone.make_aware(datetime.datetime.strptime('2015-04-01', '%Y-%m-%d'), timezone.get_default_timezone())
 
-                    new_post = Post(uuid=uuid, title=title, description="", author=new_profile, date=date,content_type=content_type,post_text=post_text,privacy='1')
+                    new_post = Post(uuid=uuid, title=title, description="", author=new_profile, date=date,content_type=content_type,post_text=post_text,privacy=1)
                     list_of_posts.append(new_post)
         except:
             pass
@@ -504,7 +503,7 @@ def ajax_public_posts(request):
                     post_text = post['content']
                     date = timezone.make_aware(datetime.datetime.strptime(post['pubdate'], '%Y-%m-%d'), timezone.get_default_timezone())
 
-                    new_post = Post(uuid=uuid, title=title, description="", author=new_profile, date=date,content_type=content_type,post_text=post_text,privacy='1')
+                    new_post = Post(uuid=uuid, title=title, description="", author=new_profile, date=date,content_type=content_type,post_text=post_text,privacy=1)
                     list_of_posts.append(new_post)
             elif host.name == "Group7":
                 for post in host_posts['posts']:
@@ -532,7 +531,7 @@ def ajax_public_posts(request):
                     #Date is set to April 1 because its not given
                     date = timezone.make_aware(datetime.datetime.strptime('2015-04-01', '%Y-%m-%d'), timezone.get_default_timezone())
 
-                    new_post = Post(uuid=uuid, title=title, description="", author=new_profile, date=date,content_type=content_type,post_text=post_text,privacy='1')
+                    new_post = Post(uuid=uuid, title=title, description="", author=new_profile, date=date,content_type=content_type,post_text=post_text,privacy=1)
                     list_of_posts.append(new_post)
         except:
             pass
@@ -548,10 +547,7 @@ def ajax_public_posts(request):
 
 @login_required
 def ajax_posts_by_author(request, author_id):
-
     list_of_posts = []
-
-
     try:
         if request.user.is_authenticated():
             my_profile = Profile.objects.get(user=request.user)
@@ -582,8 +578,8 @@ def ajax_posts_by_author(request, author_id):
                 # check if current user is allowed to see remaining posts
                 elif ((post.privacy == '3') or (post.privacy == '4')):
                     allowed_users = post.allowed.all()
-                    for user in allowed_users:
-                        if user.id == request.user.id:
+                    for allowed_user in allowed_users:
+                        if allowed_user.id == request.user.id:
                             list_of_posts.append(post)
 
                 # for when the requested user is the current user

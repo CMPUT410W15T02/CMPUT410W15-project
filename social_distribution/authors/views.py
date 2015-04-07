@@ -116,7 +116,7 @@ def index(request):
                         post_text = post['content']
                         date = timezone.make_aware(datetime.datetime.strptime(post['pubdate'], '%Y-%m-%d'), timezone.get_default_timezone())
 
-                        new_post = Post(uuid=uuid, title=title, description="", author=new_profile, date=date,content_type=content_type,post_text=post_text,privacy='1')
+                        new_post = Post(uuid=uuid, title=title, description="", author=new_profile, date=date,content_type=content_type,post_text=post_text,privacy=1)
                         post_query.append(new_post)
                 elif host.name == "Group7":
                     for post in host_posts['posts']:
@@ -144,7 +144,7 @@ def index(request):
                         #Date is set to April 1 because its not given
                         date = timezone.make_aware(datetime.datetime.strptime('2015-04-01', '%Y-%m-%d'), timezone.get_default_timezone())
 
-                        new_post = Post(uuid=uuid, title=title, description="", author=new_profile, date=date,content_type=content_type,post_text=post_text,privacy='1')
+                        new_post = Post(uuid=uuid, title=title, description="", author=new_profile, date=date,content_type=content_type,post_text=post_text,privacy=1)
                         post_query.append(new_post)
             except:
                 pass
@@ -461,7 +461,7 @@ def ajax_retrieve_latest_post(request):
                         post_text = post['content']
                         date = timezone.make_aware(datetime.datetime.strptime(post['pubdate'], '%Y-%m-%d'), timezone.get_default_timezone())
 
-                        new_post = Post(uuid=uuid, title=title, description="", author=new_profile, date=date,content_type=content_type,post_text=post_text,privacy='1')
+                        new_post = Post(uuid=uuid, title=title, description="", author=new_profile, date=date,content_type=content_type,post_text=post_text,privacy=1)
                         post_query.append(new_post)
                 elif host.name == "Group7":
                     for post in host_posts['posts']:
@@ -489,11 +489,9 @@ def ajax_retrieve_latest_post(request):
                         #Date is set to April 1 because its not given
                         date = timezone.make_aware(datetime.datetime.strptime('2015-04-01', '%Y-%m-%d'), timezone.get_default_timezone())
 
-                        new_post = Post(uuid=uuid, title=title, description="", author=new_profile, date=date,content_type=content_type,post_text=post_text,privacy='1')
-
+                        new_post = Post(uuid=uuid, title=title, description="", author=new_profile, date=date,content_type=content_type,post_text=post_text,privacy=1)
                         post_query.append(new_post)
             except:
-                print("fail")
                 pass
 
 
@@ -592,9 +590,11 @@ def ajax_retrieve_latest_github(request):
     return render(request, 'github_template.html', {'list_of_github': list_of_github, 'my_profile': my_profile})
 
 #Gets all friends of current profile
+@login_required
 def my_friends(request):
     current_profile = Profile.objects.get(user_id=request.user.id)
     friends = current_profile.friends.all()
-    print(friends)
+    if request.user.is_authenticated():
+        my_profile = Profile.objects.get(user=request.user)
 
-    return render(request, 'authors/my_friends.html', {'friends':friends})
+    return render(request, 'authors/my_friends.html', {'friends':friends, 'my_profile':my_profile})
