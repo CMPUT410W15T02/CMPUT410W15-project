@@ -1,59 +1,98 @@
 {% extends 'authors/base.html' %}
 {% block block_body %}
     <div class="margins">
-	<h1> {{user_object.username}}'s Profile</h1>
-
-	{% if profile.host = 'http://cs410.cs.ualberta.ca:41024' %}
-    	<div class="well align">
-        {% else %}
-        <div class="well align text-primary">
-        {% endif %}
-            <p>HOST: {{profile.host}} </p>
-			<p>DISPLAY NAME: {{profile.displayname}} </p>
-			<p>BODY: {{profile.body}} </p>
-			<p>BIRTHDATE: {{profile.birthdate}}</p>
-            <p>GENDER: {{profile.gender}}</p>
-            <p>GITHUB: {{profile.github}}</p>
-            <p>WORKSPACE: {{profile.workspace}}</p>
-            <p>SCHOOL: {{profile.school}}</p>
- 		</div>
-
-		<div class="button-container">
-		    {% if sentFR %}
-		        <input class="btn btn-info btn-sm" type="submit" name="submit" value="Pending Friend Request"/>
-		    {% else %}
-		        {% if isFriends %}
-					<form method="POST" action="/remove_friend/">
-					{% csrf_token %}
-					<input class="btn btn-primary btn-sm" type="hidden" value={{profile.id}} name="remove_profile_id" />
-					<input class="btn btn-info btn-sm" type="submit" name="submit" value="Remove Friend" />
-					</form>
+	    <div class="panel panel-info">
+	    	<div class="panel-heading">
+				<h1 class="panel-title"> {{user_object.username}}'s Profile</h1>
+			</div>
+			{% if profile.host = 'http://cs410.cs.ualberta.ca:41024' %}
+		    	<div class="panel-body">
 		        {% else %}
-					{% if profile.user.username != current.username %}
-				    	<form method="POST" action="/friend_request/">
-				    	{% csrf_token %}
-				    	<input class="btn btn-primary btn-sm" type="hidden" value={{profile.id}} name="to_profile" />
-			            <input  class="btn btn-info btn-sm" type="submit" name="submit" value="Send Friend Request" />
-			    	    </form>
-				    {% endif %}
-
-		            {% if isFollowing %}
-		                <form method="POST" action="/unfollow_author/">
-		                {% csrf_token %}
-		                <input class="btn btn-primary btn-sm" type="hidden" value={{profile.id}} name="unfollow_profile_id">
-		                <input class="btn btn-info btn-sm" type="submit" name="submit" value="Unfollow Author" />
-		                </form>
-		            {% else %}
-						{% if profile.user.username != current.username %}
-		                <form method="POST" action="/follow_author/">
-		                {% csrf_token %}
-		                <input class="btn btn-primary btn-sm" type="hidden" value={{profile.id}} name="follow_profile_id">
-		                <input class="btn btn-info btn-sm" type="submit" name="submit" value="Follow Author" />
-		                </form>
-						{% endif %}
-		            {% endif %}
+		        <div class="panel-body text-primary">
 		        {% endif %}
-		    {% endif %}
-	  	</div>
+		        	<div class="row">
+		        		<div class=" col-md-9 col-lg-9 ">
+		            		<table class="table table-user-information">
+		            			<tbody>
+		            				<tr>
+		            					<td>Display Name:</td>
+		            					<td>{{profile.displayname}}</td>
+		            				</tr>
+		            				<tr>
+		            					<td>Host:</td>
+		            					<td>{{profile.host}}</td>
+		            				</tr>
+		            				<tr>
+		            					<td>Birthdate:</td>
+		            					<td>{{profile.birthdate}}</td>
+		            				</tr>        				
+		            				<tr>
+		            					<td>Gender:</td>
+		            					<td>{{profile.gender}}</td>
+		            				</tr>
+		            				<tr>
+		            					<td>Github:</td>
+		            					<td>{{profile.github}}</td>
+		            				</tr>
+		            				<tr>
+		            					<td>Workspace:</td>
+		            					<td>{{profile.workspace}}</td>
+		            				</tr>
+		            				<tr>
+		            					<td>School</td>
+		            					<td>{{profile.school}}</td>
+		            				</tr>
+		            				<tr>
+		            					<td>About me:</td>
+		            					<td>{{profile.body}}</td>
+		            				</tr>
+		    					</tbody>
+		    				</table>
+		 				</div>
+
+				<div class="button-container">
+				    {% if sentFR %}
+				        <input class="btn btn-info btn-sm" type="submit" name="submit" value="Pending Friend Request"/>
+				    {% else %}
+				        {% if isFriends %}
+							<form method="POST" action="/remove_friend/">
+							{% csrf_token %}
+							<input class="btn btn-primary btn-sm" type="hidden" value={{profile.id}} name="remove_profile_id" />
+							<input class="btn btn-info btn-sm" type="submit" name="submit" value="Remove Friend" />
+							</form>
+				        {% else %}
+							{% if profile.user.username != current.username %}
+						    	<form method="POST" action="/friend_request/">
+						    	{% csrf_token %}
+						    	<input class="btn btn-primary btn-sm" type="hidden" value={{profile.id}} name="to_profile" />
+					            <input  class="btn btn-info btn-sm" type="submit" name="submit" value="Send Friend Request" />
+					    	    </form>
+						    {% endif %}
+						    <br/>
+						    <br/>
+				            {% if isFollowing %}
+				                <form method="POST" action="/unfollow_author/">
+				                {% csrf_token %}
+				                <input class="btn btn-primary btn-sm" type="hidden" value={{profile.id}} name="unfollow_profile_id">
+				                <input class="btn btn-info btn-sm" type="submit" name="submit" value="Unfollow Author" />
+				                </form>
+				            {% else %}
+								{% if profile.user.username != current.username %}
+				                <form method="POST" action="/follow_author/">
+				                {% csrf_token %}
+				                <input class="btn btn-primary btn-sm" type="hidden" value={{profile.id}} name="follow_profile_id">
+				                <input class="btn btn-info btn-sm" type="submit" name="submit" value="Follow Author" />
+				                </form>
+								{% endif %}
+				            {% endif %}
+				        {% endif %}
+				    {% endif %}
+				    <br/>
+				    <br/>
+				    <a href="/author/{{profile.uuid}}/posts" class="btn btn-primary btn-sm"> Posts by Author</a>
+			  	</div>
+			  	</div>
+			  	</div>
+		</div>
     </div>
 {% endblock %}
